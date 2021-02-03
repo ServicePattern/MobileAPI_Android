@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.brightpattern.chatdemo" >
+
+    <uses-feature android:name="android.hardware.camera"/>
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature android:glEsVersion="0x00020000" android:required="true" />
+
+
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+
+    <uses-sdk
+        android:minSdkVersion="17"
+        android:targetSdkVersion="21" />
+
+    <application
+        android:name="com.brightpattern.chatdemo.DemoApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/company_name"
+        android:theme="@style/AppTheme"
+        android:networkSecurityConfig="@xml/network_security_config"
+        >
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+
+        <activity
+            android:name="com.brightpattern.chatdemo.MainActivity"
+            android:theme="@style/TransparentActionBar"
+            android:screenOrientation="portrait"
+            android:label="@string/company_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.brightpattern.chatdemo.ChatActivity"
+            android:label="Chat"
+            android:parentActivityName="com.brightpattern.chatdemo.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.brightpattern.chatdemo.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.brightpattern.chatdemo.ArchiveActivity"
+            android:label="Past conversations"
+            android:parentActivityName="com.brightpattern.chatdemo.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.brightpattern.chatdemo.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.brightpattern.chatdemo.ArchiveChatActivity"
+            android:label="@string/title_activity_archive_chat"
+            android:parentActivityName="com.brightpattern.chatdemo.ArchiveActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.brightpattern.chatdemo.ArchiveActivity" />
+        </activity>
+        <activity
+            android:name="com.brightpattern.chatdemo.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName="com.brightpattern.chatdemo.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.brightpattern.chatdemo.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.brightpattern.chatdemo.ChatSurveyActivity"
+            android:label="@string/title_activity_chat_survey"
+            android:parentActivityName="com.brightpattern.chatdemo.ChatActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.brightpattern.chatdemo.ChatActivity" />
+        </activity>
+
+        <activity
+            android:name="com.brightpattern.chatdemo.VideoCallActivity"
+            android:label="@string/title_activity_chat_call"
+            android:parentActivityName="com.brightpattern.chatdemo.ChatActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.brightpattern.chatdemo.ChatActivity" />
+        </activity>
+
+        <service
+            android:name="com.brightpattern.chatdemo.ChatSessionService"
+            android:enabled="true">
+        </service>
+    </application>
+
+</manifest>

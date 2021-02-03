@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:minHeight="60dp"
+    android:background="@color/backgroundColor"
+    android:weightSum="1">
+
+    <TextView
+        android:id="@+id/pub_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Published Date"
+        android:textSize="10sp"
+        android:background="@color/clearColor"
+        android:textColor="@color/textGrayColor"/>
+
+    <LinearLayout
+        android:id="@+id/layoutMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/left_buble">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/typingImage"
+            android:src="@drawable/step0"
+            android:scaleType="fitXY" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/senderName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="11dp"
+        android:layout_marginRight="11dp"
+        android:text="Sender"
+        android:textSize="12sp"
+        android:background="@color/clearColor"
+        android:textColor="@color/textGrayColor"/>
+</LinearLayout>

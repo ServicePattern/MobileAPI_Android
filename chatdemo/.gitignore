@@ -1,0 +1,6 @@
+/build
+/release
+
+# IntelliJ IDEA
+*.iml
+*.keystore
