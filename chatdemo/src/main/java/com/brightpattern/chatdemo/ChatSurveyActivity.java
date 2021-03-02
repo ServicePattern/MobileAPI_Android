@@ -2,8 +2,9 @@ package com.brightpattern.chatdemo;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBarActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Switch;
@@ -13,7 +14,7 @@ import com.brightpattern.api.data.ShowFormData;
 import com.brightpattern.api.data.ShowFormResult;
 
 
-public class ChatSurveyActivity extends ActionBarActivity {
+public class ChatSurveyActivity extends AppCompatActivity {
 
     private static final String TAG = ChatSurveyActivity.class.getSimpleName();
 

@@ -13,8 +13,9 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.IBinder;
 import android.provider.MediaStore;
-import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBarActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NavUtils;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -61,7 +62,7 @@ import com.brightpattern.api.chat.events.ChatVisualEvent;
 import com.brightpattern.chatdemo.utils.AttachmentUtils;
 import com.brightpattern.chatdemo.webrtc.WebRtcConnection;
 
-public class ChatActivity extends ActionBarActivity {
+public class ChatActivity extends AppCompatActivity {
 
     private static final String TAG = ChatActivity.class.getSimpleName();
 

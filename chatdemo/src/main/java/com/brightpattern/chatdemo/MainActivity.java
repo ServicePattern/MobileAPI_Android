@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +21,8 @@ import android.database.Cursor;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.brightpattern.api.AsyncCallback;
 import com.brightpattern.api.Chat;
 import com.brightpattern.api.chat.ChatEventHandler;
@@ -29,7 +30,7 @@ import com.brightpattern.api.chat.events.ChatEvent;
 import com.brightpattern.api.data.ChatInfo;
 import com.brightpattern.chatdemo.utils.AttachmentUtils;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static int LOAD_FILE_RESULTS = 1;

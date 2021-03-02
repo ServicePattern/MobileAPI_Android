@@ -1,19 +1,14 @@
 package com.brightpattern.chatdemo;
 
-import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBarActivity;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NavUtils;
 import android.app.ActionBar;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.provider.Settings.Secure;
-
-public class SettingsActivity extends ActionBarActivity {
+public class SettingsActivity extends AppCompatActivity {
 
     private EditText editFirstName;
     private EditText editLastName;

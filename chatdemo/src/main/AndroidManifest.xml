@@ -19,7 +19,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 
     <uses-sdk
         android:minSdkVersion="17"
@@ -35,66 +34,76 @@
         >
         <uses-library android:name="org.apache.http.legacy" android:required="false"/>
 
-        <activity
-            android:name="com.brightpattern.chatdemo.MainActivity"
-            android:theme="@style/TransparentActionBar"
+        <activity android:name="com.brightpattern.TestActivity"
+            android:label="@string/company_name"
             android:screenOrientation="portrait"
-            android:label="@string/company_name">
+            android:theme="@style/TransparentActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.brightpattern.chatdemo.ChatActivity"
-            android:label="Chat"
-            android:parentActivityName="com.brightpattern.chatdemo.MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.brightpattern.chatdemo.MainActivity" />
-        </activity>
-        <activity
-            android:name="com.brightpattern.chatdemo.ArchiveActivity"
-            android:label="Past conversations"
-            android:parentActivityName="com.brightpattern.chatdemo.MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.brightpattern.chatdemo.MainActivity" />
-        </activity>
-        <activity
-            android:name="com.brightpattern.chatdemo.ArchiveChatActivity"
-            android:label="@string/title_activity_archive_chat"
-            android:parentActivityName="com.brightpattern.chatdemo.ArchiveActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.brightpattern.chatdemo.ArchiveActivity" />
-        </activity>
-        <activity
-            android:name="com.brightpattern.chatdemo.SettingsActivity"
-            android:label="@string/title_activity_settings"
-            android:parentActivityName="com.brightpattern.chatdemo.MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.brightpattern.chatdemo.MainActivity" />
-        </activity>
-        <activity
-            android:name="com.brightpattern.chatdemo.ChatSurveyActivity"
-            android:label="@string/title_activity_chat_survey"
-            android:parentActivityName="com.brightpattern.chatdemo.ChatActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.brightpattern.chatdemo.ChatActivity" />
-        </activity>
+<!--        <activity-->
+<!--            android:name="com.brightpattern.chatdemo.MainActivity"-->
+<!--            android:theme="@style/TransparentActionBar"-->
+<!--            android:screenOrientation="portrait"-->
+<!--            android:label="@string/company_name">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
 
-        <activity
-            android:name="com.brightpattern.chatdemo.VideoCallActivity"
-            android:label="@string/title_activity_chat_call"
-            android:parentActivityName="com.brightpattern.chatdemo.ChatActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.brightpattern.chatdemo.ChatActivity" />
-        </activity>
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
+<!--        <activity-->
+<!--            android:name="com.brightpattern.chatdemo.ChatActivity"-->
+<!--            android:label="Chat"-->
+<!--            android:parentActivityName="com.brightpattern.chatdemo.MainActivity" >-->
+<!--            <meta-data-->
+<!--                android:name="android.support.PARENT_ACTIVITY"-->
+<!--                android:value="com.brightpattern.chatdemo.MainActivity" />-->
+<!--        </activity>-->
+<!--        <activity-->
+<!--            android:name="com.brightpattern.chatdemo.ArchiveActivity"-->
+<!--            android:label="Past conversations"-->
+<!--            android:parentActivityName="com.brightpattern.chatdemo.MainActivity" >-->
+<!--            <meta-data-->
+<!--                android:name="android.support.PARENT_ACTIVITY"-->
+<!--                android:value="com.brightpattern.chatdemo.MainActivity" />-->
+<!--        </activity>-->
+<!--        <activity-->
+<!--            android:name="com.brightpattern.chatdemo.ArchiveChatActivity"-->
+<!--            android:label="@string/title_activity_archive_chat"-->
+<!--            android:parentActivityName="com.brightpattern.chatdemo.ArchiveActivity" >-->
+<!--            <meta-data-->
+<!--                android:name="android.support.PARENT_ACTIVITY"-->
+<!--                android:value="com.brightpattern.chatdemo.ArchiveActivity" />-->
+<!--        </activity>-->
+<!--        <activity-->
+<!--            android:name="com.brightpattern.chatdemo.SettingsActivity"-->
+<!--            android:label="@string/title_activity_settings"-->
+<!--            android:parentActivityName="com.brightpattern.chatdemo.MainActivity" >-->
+<!--            <meta-data-->
+<!--                android:name="android.support.PARENT_ACTIVITY"-->
+<!--                android:value="com.brightpattern.chatdemo.MainActivity" />-->
+<!--        </activity>-->
+<!--        <activity-->
+<!--            android:name="com.brightpattern.chatdemo.ChatSurveyActivity"-->
+<!--            android:label="@string/title_activity_chat_survey"-->
+<!--            android:parentActivityName="com.brightpattern.chatdemo.ChatActivity" >-->
+<!--            <meta-data-->
+<!--                android:name="android.support.PARENT_ACTIVITY"-->
+<!--                android:value="com.brightpattern.chatdemo.ChatActivity" />-->
+<!--        </activity>-->
+
+<!--        <activity-->
+<!--            android:name="com.brightpattern.chatdemo.VideoCallActivity"-->
+<!--            android:label="@string/title_activity_chat_call"-->
+<!--            android:parentActivityName="com.brightpattern.chatdemo.ChatActivity" >-->
+<!--            <meta-data-->
+<!--                android:name="android.support.PARENT_ACTIVITY"-->
+<!--                android:value="com.brightpattern.chatdemo.ChatActivity" />-->
+<!--        </activity>-->
 
         <service
             android:name="com.brightpattern.chatdemo.ChatSessionService"

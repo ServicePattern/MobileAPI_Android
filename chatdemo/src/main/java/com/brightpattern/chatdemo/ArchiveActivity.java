@@ -1,7 +1,6 @@
 package com.brightpattern.chatdemo;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -9,11 +8,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class ArchiveActivity extends ActionBarActivity {
+public class ArchiveActivity extends AppCompatActivity {
 
     private static final String TAG = ArchiveActivity.class.getSimpleName();
 
