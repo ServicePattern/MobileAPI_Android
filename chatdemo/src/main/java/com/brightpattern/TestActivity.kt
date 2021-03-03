@@ -7,29 +7,27 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.android.volley.RequestQueue
-import com.android.volley.toolbox.HurlStack
-import com.android.volley.toolbox.Volley
 import com.brightpattern.bpcontactcenter.ContactCenterCommunicator
+import com.brightpattern.bpcontactcenter.entity.ContactCenterEvent
+import com.brightpattern.bpcontactcenter.interfaces.ContactCenterEventsInterface
 import com.brightpattern.bpcontactcenter.model.ContactCenterChatSessionProperties
 import com.brightpattern.bpcontactcenter.utils.Failure
+import com.brightpattern.bpcontactcenter.utils.Result
 import com.brightpattern.bpcontactcenter.utils.Success
 import com.brightpattern.chatdemo.R
 import com.brightpattern.recyclerview.FunctionsListAdapter
 import org.json.JSONObject
-import java.net.HttpURLConnection
-import java.net.URL
+import java.util.*
 
 @SuppressLint("SetTextI18n")
 class TestActivity : AppCompatActivity() {
 
     val baseURL = "https://alvm.bugfocus.com"
     val tenantURL = "devs.alvm.bugfocus.com"
-    val clientID = "D3577669-EB4B-4565-B9C6-27DD857CE8E5"
+    val clientID = UUID.randomUUID().toString()
     val appID = "Android"
 
     lateinit var api: ContactCenterCommunicator
-    lateinit var queue: RequestQueue
 
     private val adapter = FunctionsListAdapter()
     private val recyclerView: RecyclerView by lazy {
@@ -40,36 +38,38 @@ class TestActivity : AppCompatActivity() {
     }
 
     private var chatID: String = ""
+    private var partyID: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_test)
 
-        queue = Volley.newRequestQueue(applicationContext, object : HurlStack() {
-            override fun createConnection(url: URL): HttpURLConnection {
-                val connection: HttpURLConnection = super.createConnection(url)
-                connection.instanceFollowRedirects = true
-                return connection
-            }
-        })
-
-        api = ContactCenterCommunicator.init(baseURL, tenantURL, appID, clientID, queue)
+        api = ContactCenterCommunicator.init(baseURL, tenantURL, appID, clientID, applicationContext)
 
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         recyclerView.adapter = adapter
         adapter.selection = { it ->
             when (it) {
-                "checkAvailability" -> api.checkAvailability { r -> result(r) }
-                "requestChat" -> api.requestChat("555-555-5555", "Someone", JSONObject()) { r -> result(r) }
-                "getChatHistory" -> api.getChatHistory(chatID) { r -> result(r) }
+                "checkAvailability" -> api.checkAvailability { r -> resultProcessing(r) }
+                "requestChat" -> api.requestChat("555-555-5555", "Someone", JSONObject()) { r -> resultProcessing(r) }
+                "getChatHistory" -> api.getChatHistory(chatID) { r -> resultProcessing(r) }
+                "getCaseHistory" -> api.getCaseHistory(chatID) { r -> resultProcessing(r) }
+                "sendChatMessage" -> api.sendChatMessage(chatID, "MY MESSAGE") { r -> resultProcessing(r) }
                 else -> Log.e("EEEEE", "########################################################")
+            }
+        }
+
+        api.callback = object: ContactCenterEventsInterface {
+            override fun chatSessionEvents(result: Result<List<ContactCenterEvent>, Error>) {
+                Log.e("&&&&&&&&&&&&", " &&&&&&&&&&&&&&&&&&&&&&&&&&& \t\n\t $result")
+                this@TestActivity.resultProcessing(result)
             }
         }
 
     }
 
-    fun result(result: Any) {
+    fun resultProcessing(result: Any) {
         when (result) {
             is Failure<*> -> {
                 Log.e("Failure", ">>> ${result.reason}")
@@ -78,7 +78,10 @@ class TestActivity : AppCompatActivity() {
             is Success<*> -> {
                 Log.e("Success", ">>> ${result.value}")
                 tvResult.text = "Success\n${result.value}"
-                (result.value as? ContactCenterChatSessionProperties)?.let { chatID = it.chatID }
+                (result.value as? ContactCenterChatSessionProperties)?.let {
+                    chatID = it.chatID
+                    partyID = it.chatID
+                }
             }
         }
     }

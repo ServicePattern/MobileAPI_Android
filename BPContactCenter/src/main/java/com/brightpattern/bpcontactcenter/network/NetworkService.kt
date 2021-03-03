@@ -1,11 +1,13 @@
 package com.brightpattern.bpcontactcenter.network
 
+import android.util.Log
+import com.android.volley.NetworkResponse
 import com.android.volley.RequestQueue
 import com.android.volley.Response
+import com.android.volley.toolbox.HttpHeaderParser
 import com.android.volley.toolbox.JsonObjectRequest
 import com.brightpattern.bpcontactcenter.interfaces.NetworkServiceable
 import com.brightpattern.bpcontactcenter.network.support.HttpHeaderFields
-import com.brightpattern.bpcontactcenter.network.support.HttpRequestDefaultParameters
 import org.json.JSONObject
 
 class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
@@ -21,6 +23,15 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
                 errorListener) {
             override fun getHeaders(): MutableMap<String, String> {
                 return headerFields?.fields?.toMutableMap() ?: mutableMapOf()
+            }
+
+            override fun parseNetworkResponse(response: NetworkResponse?): Response<JSONObject> {
+                if (response?.statusCode == 200 && response.data.isEmpty()) {
+                    val responseObject = JSONObject()
+                    responseObject.put("state","success")
+                    return Response.success(responseObject, HttpHeaderParser.parseCacheHeaders(response))
+                }
+                return super.parseNetworkResponse(response)
             }
         }
         queue.add(request)

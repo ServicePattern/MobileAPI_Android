@@ -12,6 +12,7 @@ internal class URLProvider {
     enum class Endpoint {
         CheckAvailability,
         GetChatHistory,
+        GetCaseHistory,
         GetNewChatEvents,
         RequestChat,
         SendEvents,
@@ -22,6 +23,7 @@ internal class URLProvider {
 
                 CheckAvailability -> "availability"
                 GetChatHistory -> "chats/$chatID/history"
+                GetCaseHistory -> "chats/$chatID/casehistory"
                 GetNewChatEvents -> "chats/$chatID/events"
                 RequestChat -> "chats"
                 SendEvents -> "chats/$chatID/events"

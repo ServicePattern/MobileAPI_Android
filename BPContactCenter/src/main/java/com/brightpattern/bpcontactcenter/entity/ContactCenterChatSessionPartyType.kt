@@ -1,5 +1,14 @@
 package com.brightpattern.bpcontactcenter.entity
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
 enum class ContactCenterChatSessionPartyType {
-    Scenario, External, Internal
+    @SerialName("scenario")
+    Scenario,
+    @SerialName("external")
+    External,
+    @SerialName("internal")
+    Internal
 }

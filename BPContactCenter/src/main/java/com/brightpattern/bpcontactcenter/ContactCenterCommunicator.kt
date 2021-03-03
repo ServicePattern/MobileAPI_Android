@@ -1,14 +1,17 @@
 package com.brightpattern.bpcontactcenter
 
+import android.content.Context
+import android.util.Log
 import com.android.volley.Request
-import com.android.volley.RequestQueue
+import com.android.volley.toolbox.HurlStack
+import com.android.volley.toolbox.Volley
 import com.brightpattern.bpcontactcenter.entity.ContactCenterEvent
 import com.brightpattern.bpcontactcenter.interfaces.ContactCenterCommunicating
 import com.brightpattern.bpcontactcenter.interfaces.ContactCenterEventsInterface
 import com.brightpattern.bpcontactcenter.interfaces.NetworkServiceable
 import com.brightpattern.bpcontactcenter.model.ContactCenterChatSessionProperties
 import com.brightpattern.bpcontactcenter.model.ContactCenterServiceAvailability
-import com.brightpattern.bpcontactcenter.model.ContactCenterServiceChatAvailability
+import com.brightpattern.bpcontactcenter.model.http.ContactCenterEventsContainerDto
 import com.brightpattern.bpcontactcenter.network.NetworkService
 import com.brightpattern.bpcontactcenter.network.URLProvider
 import com.brightpattern.bpcontactcenter.network.support.HttpHeaderFields
@@ -16,8 +19,13 @@ import com.brightpattern.bpcontactcenter.network.support.HttpRequestDefaultParam
 import com.brightpattern.bpcontactcenter.utils.Failure
 import com.brightpattern.bpcontactcenter.utils.Result
 import com.brightpattern.bpcontactcenter.utils.Success
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import org.json.JSONObject
+import java.net.HttpURLConnection
+import java.net.URL
+import java.util.*
 
 class ContactCenterCommunicator private constructor(override val baseURL: String, override val tenantURL: String, override val appID: String, override val clientID: String) : ContactCenterCommunicating {
 
@@ -33,10 +41,22 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             }
         }
 
-        fun init(baseURL: String, tenantURL: String, appID: String, clientID: String, queue: RequestQueue): ContactCenterCommunicator {
+        fun init(baseURL: String, tenantURL: String, appID: String, clientID: String, context: Context): ContactCenterCommunicator {
+            val queue = Volley.newRequestQueue(context, object : HurlStack() {
+                override fun createConnection(url: URL): HttpURLConnection {
+                    val connection: HttpURLConnection = super.createConnection(url)
+                    connection.instanceFollowRedirects = true
+                    return connection
+                }
+            })
             val networkService = NetworkService(queue)
-            val pollRequest = PollRequest.init(networkService, 10.0)
-            return init(baseURL, tenantURL, appID, clientID, networkService, pollRequest)
+            val pollRequest = PollRequest.init(networkService, 10000, HttpHeaderFields.defaultFields(appID, clientID))
+            return init(baseURL, tenantURL, appID, clientID, networkService, pollRequest).apply {
+                checkAvailability {
+                    Log.e("*****", "$it")
+                }
+                pollRequest.runObservation(baseURL, tenantURL)
+            }
         }
     }
 
@@ -46,7 +66,27 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
     private lateinit var pollRequestService: PollRequestInterface
     override var delegate: ContactCenterEventsInterface? = null
 
-    private val format = Json { isLenient = true }
+    private val format = Json {
+        isLenient = true
+        ignoreUnknownKeys = true
+        classDiscriminator = "event"
+    }
+
+    var callbackWaitingTimeMS: Long
+        get() {
+            return pollRequestService.pollInterval
+        }
+    set(value) {
+        (pollRequestService as PollRequest).pollInterval = value
+    }
+
+    var callback: ContactCenterEventsInterface?
+        get() {
+            return pollRequestService.callback
+        }
+        set(value) {
+            pollRequestService.callback = value
+        }
 
     override fun checkAvailability(completion: ((result: Result<ContactCenterServiceAvailability, Error>) -> Unit)) {
         try {
@@ -66,7 +106,23 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
         try {
             val url = URLProvider.Endpoint.GetChatHistory.generateFullUrl(baseURL, tenantURL, chatID)
             networkService.executeSimpleRequest(Request.Method.GET, url, defaultHttpHeaderFields, {
-                completion.invoke(Success(listOf()))
+                val list = ContactCenterEvent.listFromJSONEvents(it, format)
+                completion.invoke(Success(list))
+            }, {
+                completion.invoke(Failure(java.lang.Error(it)))
+            })
+        } catch (e: java.lang.Exception) {
+            completion.invoke(Failure(java.lang.Error(e)))
+        }
+    }
+
+    // TODO: NOT READY YET
+    override fun getCaseHistory(chatID: String, completion: (result: Result<List<ContactCenterEvent>, Error>) -> Unit) {
+        try {
+            val url = URLProvider.Endpoint.GetCaseHistory.generateFullUrl(baseURL, tenantURL, chatID)
+            networkService.executeSimpleRequest(Request.Method.GET, url, defaultHttpHeaderFields, {
+                val list = ContactCenterEvent.listFromJSONEvents(it, format)
+                completion.invoke(Success(list))
             }, {
                 completion.invoke(Failure(java.lang.Error(it)))
             })
@@ -80,6 +136,7 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             val url = URLProvider.Endpoint.RequestChat.generateFullUrl(baseURL, tenantURL)
             networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, parameters, {
                 val result = format.decodeFromString(ContactCenterChatSessionProperties.serializer(), it.toString())
+                pollRequestService.addChatID(result.chatID)
                 completion.invoke(Success(result))
             }, {
                 completion.invoke(Failure(java.lang.Error(it)))
@@ -90,7 +147,21 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
     }
 
     override fun sendChatMessage(chatID: String, message: String, completion: (Result<String, Error>) -> Unit) {
-        TODO("Not yet implemented")
+        try {
+            val url = URLProvider.Endpoint.SendEvents.generateFullUrl(baseURL, tenantURL, chatID)
+            val event = ContactCenterEvent.ChatSessionMessage(UUID.randomUUID().toString(), UUID.randomUUID().toString(), message)
+            val container = ContactCenterEventsContainerDto(listOf(event))
+            val payload = JSONObject(format.encodeToString(ContactCenterEventsContainerDto.serializer(), container))
+
+            networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
+                Log.d("#####", ">>>> $it")
+                completion.invoke(Success(it.toString()))
+            }, {
+                completion.invoke(Failure(java.lang.Error(it)))
+            })
+        } catch (e: java.lang.Exception) {
+            completion.invoke(Failure(java.lang.Error(e)))
+        }
     }
 
     override fun chatMessageDelivered(chatID: String, messageID: String, completion: (Result<Void, Error>) -> Unit) {

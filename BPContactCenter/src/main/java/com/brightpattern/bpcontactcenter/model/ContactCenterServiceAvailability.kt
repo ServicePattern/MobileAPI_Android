@@ -19,5 +19,5 @@ data class ContactCenterServiceAvailability(
         @SerialName("chat")
         val chatval: ContactCenterServiceChatAvailability,
         @SerialName("ewt")
-        val estimatedWaitTime: Int,
+        val estimatedWaitTime: Int
 )
