@@ -45,7 +45,7 @@ class TestActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         recyclerView.adapter = adapter
         adapter.selection = { it ->
-//            Log.e("FB", "${ChatDemo.gcmToken}")
+            Log.e("FB", "${ChatDemo.gcmToken}")
             when (it) {
                 "checkAvailability" -> api.checkAvailability { r -> resultProcessing(r) }
                 "requestChat" -> api.requestChat("555-555-5555", "Someone", JSONObject()) { r -> resultProcessing(r) }

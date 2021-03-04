@@ -13,7 +13,6 @@
     <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -21,8 +20,7 @@
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
 
     <uses-sdk
-        android:minSdkVersion="17"
-        android:targetSdkVersion="21" />
+        android:targetSdkVersion="30" />
 
     <application
         android:name="com.brightpattern.ChatDemo"
@@ -105,10 +103,19 @@
 <!--                android:value="com.brightpattern.chatdemo.ChatActivity" />-->
 <!--        </activity>-->
 
+<!--        <service-->
+<!--            android:name="com.brightpattern.chatdemo.ChatSessionService"-->
+<!--            android:enabled="true">-->
+<!--        </service>-->
+
         <service
-            android:name="com.brightpattern.chatdemo.ChatSessionService"
-            android:enabled="true">
+            android:name="com.brightpattern.CDFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
         </service>
+
     </application>
 
 </manifest>

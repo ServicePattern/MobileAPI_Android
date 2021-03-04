@@ -191,7 +191,6 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
 
     override fun subscribeForRemoteNotificationsFirebase(chatID: String, deviceToken: String, completion: (Result<String, Error>) -> Unit) {
         try {
-            // android_firebase_device_token
             val url = URLProvider.Endpoint.SubscribeForNotifications.generateFullUrl(baseURL, tenantURL, chatID)
             val json = JSONObject()
             json.put("android_firebase_device_token", deviceToken)
@@ -209,6 +208,9 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
     }
 
     override fun appDidReceiveMessage(userInfo: Map<Any, Any>) {
-        TODO("Not yet implemented")
+        userInfo["chatID"]?.let { (it as String)
+            Log.d("appDidReceiveMessage", "new ChatID -> $it")
+            pollRequestService.addChatID(it, baseURL, tenantURL)
+        }
     }
 }
