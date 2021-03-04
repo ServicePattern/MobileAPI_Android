@@ -155,7 +155,7 @@ sealed class ContactCenterEvent {
             ignoreUnknownKeys = true
             classDiscriminator = "event"
         }): List<ContactCenterEvent> {
-            return jsonObject.getJSONArray("events").toList().map { fromJson(it, format) }.requireNoNulls()
+            return jsonObject.getJSONArray("events").toList().mapNotNull { fromJson(it, format) }
         }
 
         fun fromJson(jsonObject: JSONObject, format: Json = Json { isLenient = true }): ContactCenterEvent? {

@@ -195,8 +195,11 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
 
     override fun subscribeForRemoteNotificationsFirebase(chatID: String, deviceToken: String, completion: (Result<String, Error>) -> Unit) {
         try {
+            // android_firebase_device_token
             val url = URLProvider.Endpoint.SubscribeForNotifications.generateFullUrl(baseURL, tenantURL, chatID)
-            networkService.executeSimpleRequest(Request.Method.POST, url, defaultHttpHeaderFields, {
+            val json = JSONObject()
+            json.put("android_firebase_device_token", deviceToken)
+            networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, json, {
 //                val result = format.decodeFromString(ContactS.serializer(), it.toString())
 
                 Log.d("#####", ">>>> $it")
