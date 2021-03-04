@@ -22,12 +22,14 @@ import java.util.*
 @SuppressLint("SetTextI18n")
 class TestActivity : AppCompatActivity() {
 
-    val baseURL = "https://alvm.bugfocus.com"
-    val tenantURL = "devs.alvm.bugfocus.com"
-    val clientID = UUID.randomUUID().toString()
-    val appID = "Android"
+//    val baseURL = "https://alvm.bugfocus.com"
+//    val tenantURL = "devs.alvm.bugfocus.com"
+//    val clientID = UUID.randomUUID().toString()
+//    val appID = "Android"
 
-    lateinit var api: ContactCenterCommunicator
+    val api: ContactCenterCommunicator by lazy {
+        ChatDemo.api
+    }
 
     private val adapter = FunctionsListAdapter()
     private val recyclerView: RecyclerView by lazy {
@@ -45,7 +47,7 @@ class TestActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_test)
 
-        api = ContactCenterCommunicator.init(baseURL, tenantURL, appID, clientID, applicationContext)
+//        api = ContactCenterCommunicator.init(baseURL, tenantURL, appID, clientID, applicationContext)
 
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         recyclerView.adapter = adapter

@@ -25,7 +25,7 @@
         android:targetSdkVersion="21" />
 
     <application
-        android:name="com.brightpattern.chatdemo.DemoApplication"
+        android:name="com.brightpattern.ChatDemo"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/company_name"
