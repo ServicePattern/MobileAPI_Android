@@ -47,8 +47,6 @@ class TestActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_test)
 
-//        api = ContactCenterCommunicator.init(baseURL, tenantURL, appID, clientID, applicationContext)
-
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         recyclerView.adapter = adapter
         adapter.selection = { it ->
