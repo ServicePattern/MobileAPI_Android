@@ -23,6 +23,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import org.json.JSONObject
+import java.lang.Exception
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
@@ -189,11 +190,23 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
     }
 
     override fun subscribeForRemoteNotificationsAPNs(chatID: String, deviceToken: String, completion: (Result<Void, Error>) -> Unit) {
-        TODO("Not yet implemented")
+        completion(Failure(java.lang.Error("NO APN on Android")))
     }
 
-    override fun subscribeForRemoteNotificationsFirebase(chatID: String, deviceToken: String, completion: (Result<Void, Error>) -> Unit) {
-        TODO("Not yet implemented")
+    override fun subscribeForRemoteNotificationsFirebase(chatID: String, deviceToken: String, completion: (Result<String, Error>) -> Unit) {
+        try {
+            val url = URLProvider.Endpoint.SubscribeForNotifications.generateFullUrl(baseURL, tenantURL, chatID)
+            networkService.executeSimpleRequest(Request.Method.POST, url, defaultHttpHeaderFields, {
+//                val result = format.decodeFromString(ContactS.serializer(), it.toString())
+
+                Log.d("#####", ">>>> $it")
+                completion.invoke(Success(it.toString()))
+            }, {
+                completion.invoke(Failure(java.lang.Error(it)))
+            })
+        } catch (e: java.lang.Exception) {
+            completion.invoke(Failure(java.lang.Error(e)))
+        }
     }
 
     override fun appDidReceiveMessage(userInfo: Map<Any, Any>) {

@@ -113,7 +113,7 @@ interface ContactCenterCommunicating {
     ///   - chatID: The current chat ID
     ///   - deviceToken: Unique to both the device and the app. Which is received in `didRegisterForRemoteNotificationsWithDeviceToken`
     ///   - completion: Returns `.success` or [ContactCenterError](x-source-tag://ContactCenterError) otherwise
-    fun subscribeForRemoteNotificationsFirebase(chatID: String, deviceToken: String, completion: (Result<Void, Error>) -> Unit)
+    fun subscribeForRemoteNotificationsFirebase(chatID: String, deviceToken: String, completion: (Result<String, Error>) -> Unit)
 
     /// Notify contact center library about new remote notification
     /// - Parameters:

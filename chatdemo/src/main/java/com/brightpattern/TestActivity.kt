@@ -56,6 +56,8 @@ class TestActivity : AppCompatActivity() {
                 "getChatHistory" -> api.getChatHistory(chatID) { r -> resultProcessing(r) }
                 "getCaseHistory" -> api.getCaseHistory(chatID) { r -> resultProcessing(r) }
                 "sendChatMessage" -> api.sendChatMessage(chatID, "MY MESSAGE") { r -> resultProcessing(r) }
+                "subscribeForRemoteNotificationsFirebase" -> api.subscribeForRemoteNotificationsFirebase(chatID, ChatDemo.gcmToken ?: "unknown") { r -> resultProcessing(r) }
+                "subscribeForRemoteNotificationsAPNs" -> api.subscribeForRemoteNotificationsAPNs(chatID, ChatDemo.gcmToken ?: "unknown") { r -> resultProcessing(r) }
                 else -> Log.e("EEEEE", "########################################################")
             }
         }
