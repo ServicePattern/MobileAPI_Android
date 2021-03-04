@@ -54,6 +54,12 @@ class TestActivity : AppCompatActivity() {
                 "sendChatMessage" -> api.sendChatMessage(chatID, "MY MESSAGE") { r -> resultProcessing(r) }
                 "subscribeForRemoteNotificationsFirebase" -> api.subscribeForRemoteNotificationsFirebase(chatID, ChatDemo.gcmToken ?: "unknown") { r -> resultProcessing(r) }
                 "subscribeForRemoteNotificationsAPNs" -> api.subscribeForRemoteNotificationsAPNs(chatID, ChatDemo.gcmToken ?: "unknown") { r -> resultProcessing(r) }
+                "chatMessageDelivered" -> api.chatMessageDelivered(chatID,""){ r -> resultProcessing(r) }
+                "chatMessageRead" -> api.chatMessageRead(chatID,""){ r -> resultProcessing(r) }
+                "chatTyping" -> api.chatTyping(chatID){ r -> resultProcessing(r) }
+                "chatNotTyping" -> api.chatNotTyping(chatID){ r -> resultProcessing(r) }
+                "disconnectChat" -> api.disconnectChat(chatID){ r -> resultProcessing(r) }
+                "endChat" -> api.endChat(chatID){ r -> resultProcessing(r) }
                 else -> Log.e("EEEEE", "########################################################")
             }
         }

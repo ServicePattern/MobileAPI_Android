@@ -146,12 +146,10 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
     override fun sendChatMessage(chatID: String, message: String, completion: (Result<String, Error>) -> Unit) {
         try {
             val url = URLProvider.Endpoint.SendEvents.generateFullUrl(baseURL, tenantURL, chatID)
-            val event = ContactCenterEvent.ChatSessionMessage(UUID.randomUUID().toString(), UUID.randomUUID().toString(), message)
-            val container = ContactCenterEventsContainerDto(listOf(event))
-            val payload = JSONObject(format.encodeToString(ContactCenterEventsContainerDto.serializer(), container))
+            val payload = createSendEventPayload(ContactCenterEvent.ChatSessionMessage(UUID.randomUUID().toString(), UUID.randomUUID().toString(), message))
 
             networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
-                Log.d("#####", ">>>> $it")
+                Log.d("sendChatMessage", ">>>> $it")
                 completion.invoke(Success(it.toString()))
             }, {
                 completion.invoke(Failure(java.lang.Error(it)))
@@ -161,28 +159,100 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
         }
     }
 
-    override fun chatMessageDelivered(chatID: String, messageID: String, completion: (Result<Void, Error>) -> Unit) {
-        TODO("Not yet implemented")
+    override fun chatMessageDelivered(chatID: String, messageID: String, completion: (Result<String, Error>) -> Unit) {
+        try {
+            val url = URLProvider.Endpoint.SendEvents.generateFullUrl(baseURL, tenantURL, chatID)
+            val payload = createSendEventPayload(ContactCenterEvent.ChatSessionMessageDelivered(messageID, null))
+
+            networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
+                Log.d("chatMessageDelivered", ">>>> $it")
+                completion.invoke(Success(it.toString()))
+            }, {
+                completion.invoke(Failure(java.lang.Error(it)))
+            })
+        } catch (e: java.lang.Exception) {
+            completion.invoke(Failure(java.lang.Error(e)))
+        }
     }
 
-    override fun chatMessageRead(chatID: String, messageID: String, completion: (Result<Void, Error>) -> Unit) {
-        TODO("Not yet implemented")
+    override fun chatMessageRead(chatID: String, messageID: String, completion: (Result<String, Error>) -> Unit) {
+        try {
+            val url = URLProvider.Endpoint.SendEvents.generateFullUrl(baseURL, tenantURL, chatID)
+            val payload = createSendEventPayload(ContactCenterEvent.ChatSessionMessageRead(messageID, null))
+
+            networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
+                Log.d("chatMessageRead", ">>>> $it")
+                completion.invoke(Success(it.toString()))
+            }, {
+                completion.invoke(Failure(java.lang.Error(it)))
+            })
+        } catch (e: java.lang.Exception) {
+            completion.invoke(Failure(java.lang.Error(e)))
+        }
     }
 
-    override fun chatTyping(chatID: String, completion: (Result<Void, Error>) -> Unit) {
-        TODO("Not yet implemented")
+    override fun chatTyping(chatID: String, completion: (Result<String, Error>) -> Unit) {
+        try {
+            val url = URLProvider.Endpoint.SendEvents.generateFullUrl(baseURL, tenantURL, chatID)
+            val payload = createSendEventPayload(ContactCenterEvent.ChatSessionTyping(null))
+
+            networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
+                Log.d("chatTyping", ">>>> $it")
+                completion.invoke(Success(it.toString()))
+            }, {
+                completion.invoke(Failure(java.lang.Error(it)))
+            })
+        } catch (e: java.lang.Exception) {
+            completion.invoke(Failure(java.lang.Error(e)))
+        }
     }
 
-    override fun chatNotTyping(chatID: String, completion: (Result<Void, Error>) -> Unit) {
-        TODO("Not yet implemented")
+    override fun chatNotTyping(chatID: String, completion: (Result<String, Error>) -> Unit) {
+        try {
+            val url = URLProvider.Endpoint.SendEvents.generateFullUrl(baseURL, tenantURL, chatID)
+            val payload = createSendEventPayload(ContactCenterEvent.ChatSessionNotTyping(null))
+
+            networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
+                Log.d("chatNotTyping", ">>>> $it")
+                completion.invoke(Success(it.toString()))
+            }, {
+                completion.invoke(Failure(java.lang.Error(it)))
+            })
+        } catch (e: java.lang.Exception) {
+            completion.invoke(Failure(java.lang.Error(e)))
+        }
     }
 
-    override fun disconnectChat(chatID: String, completion: (Result<Void, Error>) -> Unit) {
-        TODO("Not yet implemented")
+    override fun disconnectChat(chatID: String, completion: (Result<String, Error>) -> Unit) {
+        try {
+            val url = URLProvider.Endpoint.SendEvents.generateFullUrl(baseURL, tenantURL, chatID)
+            val payload = createSendEventPayload(ContactCenterEvent.ChatSessionDisconnect())
+
+            networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
+                Log.d("disconnectChat", ">>>> $it")
+                completion.invoke(Success(it.toString()))
+            }, {
+                completion.invoke(Failure(java.lang.Error(it)))
+            })
+        } catch (e: java.lang.Exception) {
+            completion.invoke(Failure(java.lang.Error(e)))
+        }
     }
 
-    override fun endChat(chatID: String, completion: (Result<Void, Error>) -> Unit) {
-        TODO("Not yet implemented")
+    override fun endChat(chatID: String, completion: (Result<String, Error>) -> Unit) {
+        try {
+            val url = URLProvider.Endpoint.SendEvents.generateFullUrl(baseURL, tenantURL, chatID)
+            val payload = createSendEventPayload(ContactCenterEvent.ChatSessionEnd())
+
+            networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
+                Log.d("endChat", ">>>> $it")
+                completion.invoke(Success(it.toString()))
+            }, {
+                completion.invoke(Failure(java.lang.Error(it)))
+            })
+        } catch (e: java.lang.Exception) {
+            completion.invoke(Failure(java.lang.Error(e)))
+        }
     }
 
     override fun subscribeForRemoteNotificationsAPNs(chatID: String, deviceToken: String, completion: (Result<Void, Error>) -> Unit) {
@@ -195,7 +265,6 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             val json = JSONObject()
             json.put("android_firebase_device_token", deviceToken)
             networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, json, {
-//                val result = format.decodeFromString(ContactS.serializer(), it.toString())
 
                 Log.d("#####", ">>>> $it")
                 completion.invoke(Success(it.toString()))
@@ -208,9 +277,15 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
     }
 
     override fun appDidReceiveMessage(userInfo: Map<Any, Any>) {
-        userInfo["chatID"]?.let { (it as String)
+        userInfo["chatID"]?.let {
+            (it as String)
             Log.d("appDidReceiveMessage", "new ChatID -> $it")
             pollRequestService.addChatID(it, baseURL, tenantURL)
         }
+    }
+
+    private fun createSendEventPayload(event: ContactCenterEvent): JSONObject {
+        val container = ContactCenterEventsContainerDto(listOf(event))
+        return JSONObject(format.encodeToString(ContactCenterEventsContainerDto.serializer(), container))
     }
 }

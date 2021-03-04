@@ -10,7 +10,15 @@ import com.brightpattern.chatdemo.R
 
 class FunctionsListAdapter: RecyclerView.Adapter<FunctionsListAdapter.MyViewHolder>() {
 
-    val functionList = listOf("checkAvailability", "requestChat", "getChatHistory", "sendChatMessage", "subscribeForRemoteNotificationsFirebase", "subscribeForRemoteNotificationsAPNs")
+    val functionList = listOf("checkAvailability", "requestChat", "getChatHistory", "sendChatMessage",
+            "chatMessageDelivered",
+            "chatMessageRead",
+            "chatTyping",
+            "chatNotTyping",
+            "disconnectChat",
+            "endChat",
+            "subscribeForRemoteNotificationsFirebase",
+            "subscribeForRemoteNotificationsAPNs")
 
     var selection: ((String) -> Unit)? = null
 

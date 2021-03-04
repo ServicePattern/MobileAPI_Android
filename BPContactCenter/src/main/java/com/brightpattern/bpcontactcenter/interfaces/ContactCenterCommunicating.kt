@@ -65,38 +65,38 @@ interface ContactCenterCommunicating {
     ///   - chatID: The current chat ID
     ///   - messageID: The message ID
     ///   - completion: Returns ` .success` or [ContactCenterError](x-source-tag://ContactCenterError) otherwise
-    fun chatMessageDelivered(chatID: String, messageID: String, completion: (Result<Void, Error>) -> Unit)
+    fun chatMessageDelivered(chatID: String, messageID: String, completion: (Result<String, Error>) -> Unit)
 
     /// Confirms that a chat message has been read by the user
     /// - Parameters:
     ///   - chatID: The current chat ID
     ///   - messageID: The message ID
     ///   - completion: Returns `.success` or [ContactCenterError](x-source-tag://ContactCenterError) otherwise
-    fun chatMessageRead(chatID: String, messageID: String, completion: (Result<Void, Error>) -> Unit)
+    fun chatMessageRead(chatID: String, messageID: String, completion: (Result<String, Error>) -> Unit)
 
     /// Informs that a user started to type in a new chat message
     /// - Parameters:
     ///   - chatID: The current chat ID
     ///   - completion: Returns `.success` or [ContactCenterError](x-source-tag://ContactCenterError) otherwise
-    fun chatTyping(chatID: String, completion: (Result<Void, Error>) -> Unit)
+    fun chatTyping(chatID: String, completion: (Result<String, Error>) -> Unit)
 
     /// Informs that a user stopped to type in a new chat message
     /// - Parameters:
     ///   - chatID: The current chat ID
     ///   - completion: Returns `.success` or [ContactCenterError](x-source-tag://ContactCenterError) otherwise
-    fun chatNotTyping(chatID: String, completion: (Result<Void, Error>) -> Unit)
+    fun chatNotTyping(chatID: String, completion: (Result<String, Error>) -> Unit)
 
     /// Request to disconnect chat conversation but keep the session active. Server may continue communicating with the client
     /// - Parameters:
     ///   - chatID: The current chat ID
     ///   - completion: Returns `.success` or [ContactCenterError](x-source-tag://ContactCenterError) otherwise
-    fun disconnectChat(chatID: String, completion: (Result<Void, Error>) -> Unit)
+    fun disconnectChat(chatID: String, completion: (Result<String, Error>) -> Unit)
 
     /// Request to disconnect chat conversation and complete the session. Server will not continue communicating with the client once request is sent
     /// - Parameters:
     ///   - chatID: The current chat ID
     ///   - completion: Returns `.success` or [ContactCenterError](x-source-tag://ContactCenterError) otherwise
-    fun endChat(chatID: String, completion: (Result<Void, Error>) -> Unit)
+    fun endChat(chatID: String, completion: (Result<String, Error>) -> Unit)
 
     /// Subscribes for push notifications from APNs server
     ///
