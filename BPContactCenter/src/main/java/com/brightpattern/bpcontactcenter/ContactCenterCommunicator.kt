@@ -19,11 +19,8 @@ import com.brightpattern.bpcontactcenter.network.support.HttpRequestDefaultParam
 import com.brightpattern.bpcontactcenter.utils.Failure
 import com.brightpattern.bpcontactcenter.utils.Result
 import com.brightpattern.bpcontactcenter.utils.Success
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import org.json.JSONObject
-import java.lang.Exception
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
@@ -51,12 +48,11 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
                 }
             })
             val networkService = NetworkService(queue)
-            val pollRequest = PollRequest.init(networkService, 10000, HttpHeaderFields.defaultFields(appID, clientID))
+            val pollRequest = PollRequest.init(networkService, 20000, HttpHeaderFields.defaultFields(appID, clientID))
             return init(baseURL, tenantURL, appID, clientID, networkService, pollRequest).apply {
                 checkAvailability {
                     Log.e("*****", "$it")
                 }
-                pollRequest.runObservation(baseURL, tenantURL)
             }
         }
     }
@@ -73,13 +69,13 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
         classDiscriminator = "event"
     }
 
-    var callbackWaitingTimeMS: Long
+    var callbackWaitingTimeMS: Int
         get() {
             return pollRequestService.pollInterval
         }
-    set(value) {
-        (pollRequestService as PollRequest).pollInterval = value
-    }
+        set(value) {
+            (pollRequestService as PollRequest).pollInterval = value
+        }
 
     var callback: ContactCenterEventsInterface?
         get() {
@@ -137,7 +133,7 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             val url = URLProvider.Endpoint.RequestChat.generateFullUrl(baseURL, tenantURL)
             networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, parameters, {
                 val result = format.decodeFromString(ContactCenterChatSessionProperties.serializer(), it.toString())
-                pollRequestService.addChatID(result.chatID)
+                pollRequestService.addChatID(result.chatID, baseURL, tenantURL)
                 completion.invoke(Success(result))
             }, {
                 completion.invoke(Failure(java.lang.Error(it)))

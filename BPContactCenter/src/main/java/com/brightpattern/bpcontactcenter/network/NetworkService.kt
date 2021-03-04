@@ -1,6 +1,6 @@
 package com.brightpattern.bpcontactcenter.network
 
-import android.util.Log
+import com.android.volley.DefaultRetryPolicy
 import com.android.volley.NetworkResponse
 import com.android.volley.RequestQueue
 import com.android.volley.Response
@@ -28,7 +28,7 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
             override fun parseNetworkResponse(response: NetworkResponse?): Response<JSONObject> {
                 if (response?.statusCode == 200 && response.data.isEmpty()) {
                     val responseObject = JSONObject()
-                    responseObject.put("state","success")
+                    responseObject.put("state", "success")
                     return Response.success(responseObject, HttpHeaderParser.parseCacheHeaders(response))
                 }
                 return super.parseNetworkResponse(response)
@@ -48,6 +48,34 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
                 return headerFields?.fields?.toMutableMap() ?: mutableMapOf()
             }
         }
+        queue.add(request)
+    }
+
+    override fun executePollRequest(method: Int, url: String, headerFields: HttpHeaderFields?, jsonRequest: JSONObject?, timeoutMs: Int, listener: Response.Listener<JSONObject>, errorListener: Response.ErrorListener?) {
+        val request = object : JsonObjectRequest(
+                method,
+                url,
+                jsonRequest,
+                listener,
+                errorListener) {
+            override fun getHeaders(): MutableMap<String, String> {
+                return headerFields?.fields?.toMutableMap() ?: mutableMapOf()
+            }
+
+            override fun parseNetworkResponse(response: NetworkResponse?): Response<JSONObject> {
+                if (response?.statusCode == 200 && response.data.isEmpty()) {
+                    val responseObject = JSONObject()
+                    responseObject.put("state", "success")
+                    return Response.success(responseObject, HttpHeaderParser.parseCacheHeaders(response))
+                }
+                return super.parseNetworkResponse(response)
+            }
+        }
+        request.retryPolicy = DefaultRetryPolicy(
+                timeoutMs,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+
         queue.add(request)
     }
 

@@ -22,11 +22,6 @@ import java.util.*
 @SuppressLint("SetTextI18n")
 class TestActivity : AppCompatActivity() {
 
-//    val baseURL = "https://alvm.bugfocus.com"
-//    val tenantURL = "devs.alvm.bugfocus.com"
-//    val clientID = UUID.randomUUID().toString()
-//    val appID = "Android"
-
     val api: ContactCenterCommunicator by lazy {
         ChatDemo.api
     }
@@ -50,6 +45,7 @@ class TestActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         recyclerView.adapter = adapter
         adapter.selection = { it ->
+//            Log.e("FB", "${ChatDemo.gcmToken}")
             when (it) {
                 "checkAvailability" -> api.checkAvailability { r -> resultProcessing(r) }
                 "requestChat" -> api.requestChat("555-555-5555", "Someone", JSONObject()) { r -> resultProcessing(r) }
