@@ -78,8 +78,4 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
 
         queue.add(request)
     }
-
-    override fun createRequest(method: Int, url: String, headerFields: HttpHeaderFields, parameters: String?, body: String?): JsonObjectRequest {
-        TODO("Not yet implemented")
-    }
 }

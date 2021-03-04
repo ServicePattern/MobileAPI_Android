@@ -1,7 +1,5 @@
 package com.brightpattern.bpcontactcenter.network
 
-import java.net.URL
-
 internal class URLProvider {
     companion object {
         const val apiVersion = "v2"

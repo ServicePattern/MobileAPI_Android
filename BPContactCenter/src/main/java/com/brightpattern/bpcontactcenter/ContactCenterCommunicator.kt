@@ -256,7 +256,7 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
     }
 
     override fun subscribeForRemoteNotificationsAPNs(chatID: String, deviceToken: String, completion: (Result<Void, Error>) -> Unit) {
-        completion(Failure(java.lang.Error("NO APN on Android")))
+        completion(Failure(java.lang.Error("Android has NO APN")))
     }
 
     override fun subscribeForRemoteNotificationsFirebase(chatID: String, deviceToken: String, completion: (Result<String, Error>) -> Unit) {

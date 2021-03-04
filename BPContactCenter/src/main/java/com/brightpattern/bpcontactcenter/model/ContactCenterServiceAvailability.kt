@@ -8,6 +8,7 @@ import kotlinx.serialization.Serializable
 enum class ContactCenterServiceChatAvailability {
     @SerialName("available")
     Available,
+
     @SerialName("unavailable")
     Unavailable
 }

@@ -36,7 +36,7 @@ class PollRequest private constructor(
     private var chatID: String = ""
     private lateinit var networkService: NetworkServiceable
 
-    // TODO: Threadsafe !!!!!
+    // TODO: check for threadsafe !!!!!
     override fun addChatID(chatID: String, baseURL: String, tenantURL: String) {
         this.chatID = chatID
         runObservation(baseURL, tenantURL)

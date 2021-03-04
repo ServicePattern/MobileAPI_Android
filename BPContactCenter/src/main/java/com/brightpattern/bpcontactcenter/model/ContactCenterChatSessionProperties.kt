@@ -7,14 +7,19 @@ import kotlinx.serialization.Serializable
 enum class ContactCenterChatSessionState {
     @SerialName("queued")
     Queued,
+
     @SerialName("connecting")
     Connecting,
+
     @SerialName("connected")
     Connected,
+
     @SerialName("ivr")
     Ivr,
+
     @SerialName("failed")
     Failed,
+
     @SerialName("completed")
     Completed
 }

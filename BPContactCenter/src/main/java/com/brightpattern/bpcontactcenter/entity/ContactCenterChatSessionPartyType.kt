@@ -7,8 +7,10 @@ import kotlinx.serialization.Serializable
 enum class ContactCenterChatSessionPartyType {
     @SerialName("scenario")
     Scenario,
+
     @SerialName("external")
     External,
+
     @SerialName("internal")
     Internal
 }

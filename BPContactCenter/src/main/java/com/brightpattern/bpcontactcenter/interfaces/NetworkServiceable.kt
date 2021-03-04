@@ -11,7 +11,6 @@ interface NetworkServiceable {
     var baseURL: String
 
     fun executeJsonRequest(method: Int, url: String, headerFields: HttpHeaderFields?, jsonRequest: JSONObject?, listener: Response.Listener<JSONObject>, errorListener: Response.ErrorListener? = null)
-    fun createRequest(method: Int, url: String, headerFields: HttpHeaderFields, parameters: String?, body: String?): JsonObjectRequest
     fun executeSimpleRequest(method: Int, url: String, headerFields: HttpHeaderFields?, listener: Response.Listener<JSONObject>, errorListener: Response.ErrorListener? = null)
     fun executePollRequest(method: Int, url: String, headerFields: HttpHeaderFields?, jsonRequest: JSONObject?, timeoutMs: Int, listener: Response.Listener<JSONObject>, errorListener: Response.ErrorListener? = null)
 
