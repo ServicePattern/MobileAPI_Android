@@ -46,4 +46,6 @@
     <string name="action_enable_video">Enable Video</string>
     <string name="action_chat_return_to_call">Return to Call</string>
 
+    <string name="keyChatNewMessageTitle">*** KEY ***</string>
+
 </resources>
