@@ -14,7 +14,8 @@ internal class URLProvider {
         GetNewChatEvents,
         RequestChat,
         SendEvents,
-        SubscribeForNotifications;
+        SubscribeForNotifications,
+        CloseCase;
 
         private val endpointPathString: String
             get() = when (this) {
@@ -26,7 +27,7 @@ internal class URLProvider {
                 RequestChat -> "chats"
                 SendEvents -> "chats/$chatID/events"
                 SubscribeForNotifications -> "chats/$chatID/notifications"
-
+                CloseCase -> "chats/$chatID/closecase"
             }
 
         fun generateFullUrl(baseURL: String, tenantURL: String, chatID: String = ""): String {

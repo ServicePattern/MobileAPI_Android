@@ -1,5 +1,6 @@
 package com.brightpattern.bpcontactcenter.model
 
+import com.brightpattern.bpcontactcenter.entity.FieldName
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -26,14 +27,14 @@ enum class ContactCenterChatSessionState {
 
 @Serializable
 data class ContactCenterChatSessionProperties(
-        @SerialName("chat_id")
+        @SerialName(FieldName.CHAT_ID)
         val chatID: String,
-        @SerialName("state")
+        @SerialName(FieldName.STATE)
         val state: ContactCenterChatSessionState,
-        @SerialName("ewt")
+        @SerialName(FieldName.EWT)
         val estimatedWaitTime: Int,
-        @SerialName("is_new_chat")
+        @SerialName(FieldName.IS_NEW_CHAT)
         val isNewChat: Boolean,
-        @SerialName("phone_number")
+        @SerialName(FieldName.PHONE_NUMBER)
         val phoneNumber: String = "Undefined"
 )

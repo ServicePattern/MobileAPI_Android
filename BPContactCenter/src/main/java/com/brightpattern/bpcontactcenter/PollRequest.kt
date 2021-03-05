@@ -1,13 +1,14 @@
 package com.brightpattern.bpcontactcenter
 
 import com.android.volley.Request
-import com.brightpattern.bpcontactcenter.entity.ContactCenterEvent
 import com.brightpattern.bpcontactcenter.interfaces.ContactCenterEventsInterface
 import com.brightpattern.bpcontactcenter.interfaces.NetworkServiceable
+import com.brightpattern.bpcontactcenter.model.http.ContactCenterEventsContainerDto
 import com.brightpattern.bpcontactcenter.network.URLProvider
 import com.brightpattern.bpcontactcenter.network.support.HttpHeaderFields
 import com.brightpattern.bpcontactcenter.utils.Failure
 import com.brightpattern.bpcontactcenter.utils.Success
+import kotlinx.serialization.json.Json
 import kotlin.properties.Delegates
 
 interface PollRequestInterface {
@@ -35,6 +36,11 @@ class PollRequest private constructor(
     override var callback: ContactCenterEventsInterface? = null
     private var chatID: String = ""
     private lateinit var networkService: NetworkServiceable
+    private val format: Json = Json {
+        isLenient = true
+        ignoreUnknownKeys = true
+        classDiscriminator = "event"
+    }
 
     // TODO: check for threadsafe !!!!!
     override fun addChatID(chatID: String, baseURL: String, tenantURL: String) {
@@ -47,8 +53,8 @@ class PollRequest private constructor(
         val url = URLProvider.Endpoint.GetNewChatEvents.generateFullUrl(baseURL, tenantURL, chatID)
         if (chatID.isNotEmpty())
             networkService.executePollRequest(Request.Method.GET, url, defaultHttpHeaderFields, null, pollInterval, {
-                val result = ContactCenterEvent.listFromJSONEvents(it)
-                callback?.chatSessionEvents(Success(result))
+                val result = format.decodeFromString(ContactCenterEventsContainerDto.serializer(), it.toString())
+                callback?.chatSessionEvents(Success(result.events))
                 runObservation(baseURL, tenantURL)
             }, {
                 callback?.chatSessionEvents(Failure(Error(it)))

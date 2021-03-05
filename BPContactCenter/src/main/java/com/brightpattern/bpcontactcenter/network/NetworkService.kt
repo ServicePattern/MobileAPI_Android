@@ -6,6 +6,7 @@ import com.android.volley.RequestQueue
 import com.android.volley.Response
 import com.android.volley.toolbox.HttpHeaderParser
 import com.android.volley.toolbox.JsonObjectRequest
+import com.brightpattern.bpcontactcenter.entity.FieldName
 import com.brightpattern.bpcontactcenter.interfaces.NetworkServiceable
 import com.brightpattern.bpcontactcenter.network.support.HttpHeaderFields
 import org.json.JSONObject
@@ -28,7 +29,7 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
             override fun parseNetworkResponse(response: NetworkResponse?): Response<JSONObject> {
                 if (response?.statusCode == 200 && response.data.isEmpty()) {
                     val responseObject = JSONObject()
-                    responseObject.put("state", "success")
+                    responseObject.put(FieldName.STATE, "success")
                     return Response.success(responseObject, HttpHeaderParser.parseCacheHeaders(response))
                 }
                 return super.parseNetworkResponse(response)
@@ -65,7 +66,7 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
             override fun parseNetworkResponse(response: NetworkResponse?): Response<JSONObject> {
                 if (response?.statusCode == 200 && response.data.isEmpty()) {
                     val responseObject = JSONObject()
-                    responseObject.put("state", "success")
+                    responseObject.put(FieldName.STATE, "success")
                     return Response.success(responseObject, HttpHeaderParser.parseCacheHeaders(response))
                 }
                 return super.parseNetworkResponse(response)

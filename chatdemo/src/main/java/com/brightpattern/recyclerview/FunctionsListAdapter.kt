@@ -8,9 +8,11 @@ import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
 import com.brightpattern.chatdemo.R
 
-class FunctionsListAdapter: RecyclerView.Adapter<FunctionsListAdapter.MyViewHolder>() {
+class FunctionsListAdapter : RecyclerView.Adapter<FunctionsListAdapter.MyViewHolder>() {
 
-    val functionList = listOf("checkAvailability", "requestChat", "getChatHistory", "sendChatMessage",
+    val functionList = listOf("checkAvailability", "requestChat", "getChatHistory",
+            "getCaseHistory",
+            "sendChatMessage",
             "chatMessageDelivered",
             "chatMessageRead",
             "chatTyping",
@@ -39,7 +41,7 @@ class FunctionsListAdapter: RecyclerView.Adapter<FunctionsListAdapter.MyViewHold
         return functionList.count()
     }
 
-    class MyViewHolder(v: View): RecyclerView.ViewHolder(v){
+    class MyViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         val cmdName = v.findViewById<Button>(R.id.btnCmdName)
     }
 

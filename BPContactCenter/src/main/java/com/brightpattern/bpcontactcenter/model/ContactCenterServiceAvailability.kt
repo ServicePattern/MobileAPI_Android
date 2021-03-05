@@ -1,5 +1,6 @@
 package com.brightpattern.bpcontactcenter.model
 
+import com.brightpattern.bpcontactcenter.entity.FieldName
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -17,8 +18,8 @@ enum class ContactCenterServiceChatAvailability {
 /// - Tag: ContactCenterServiceAvailability
 @Serializable
 data class ContactCenterServiceAvailability(
-        @SerialName("chat")
+        @SerialName(FieldName.CHAT)
         val chatval: ContactCenterServiceChatAvailability,
-        @SerialName("ewt")
+        @SerialName(FieldName.EWT)
         val estimatedWaitTime: Int
 )

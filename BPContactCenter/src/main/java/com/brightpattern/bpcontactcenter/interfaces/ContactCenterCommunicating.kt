@@ -3,6 +3,7 @@ package com.brightpattern.bpcontactcenter.interfaces
 import com.brightpattern.bpcontactcenter.entity.ContactCenterEvent
 import com.brightpattern.bpcontactcenter.model.ContactCenterChatSessionProperties
 import com.brightpattern.bpcontactcenter.model.ContactCenterServiceAvailability
+import com.brightpattern.bpcontactcenter.model.http.ChatSessionCaseHistoryDto
 import com.brightpattern.bpcontactcenter.utils.Result
 import org.json.JSONObject
 
@@ -43,7 +44,7 @@ interface ContactCenterCommunicating {
     /// - Parameters:
     ///   - chatID: The current chat ID
     ///   - completion: Chat sessions with client and server events [ContactCenterChatSession](x-source-tag://ContactCenterEvent) or [ContactCenterError](x-source-tag://ContactCenterError) otherwise
-    fun getCaseHistory(chatID: String, completion: (result: Result<List<ContactCenterEvent>, Error>) -> Unit)
+    fun getCaseHistory(chatID: String, completion: (result: Result<ChatSessionCaseHistoryDto, Error>) -> Unit)
 
     /// Request Chat initiates a chat session. It provides values of all or some of the expected parameters, and it may also contain the phone number of the mobile device. Note that if the mobile scenario entry is not configured for automatic callback, the agent can still use this number to call the mobile user manually, either upon the agent's own initiative or when asked to do this via a chat message from the mobile user.
     /// - Parameters:
@@ -121,4 +122,10 @@ interface ContactCenterCommunicating {
     /// - Parameters:
     ///   - userInfo: Contains a payload with a new event from a backend which is received in `didReceiveRemoteNotification` or `userNotificationCenter`
     fun appDidReceiveMessage(userInfo: Map<Any, Any>)
+
+    /// Closes the CRM case defined by the scenario which handles a current chat session.
+    /// - Parameters:
+    ///   - chatID: The current chat ID
+    ///   - completion: Returns `.success` or [ContactCenterError](x-source-tag://ContactCenterError) otherwise
+    fun closeCase(chatID: String, completion: (Result<String, Error>) -> Unit)
 }

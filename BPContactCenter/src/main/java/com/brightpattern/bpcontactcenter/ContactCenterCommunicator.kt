@@ -1,7 +1,6 @@
 package com.brightpattern.bpcontactcenter
 
 import android.content.Context
-import android.util.Log
 import com.android.volley.Request
 import com.android.volley.toolbox.HurlStack
 import com.android.volley.toolbox.Volley
@@ -11,6 +10,7 @@ import com.brightpattern.bpcontactcenter.interfaces.ContactCenterEventsInterface
 import com.brightpattern.bpcontactcenter.interfaces.NetworkServiceable
 import com.brightpattern.bpcontactcenter.model.ContactCenterChatSessionProperties
 import com.brightpattern.bpcontactcenter.model.ContactCenterServiceAvailability
+import com.brightpattern.bpcontactcenter.model.http.ChatSessionCaseHistoryDto
 import com.brightpattern.bpcontactcenter.model.http.ContactCenterEventsContainerDto
 import com.brightpattern.bpcontactcenter.network.NetworkService
 import com.brightpattern.bpcontactcenter.network.URLProvider
@@ -51,7 +51,7 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             val pollRequest = PollRequest.init(networkService, 20000, HttpHeaderFields.defaultFields(appID, clientID))
             return init(baseURL, tenantURL, appID, clientID, networkService, pollRequest).apply {
                 checkAvailability {
-                    Log.e("*****", "$it")
+                    callback?.chatSessionEvents(Failure(java.lang.Error("checkAvailability error")))
                 }
             }
         }
@@ -103,8 +103,8 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
         try {
             val url = URLProvider.Endpoint.GetChatHistory.generateFullUrl(baseURL, tenantURL, chatID)
             networkService.executeSimpleRequest(Request.Method.GET, url, defaultHttpHeaderFields, {
-                val list = ContactCenterEvent.listFromJSONEvents(it, format)
-                completion.invoke(Success(list))
+                val result = format.decodeFromString(ContactCenterEventsContainerDto.serializer(), it.toString())
+                completion.invoke(Success(result.events))
             }, {
                 completion.invoke(Failure(java.lang.Error(it)))
             })
@@ -113,12 +113,11 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
         }
     }
 
-    // TODO: NOT READY YET
-    override fun getCaseHistory(chatID: String, completion: (result: Result<List<ContactCenterEvent>, Error>) -> Unit) {
+    override fun getCaseHistory(chatID: String, completion: (result: Result<ChatSessionCaseHistoryDto, Error>) -> Unit) {
         try {
             val url = URLProvider.Endpoint.GetCaseHistory.generateFullUrl(baseURL, tenantURL, chatID)
             networkService.executeSimpleRequest(Request.Method.GET, url, defaultHttpHeaderFields, {
-                val list = ContactCenterEvent.listFromJSONEvents(it, format)
+                val list = format.decodeFromString(ChatSessionCaseHistoryDto.serializer(), it.toString())
                 completion.invoke(Success(list))
             }, {
                 completion.invoke(Failure(java.lang.Error(it)))
@@ -149,7 +148,6 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             val payload = createSendEventPayload(ContactCenterEvent.ChatSessionMessage(UUID.randomUUID().toString(), UUID.randomUUID().toString(), message))
 
             networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
-                Log.d("sendChatMessage", ">>>> $it")
                 completion.invoke(Success(it.toString()))
             }, {
                 completion.invoke(Failure(java.lang.Error(it)))
@@ -165,7 +163,6 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             val payload = createSendEventPayload(ContactCenterEvent.ChatSessionMessageDelivered(messageID, null))
 
             networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
-                Log.d("chatMessageDelivered", ">>>> $it")
                 completion.invoke(Success(it.toString()))
             }, {
                 completion.invoke(Failure(java.lang.Error(it)))
@@ -181,7 +178,6 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             val payload = createSendEventPayload(ContactCenterEvent.ChatSessionMessageRead(messageID, null))
 
             networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
-                Log.d("chatMessageRead", ">>>> $it")
                 completion.invoke(Success(it.toString()))
             }, {
                 completion.invoke(Failure(java.lang.Error(it)))
@@ -197,7 +193,6 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             val payload = createSendEventPayload(ContactCenterEvent.ChatSessionTyping(null))
 
             networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
-                Log.d("chatTyping", ">>>> $it")
                 completion.invoke(Success(it.toString()))
             }, {
                 completion.invoke(Failure(java.lang.Error(it)))
@@ -213,7 +208,6 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             val payload = createSendEventPayload(ContactCenterEvent.ChatSessionNotTyping(null))
 
             networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
-                Log.d("chatNotTyping", ">>>> $it")
                 completion.invoke(Success(it.toString()))
             }, {
                 completion.invoke(Failure(java.lang.Error(it)))
@@ -229,7 +223,6 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             val payload = createSendEventPayload(ContactCenterEvent.ChatSessionDisconnect())
 
             networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
-                Log.d("disconnectChat", ">>>> $it")
                 completion.invoke(Success(it.toString()))
             }, {
                 completion.invoke(Failure(java.lang.Error(it)))
@@ -245,7 +238,6 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             val payload = createSendEventPayload(ContactCenterEvent.ChatSessionEnd())
 
             networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
-                Log.d("endChat", ">>>> $it")
                 completion.invoke(Success(it.toString()))
             }, {
                 completion.invoke(Failure(java.lang.Error(it)))
@@ -265,8 +257,6 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             val json = JSONObject()
             json.put("android_firebase_device_token", deviceToken)
             networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, json, {
-
-                Log.d("#####", ">>>> $it")
                 completion.invoke(Success(it.toString()))
             }, {
                 completion.invoke(Failure(java.lang.Error(it)))
@@ -279,8 +269,22 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
     override fun appDidReceiveMessage(userInfo: Map<Any, Any>) {
         userInfo["chatID"]?.let {
             (it as String)
-            Log.d("appDidReceiveMessage", "new ChatID -> $it")
             pollRequestService.addChatID(it, baseURL, tenantURL)
+        }
+    }
+
+    override fun closeCase(chatID: String, completion: (Result<String, Error>) -> Unit) {
+        try {
+            val url = URLProvider.Endpoint.CloseCase.generateFullUrl(baseURL, tenantURL, chatID)
+            val payload = createSendEventPayload(ContactCenterEvent.ChatSessionEnd())
+
+            networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
+                completion.invoke(Success(it.toString()))
+            }, {
+                completion.invoke(Failure(java.lang.Error(it)))
+            })
+        } catch (e: java.lang.Exception) {
+            completion.invoke(Failure(java.lang.Error(e)))
         }
     }
 
