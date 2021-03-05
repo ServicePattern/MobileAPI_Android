@@ -36,6 +36,7 @@ class TestActivity : AppCompatActivity() {
 
     private var chatID: String = ""
     private var partyID: String = ""
+    private var lastMessageID: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,8 +55,8 @@ class TestActivity : AppCompatActivity() {
                 "sendChatMessage" -> api.sendChatMessage(chatID, "MY MESSAGE") { r -> resultProcessing(r) }
                 "subscribeForRemoteNotificationsFirebase" -> api.subscribeForRemoteNotificationsFirebase(chatID, ChatDemo.gcmToken ?: "unknown") { r -> resultProcessing(r) }
                 "subscribeForRemoteNotificationsAPNs" -> api.subscribeForRemoteNotificationsAPNs(chatID, ChatDemo.gcmToken ?: "unknown") { r -> resultProcessing(r) }
-                "chatMessageDelivered" -> api.chatMessageDelivered(chatID,""){ r -> resultProcessing(r) }
-                "chatMessageRead" -> api.chatMessageRead(chatID,""){ r -> resultProcessing(r) }
+                "chatMessageDelivered" -> api.chatMessageDelivered(chatID,lastMessageID){ r -> resultProcessing(r) }
+                "chatMessageRead" -> api.chatMessageRead(chatID,lastMessageID){ r -> resultProcessing(r) }
                 "chatTyping" -> api.chatTyping(chatID){ r -> resultProcessing(r) }
                 "chatNotTyping" -> api.chatNotTyping(chatID){ r -> resultProcessing(r) }
                 "disconnectChat" -> api.disconnectChat(chatID){ r -> resultProcessing(r) }
@@ -82,6 +83,14 @@ class TestActivity : AppCompatActivity() {
             is Success<*> -> {
                 Log.e("Success", ">>> ${result.value}")
                 tvResult.text = "Success\n${result.value}"
+
+                (result.value as? List<ContactCenterEvent>)?.firstOrNull {
+                    (it as? ContactCenterEvent.ChatSessionMessage)!= null }?.let {
+                        (it as ContactCenterEvent.ChatSessionMessage )
+                    Log.e("TestActivity", "MessageId = ${it.messageID}")
+                    lastMessageID = it.messageID
+                }
+
                 (result.value as? ContactCenterChatSessionProperties)?.let {
                     chatID = it.chatID
                     partyID = it.chatID
