@@ -1,6 +1,7 @@
 package com.brightpattern
 
 import android.app.Application
+import android.content.Context
 import android.util.Log
 import com.brightpattern.bpcontactcenter.ContactCenterCommunicator
 import com.google.android.gms.tasks.OnCompleteListener
@@ -16,8 +17,18 @@ class ChatDemo : Application() {
 
     val baseURL = "https://alvm.bugfocus.com"
     val tenantURL = "devs.alvm.bugfocus.com"
-    val clientID = UUID.randomUUID().toString()
     val appID = "Android"
+
+    val clientID: String by lazy {
+        val default = UUID.randomUUID().toString()
+        val preferences = applicationContext.getSharedPreferences("ChatDemo", Context.MODE_PRIVATE)
+        preferences.getString("clientID", null)?.let {
+            it
+        } ?: run {
+            preferences.edit().putString("clientID", default).apply()
+            default
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()
