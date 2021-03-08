@@ -16,6 +16,7 @@ import com.stfalcon.chatkit.commons.models.IUser
 import com.stfalcon.chatkit.messages.MessageInput
 import com.stfalcon.chatkit.messages.MessagesList
 import com.stfalcon.chatkit.messages.MessagesListAdapter
+import java.time.Instant
 import java.util.*
 
 class MessageActivity : AppCompatActivity() {
@@ -34,35 +35,15 @@ class MessageActivity : AppCompatActivity() {
 
     var imageLoader: ImageLoader = ImageLoader { imageView, url, _ -> imageView?.load(url) }
 
-    val myUser =  object : IUser {
-        override fun getId(): String {
-            return ChatDemo.chatID
-        }
+    val myUser = MyUser(ChatDemo.chatID, "Me")
+    val systemUser = MyUser(UUID.randomUUID().toString(), "")
 
-        override fun getName(): String {
-            return "Me"
-        }
+    val parties = HashMap<String, MyUser>()
 
-        override fun getAvatar(): String {
-            return ""
-        }
-
+    private fun getParty(id: String?) : IUser {
+        return parties[id] ?: myUser
     }
 
-    val supportUser = object : IUser {
-        override fun getId(): String {
-            return UUID.randomUUID().toString()
-        }
-
-        override fun getName(): String {
-            return "Support User"
-        }
-
-        override fun getAvatar(): String {
-            return ""
-        }
-
-    }
     private val messageListAdapter: MessagesListAdapter<MyMessage> by lazy {
         MessagesListAdapter<MyMessage>(ChatDemo.chatID, imageLoader)
     }
@@ -90,7 +71,7 @@ class MessageActivity : AppCompatActivity() {
             val messageID = UUID.randomUUID()
             api.sendChatMessage(ChatDemo.chatID, "$messageText", messageID) { result ->
                 if (result is Success) {
-                    val myMessage = MyMessage(ContactCenterEvent.ChatSessionMessage(messageID.toString(), null, "$messageText"), myUser)
+                    val myMessage = MyMessage("$messageText", myUser, messageID.toString())
                     messageListAdapter.addToStart(myMessage, true)
                 }
             }
@@ -100,9 +81,31 @@ class MessageActivity : AppCompatActivity() {
 
     fun resultProcessing(result: Any) {
         if (result is Success<*>) {
-            (result.value as? List<ContactCenterEvent>)?.filter { (it as? ContactCenterEvent.ChatSessionMessage) != null }?.forEach {
+            (result.value as? List<ContactCenterEvent>)?.forEach {
                 (it as? ContactCenterEvent.ChatSessionMessage)?.let { message ->
-                    val incomingMessage = MyMessage(message, supportUser)
+                    val incomingMessage = MyMessage(message.message, getParty(message.partyID), message.messageID)
+                    messageListAdapter.addToStart(incomingMessage, true)
+                }
+                (it as? ContactCenterEvent.ChatSessionPartyJoined)?.let { message ->
+                    val user = MyUser(message.partyID, message.displayName ?: ((message.firstName ?: "") + " " + (message.lastName ?: "")))
+                    parties[user.userId] = user
+                    val incomingMessage = MyMessage("Joined the session", user)
+                    messageListAdapter.addToStart(incomingMessage, true)
+                }
+                (it as? ContactCenterEvent.ChatSessionPartyLeft)?.let { message ->
+                    val incomingMessage = MyMessage("Left the session", getParty(message.partyID))
+                    messageListAdapter.addToStart(incomingMessage, true)
+                }
+                (it as? ContactCenterEvent.ChatSessionTimeoutWarning)?.let { message ->
+                    val incomingMessage = MyMessage(message.message, systemUser)
+                    messageListAdapter.addToStart(incomingMessage, true)
+                }
+                (it as? ContactCenterEvent.ChatSessionInactivityTimeout)?.let { message ->
+                    val incomingMessage = MyMessage(message.message, systemUser)
+                    messageListAdapter.addToStart(incomingMessage, true)
+                }
+                (it as? ContactCenterEvent.ChatSessionEnded)?.let { message ->
+                    val incomingMessage = MyMessage("The session has ended", systemUser)
                     messageListAdapter.addToStart(incomingMessage, true)
                 }
             }
@@ -110,13 +113,13 @@ class MessageActivity : AppCompatActivity() {
     }
 }
 
-data class MyMessage(val message: ContactCenterEvent.ChatSessionMessage, val messageUser: IUser) : IMessage {
+data class MyMessage(val message: String, val messageUser: IUser, val messageID: String = "", val timestamp: Long = Instant.now().epochSecond) : IMessage {
     override fun getId(): String {
-        return message.messageID
+        return messageID
     }
 
     override fun getText(): String {
-        return message.message
+        return message
     }
 
     override fun getUser(): IUser {
@@ -124,7 +127,21 @@ data class MyMessage(val message: ContactCenterEvent.ChatSessionMessage, val mes
     }
 
     override fun getCreatedAt(): Date {
-        return Date(message.timestamp * 1000)
+        return Date(timestamp * 1000)
+    }
+}
+
+data class MyUser(val userId: String, val displayName: String) : IUser {
+    override fun getId(): String {
+        return userId
+    }
+
+    override fun getName(): String {
+        return displayName
+    }
+
+    override fun getAvatar(): String {
+        return ""
     }
 
 }
