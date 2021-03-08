@@ -34,6 +34,35 @@ class MessageActivity : AppCompatActivity() {
 
     var imageLoader: ImageLoader = ImageLoader { imageView, url, _ -> imageView?.load(url) }
 
+    val myUser =  object : IUser {
+        override fun getId(): String {
+            return ChatDemo.chatID
+        }
+
+        override fun getName(): String {
+            return "Me"
+        }
+
+        override fun getAvatar(): String {
+            return ""
+        }
+
+    }
+
+    val supportUser = object : IUser {
+        override fun getId(): String {
+            return UUID.randomUUID().toString()
+        }
+
+        override fun getName(): String {
+            return "Support User"
+        }
+
+        override fun getAvatar(): String {
+            return ""
+        }
+
+    }
     private val messageListAdapter: MessagesListAdapter<MyMessage> by lazy {
         MessagesListAdapter<MyMessage>(ChatDemo.chatID, imageLoader)
     }
@@ -61,7 +90,7 @@ class MessageActivity : AppCompatActivity() {
             val messageID = UUID.randomUUID()
             api.sendChatMessage(ChatDemo.chatID, "$messageText", messageID) { result ->
                 if (result is Success) {
-                    val myMessage = MyMessage(ContactCenterEvent.ChatSessionMessage(messageID.toString(), null, "$messageText"))
+                    val myMessage = MyMessage(ContactCenterEvent.ChatSessionMessage(messageID.toString(), null, "$messageText"), myUser)
                     messageListAdapter.addToStart(myMessage, true)
                 }
             }
@@ -73,7 +102,7 @@ class MessageActivity : AppCompatActivity() {
         if (result is Success<*>) {
             (result.value as? List<ContactCenterEvent>)?.filter { (it as? ContactCenterEvent.ChatSessionMessage) != null }?.forEach {
                 (it as? ContactCenterEvent.ChatSessionMessage)?.let { message ->
-                    val incomingMessage = MyMessage(message)
+                    val incomingMessage = MyMessage(message, supportUser)
                     messageListAdapter.addToStart(incomingMessage, true)
                 }
             }
@@ -81,7 +110,7 @@ class MessageActivity : AppCompatActivity() {
     }
 }
 
-data class MyMessage(val message: ContactCenterEvent.ChatSessionMessage) : IMessage {
+data class MyMessage(val message: ContactCenterEvent.ChatSessionMessage, val messageUser: IUser) : IMessage {
     override fun getId(): String {
         return message.messageID
     }
@@ -91,20 +120,7 @@ data class MyMessage(val message: ContactCenterEvent.ChatSessionMessage) : IMess
     }
 
     override fun getUser(): IUser {
-        return object : IUser {
-            override fun getId(): String {
-                return UUID.randomUUID().toString()
-            }
-
-            override fun getName(): String {
-                return "User Name"
-            }
-
-            override fun getAvatar(): String {
-                return ""
-            }
-
-        }
+        return messageUser
     }
 
     override fun getCreatedAt(): Date {
