@@ -1,8 +1,10 @@
 package com.brightpattern
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,10 +36,6 @@ class TestActivity : AppCompatActivity() {
         findViewById(R.id.tvResult)
     }
 
-    private var chatID: String = ""
-    private var partyID: String = ""
-    private var lastMessageID: String = ""
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -50,28 +48,35 @@ class TestActivity : AppCompatActivity() {
             when (it) {
                 "checkAvailability" -> api.checkAvailability { r -> resultProcessing(r) }
                 "requestChat" -> api.requestChat("555-555-5555", "Someone", JSONObject()) { r -> resultProcessing(r) }
-                "getChatHistory" -> api.getChatHistory(chatID) { r -> resultProcessing(r) }
-                "getCaseHistory" -> api.getCaseHistory(chatID) { r -> resultProcessing(r) }
-                "sendChatMessage" -> api.sendChatMessage(chatID, "MY MESSAGE") { r -> resultProcessing(r) }
-                "subscribeForRemoteNotificationsFirebase" -> api.subscribeForRemoteNotificationsFirebase(chatID, ChatDemo.gcmToken ?: "unknown") { r -> resultProcessing(r) }
-                "subscribeForRemoteNotificationsAPNs" -> api.subscribeForRemoteNotificationsAPNs(chatID, ChatDemo.gcmToken ?: "unknown") { r -> resultProcessing(r) }
-                "chatMessageDelivered" -> api.chatMessageDelivered(chatID,lastMessageID){ r -> resultProcessing(r) }
-                "chatMessageRead" -> api.chatMessageRead(chatID,lastMessageID){ r -> resultProcessing(r) }
-                "chatTyping" -> api.chatTyping(chatID){ r -> resultProcessing(r) }
-                "chatNotTyping" -> api.chatNotTyping(chatID){ r -> resultProcessing(r) }
-                "disconnectChat" -> api.disconnectChat(chatID){ r -> resultProcessing(r) }
-                "endChat" -> api.endChat(chatID){ r -> resultProcessing(r) }
+                "getChatHistory" -> api.getChatHistory(ChatDemo.chatID) { r -> resultProcessing(r) }
+                "getCaseHistory" -> api.getCaseHistory(ChatDemo.chatID) { r -> resultProcessing(r) }
+                "sendChatMessage" -> api.sendChatMessage(ChatDemo.chatID, "MY MESSAGE") { r -> resultProcessing(r) }
+                "subscribeForRemoteNotificationsFirebase" -> api.subscribeForRemoteNotificationsFirebase(ChatDemo.chatID, ChatDemo.gcmToken ?: "unknown") { r -> resultProcessing(r) }
+                "subscribeForRemoteNotificationsAPNs" -> api.subscribeForRemoteNotificationsAPNs(ChatDemo.chatID, ChatDemo.gcmToken ?: "unknown") { r -> resultProcessing(r) }
+                "chatMessageDelivered" -> api.chatMessageDelivered(ChatDemo.chatID, ChatDemo.lastMessageID) { r -> resultProcessing(r) }
+                "chatMessageRead" -> api.chatMessageRead(ChatDemo.chatID, ChatDemo.lastMessageID) { r -> resultProcessing(r) }
+                "chatTyping" -> api.chatTyping(ChatDemo.chatID) { r -> resultProcessing(r) }
+                "chatNotTyping" -> api.chatNotTyping(ChatDemo.chatID) { r -> resultProcessing(r) }
+                "disconnectChat" -> api.disconnectChat(ChatDemo.chatID) { r -> resultProcessing(r) }
+                "endChat" -> api.endChat(ChatDemo.chatID) { r -> resultProcessing(r) }
                 else -> Log.e("EEEEE", "########################################################")
             }
         }
 
-        api.callback = object: ContactCenterEventsInterface {
+        findViewById<Button>(R.id.btnRunMessaging).setOnClickListener {
+            startActivity(Intent(applicationContext, MessageActivity::class.java))
+        }
+    }
+
+    override fun onResume() {
+        Log.e("TestActivity", "************** onResume **************")
+        super.onResume()
+        api.callback = object : ContactCenterEventsInterface {
             override fun chatSessionEvents(result: Result<List<ContactCenterEvent>, Error>) {
                 Log.e("&&&&&&&&&&&&", " &&&&&&&&&&&&&&&&&&&&&&&&&&& \t\n\t $result")
                 this@TestActivity.resultProcessing(result)
             }
         }
-
     }
 
     fun resultProcessing(result: Any) {
@@ -85,15 +90,16 @@ class TestActivity : AppCompatActivity() {
                 tvResult.text = "Success\n${result.value}"
 
                 (result.value as? List<ContactCenterEvent>)?.firstOrNull {
-                    (it as? ContactCenterEvent.ChatSessionMessage)!= null }?.let {
-                        (it as ContactCenterEvent.ChatSessionMessage )
+                    (it as? ContactCenterEvent.ChatSessionMessage) != null
+                }?.let {
+                    (it as ContactCenterEvent.ChatSessionMessage)
                     Log.e("TestActivity", "MessageId = ${it.messageID}")
-                    lastMessageID = it.messageID
+                    ChatDemo.lastMessageID = it.messageID
                 }
 
                 (result.value as? ContactCenterChatSessionProperties)?.let {
-                    chatID = it.chatID
-                    partyID = it.chatID
+                    ChatDemo.chatID = it.chatID
+                    ChatDemo.partyID = it.chatID
                 }
             }
         }

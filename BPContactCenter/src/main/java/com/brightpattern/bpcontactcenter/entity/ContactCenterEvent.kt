@@ -19,7 +19,7 @@ sealed class ContactCenterEvent {
             @SerialName(FieldName.MSG_ID) val messageID: String = "",
             @SerialName(FieldName.PARTY_ID) val partyID: String?,
             @SerialName(FieldName.MSG) val message: String,
-            val timestamp: Long = Instant.now().toEpochMilli()) : ContactCenterEvent()
+            val timestamp: Long = Instant.now().epochSecond) : ContactCenterEvent()
 
     /// Indicates that a message has been delivered
     /// Direction: S<->C
@@ -28,7 +28,7 @@ sealed class ContactCenterEvent {
     data class ChatSessionMessageDelivered(
             @SerialName(FieldName.MSG_ID) val messageID: String,
             @SerialName(FieldName.PARTY_ID) val partyID: String?,
-            val timestamp: Long = Instant.now().toEpochMilli()) : ContactCenterEvent()
+             val timestamp: Long = Instant.now().epochSecond) : ContactCenterEvent()
 
     /// Indicates that a message has been read
     /// Direction: S<->C
@@ -37,7 +37,7 @@ sealed class ContactCenterEvent {
     data class ChatSessionMessageRead(
             @SerialName(FieldName.MSG_ID) val messageID: String,
             @SerialName(FieldName.PARTY_ID) val partyID: String?,
-            val timestamp: Long = Instant.now().toEpochMilli()) : ContactCenterEvent()
+             val timestamp: Long = Instant.now().epochSecond) : ContactCenterEvent()
 
     /// Updates the current state of the chat session. If the state is failed, the client application shall assume that the chat session no longer exists.
     /// Direction: S->C
@@ -57,7 +57,7 @@ sealed class ContactCenterEvent {
             @SerialName(FieldName.LAST_NAME) val lastName: String = "",
             @SerialName(FieldName.DISPLAY_NAME) val displayName: String = "",
             val type: ContactCenterChatSessionPartyType,
-            val timestamp: Long = Instant.now().toEpochMilli()) : ContactCenterEvent()
+             val timestamp: Long = Instant.now().epochSecond) : ContactCenterEvent()
 
     /// Indicates that a party has left the chat session.
     /// Direction: S->C
@@ -65,7 +65,7 @@ sealed class ContactCenterEvent {
     @SerialName("chat_session_party_left")
     data class ChatSessionPartyLeft(
             @SerialName(FieldName.PARTY_ID) val partyID: String,
-            val timestamp: Long = Instant.now().toEpochMilli()) : ContactCenterEvent()
+             val timestamp: Long = Instant.now().epochSecond) : ContactCenterEvent()
 
     /// Indicates that the party started typing a message
     /// Direction: S<->C
@@ -73,7 +73,7 @@ sealed class ContactCenterEvent {
     @SerialName("chat_session_typing")
     data class ChatSessionTyping(
             @SerialName(FieldName.PARTY_ID) val partyID: String?,
-            val timestamp: Long = Instant.now().toEpochMilli()) : ContactCenterEvent()
+             val timestamp: Long = Instant.now().epochSecond) : ContactCenterEvent()
 
     /// Indicates that the party stopped typing a message
     /// Direction: S<->C
@@ -81,7 +81,7 @@ sealed class ContactCenterEvent {
     @SerialName("chat_session_not_typing")
     data class ChatSessionNotTyping(
             @SerialName(FieldName.PARTY_ID) val partyID: String?,
-            val timestamp: Long = Instant.now().toEpochMilli()) : ContactCenterEvent()
+             val timestamp: Long = Instant.now().epochSecond) : ContactCenterEvent()
 
     /// Contains a new geographic location
     /// Direction: S<->C
@@ -92,7 +92,7 @@ sealed class ContactCenterEvent {
             val url: String?,
             val latitude: Float,
             val longitude: Float,
-            val timestamp: Long = Instant.now().toEpochMilli()) : ContactCenterEvent()
+             val timestamp: Long = Instant.now().epochSecond) : ContactCenterEvent()
 
     /// Indicates that a system has requested an application to display a message. Typically used to display inactivity warning.
     /// Direction: S->C
@@ -100,7 +100,7 @@ sealed class ContactCenterEvent {
     @SerialName("chat_session_timeout_warning")
     data class ChatSessionTimeoutWarning(
             @SerialName(FieldName.MSG) val message: String,
-            val timestamp: Long = Instant.now().toEpochMilli()) : ContactCenterEvent()
+             val timestamp: Long = Instant.now().epochSecond) : ContactCenterEvent()
 
     /// Indicates that a system has ended the chat session due to the user's inactivity.
     /// Direction: S->C
@@ -108,7 +108,7 @@ sealed class ContactCenterEvent {
     @SerialName("chat_session_inactivity_timeout")
     data class ChatSessionInactivityTimeout(
             @SerialName(FieldName.MSG) val message: String,
-            val timestamp: Long = Instant.now().toEpochMilli()) : ContactCenterEvent()
+             val timestamp: Long = Instant.now().epochSecond) : ContactCenterEvent()
 
     /// Indicates a normal termination of the chat session (e.g., when the chat session is closed by the agent). The client application shall assume that the chat session no longer exists.
     /// Direction: S->C
@@ -142,7 +142,7 @@ sealed class ContactCenterEvent {
             val fileType: String,
             @SerialName(FieldName.PARTY_ID)
             val partyID: String,
-            val timestamp: Long = Instant.now().toEpochMilli()) : ContactCenterEvent()
+             val timestamp: Long = Instant.now().epochSecond) : ContactCenterEvent()
 
     @Serializable
     @SerialName("chat_session_form_submit")
@@ -154,7 +154,7 @@ sealed class ContactCenterEvent {
             @SerialName(FieldName.REQ_ID)
             val reqID: Int = -1,
             @SerialName(FieldName.TIMESTAMP)
-            val timestamp: Long = Instant.now().toEpochMilli()) : ContactCenterEvent()
+             val timestamp: Long = Instant.now().epochSecond) : ContactCenterEvent()
 
     @Serializable
     @SerialName("chat_session_case_set")
@@ -162,7 +162,7 @@ sealed class ContactCenterEvent {
             @SerialName(FieldName.CASE_ID)
             val caseID: String,
             @SerialName(FieldName.TIMESTAMP)
-            val timestamp: Long = Instant.now().toEpochMilli()) : ContactCenterEvent()
+             val timestamp: Long = Instant.now().epochSecond) : ContactCenterEvent()
 
     @Serializable
     @SerialName("chat_session_status")
