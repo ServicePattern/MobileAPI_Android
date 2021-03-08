@@ -44,6 +44,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name="com.brightpattern.MessageActivity"/>
+
         <service
             android:name="com.brightpattern.CDFirebaseMessagingService"
             android:exported="false">

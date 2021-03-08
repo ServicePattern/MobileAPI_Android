@@ -6,6 +6,7 @@ import com.brightpattern.bpcontactcenter.model.ContactCenterServiceAvailability
 import com.brightpattern.bpcontactcenter.model.http.ChatSessionCaseHistoryDto
 import com.brightpattern.bpcontactcenter.utils.Result
 import org.json.JSONObject
+import java.util.*
 
 interface ContactCenterCommunicating {
     // -- Initialization
@@ -59,7 +60,7 @@ interface ContactCenterCommunicating {
     ///   - chatID: The current chat ID
     ///   - message: Text of the message
     ///   - completion: Returns  `messageID` in the format chatId:messageNumber where messageNumber is ordinal number of the given message in the chat exchange or [ContactCenterError](x-source-tag://ContactCenterError) otherwise
-    fun sendChatMessage(chatID: String, message: String, completion: (Result<String, Error>) -> Unit)
+    fun sendChatMessage(chatID: String, message: String, messageID: UUID? = null, completion: (Result<String, Error>) -> Unit)
 
     /// Confirms that a chat message has been delivered to the application
     /// - Parameters:

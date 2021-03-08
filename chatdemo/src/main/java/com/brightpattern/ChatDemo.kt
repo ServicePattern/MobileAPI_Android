@@ -13,6 +13,9 @@ class ChatDemo : Application() {
     companion object {
         lateinit var api: ContactCenterCommunicator
         var gcmToken: String? = null
+        var chatID: String = ""
+        var partyID: String = ""
+        var lastMessageID: String = ""
     }
 
     val baseURL = "https://alvm.bugfocus.com"

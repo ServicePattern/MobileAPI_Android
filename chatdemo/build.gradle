@@ -33,8 +33,12 @@ android {
     }
     sourceSets { main { jniLibs.srcDirs = ['src/main/jniLibs'] } }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
     lintOptions {
@@ -70,7 +74,8 @@ dependencies {
 
     implementation platform('com.google.firebase:firebase-bom:26.6.0')
     implementation 'com.google.firebase:firebase-messaging-ktx'
-
+    implementation 'com.github.stfalcon-studio:Chatkit:0.4.1'
+    implementation("io.coil-kt:coil:1.1.1")
 }
 repositories {
     mavenCentral()
