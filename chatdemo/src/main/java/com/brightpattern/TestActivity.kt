@@ -36,6 +36,10 @@ class TestActivity : AppCompatActivity() {
         findViewById(R.id.tvResult)
     }
 
+    private val btnRunMessaging: Button by lazy {
+        findViewById(R.id.btnRunMessaging)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -63,8 +67,16 @@ class TestActivity : AppCompatActivity() {
             }
         }
 
-        findViewById<Button>(R.id.btnRunMessaging).setOnClickListener {
-            startActivity(Intent(applicationContext, MessageActivity::class.java))
+        btnRunMessaging.setOnClickListener {
+            startActivityForResult(Intent(applicationContext, MessageActivity::class.java), ChatDemo.OPEN_MESSAGE_ACTIVITY_REQUEST_ID)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == ChatDemo.OPEN_MESSAGE_ACTIVITY_REQUEST_ID && resultCode == ChatDemo.CLOSED_BY_SERVER) {
+            ChatDemo.chatID = ""
+            adapter.notifyDataSetChanged()
         }
     }
 
@@ -77,6 +89,7 @@ class TestActivity : AppCompatActivity() {
                 this@TestActivity.resultProcessing(result)
             }
         }
+        btnRunMessaging.isEnabled = ChatDemo.chatID.isNotEmpty()
     }
 
     fun resultProcessing(result: Any) {
@@ -89,7 +102,7 @@ class TestActivity : AppCompatActivity() {
                 Log.e("Success", ">>> ${result.value}")
                 tvResult.text = "Success\n${result.value}"
 
-                (result.value as? List<ContactCenterEvent>)?.firstOrNull {
+                (result.value as? List<*>)?.firstOrNull {
                     (it as? ContactCenterEvent.ChatSessionMessage) != null
                 }?.let {
                     (it as ContactCenterEvent.ChatSessionMessage)
@@ -100,6 +113,8 @@ class TestActivity : AppCompatActivity() {
                 (result.value as? ContactCenterChatSessionProperties)?.let {
                     ChatDemo.chatID = it.chatID
                     ChatDemo.partyID = it.chatID
+                    adapter.notifyDataSetChanged()
+                    btnRunMessaging.isEnabled = ChatDemo.chatID.isNotEmpty()
                 }
             }
         }

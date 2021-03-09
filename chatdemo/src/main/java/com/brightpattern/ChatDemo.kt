@@ -16,6 +16,10 @@ class ChatDemo : Application() {
         var chatID: String = ""
         var partyID: String = ""
         var lastMessageID: String = ""
+
+        const val OPEN_MESSAGE_ACTIVITY_REQUEST_ID = 100
+        const val CLOSED_BY_SERVER = 1001
+
     }
 
     val baseURL = "https://alvm.bugfocus.com"

@@ -10,9 +10,11 @@ import com.brightpattern.bpcontactcenter.interfaces.ContactCenterEventsInterface
 import com.brightpattern.bpcontactcenter.utils.Result
 import com.brightpattern.bpcontactcenter.utils.Success
 import com.brightpattern.chatdemo.R
+import com.brightpattern.customview.CustomIncomingTextMessageViewHolder
 import com.stfalcon.chatkit.commons.ImageLoader
 import com.stfalcon.chatkit.commons.models.IMessage
 import com.stfalcon.chatkit.commons.models.IUser
+import com.stfalcon.chatkit.messages.MessageHolders
 import com.stfalcon.chatkit.messages.MessageInput
 import com.stfalcon.chatkit.messages.MessagesList
 import com.stfalcon.chatkit.messages.MessagesListAdapter
@@ -35,17 +37,24 @@ class MessageActivity : AppCompatActivity() {
 
     var imageLoader: ImageLoader = ImageLoader { imageView, url, _ -> imageView?.load(url) }
 
-    val myUser = MyUser(ChatDemo.chatID, "Me")
-    val systemUser = MyUser(UUID.randomUUID().toString(), "")
+    private val myUser = MyUser(ChatDemo.chatID, "Me")
+    private val systemUser = MyUser(UUID.randomUUID().toString(), "")
 
-    val parties = HashMap<String, MyUser>()
+    private val parties = HashMap<String, IUser>().apply {
+        this[myUser.userId] = myUser
+    }
 
-    private fun getParty(id: String?) : IUser {
-        return parties[id] ?: myUser
+    private fun getParty(id: String?): IUser {
+        return parties[id] ?: systemUser
     }
 
     private val messageListAdapter: MessagesListAdapter<MyMessage> by lazy {
-        MessagesListAdapter<MyMessage>(ChatDemo.chatID, imageLoader)
+        val holdersConfig = MessageHolders()
+                .setIncomingTextConfig(
+                        CustomIncomingTextMessageViewHolder::class.java,
+                        R.layout.item_custom_incoming_text_message)
+
+        MessagesListAdapter<MyMessage>(ChatDemo.chatID, holdersConfig, imageLoader)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,7 +74,7 @@ class MessageActivity : AppCompatActivity() {
             }
         }
 
-        api.getCaseHistory(ChatDemo.chatID) { r -> resultProcessing(r) }
+        api.getChatHistory(ChatDemo.chatID) { r -> resultProcessing(r) }
 
         messageInput.setInputListener { messageText ->
             val messageID = UUID.randomUUID()
@@ -104,9 +113,13 @@ class MessageActivity : AppCompatActivity() {
                     val incomingMessage = MyMessage(message.message, systemUser)
                     messageListAdapter.addToStart(incomingMessage, true)
                 }
-                (it as? ContactCenterEvent.ChatSessionEnded)?.let { message ->
+                (it as? ContactCenterEvent.ChatSessionEnded)?.let { _ ->
                     val incomingMessage = MyMessage("The session has ended", systemUser)
                     messageListAdapter.addToStart(incomingMessage, true)
+
+                    // Set the result and close the activity
+                    setResult(ChatDemo.CLOSED_BY_SERVER)
+                    finish()
                 }
             }
         }
