@@ -39,6 +39,7 @@ class TestActivity : AppCompatActivity() {
     private val btnRunMessaging: Button by lazy {
         findViewById(R.id.btnRunMessaging)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -67,7 +68,15 @@ class TestActivity : AppCompatActivity() {
         }
 
         btnRunMessaging.setOnClickListener {
-            startActivity(Intent(applicationContext, MessageActivity::class.java))
+            startActivityForResult(Intent(applicationContext, MessageActivity::class.java), ChatDemo.OPEN_MESSAGE_ACTIVITY_REQUEST_ID)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == ChatDemo.OPEN_MESSAGE_ACTIVITY_REQUEST_ID && resultCode == ChatDemo.CLOSED_BY_SERVER) {
+            ChatDemo.chatID = ""
+            adapter.notifyDataSetChanged()
         }
     }
 

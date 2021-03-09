@@ -38,10 +38,12 @@ class MessageActivity : AppCompatActivity() {
     val myUser = MyUser(ChatDemo.chatID, "Me")
     val systemUser = MyUser(UUID.randomUUID().toString(), "")
 
-    val parties = HashMap<String, MyUser>()
+    private val parties = HashMap<String, MyUser>().apply {
+        this[myUser.userId] = myUser
+    }
 
     private fun getParty(id: String?) : IUser {
-        return parties[id] ?: myUser
+        return parties[id] ?: systemUser
     }
 
     private val messageListAdapter: MessagesListAdapter<MyMessage> by lazy {
@@ -107,6 +109,10 @@ class MessageActivity : AppCompatActivity() {
                 (it as? ContactCenterEvent.ChatSessionEnded)?.let { _ ->
                     val incomingMessage = MyMessage("The session has ended", systemUser)
                     messageListAdapter.addToStart(incomingMessage, true)
+
+                    // Set the result and close the activity
+                    setResult(ChatDemo.CLOSED_BY_SERVER)
+                    finish()
                 }
             }
         }
