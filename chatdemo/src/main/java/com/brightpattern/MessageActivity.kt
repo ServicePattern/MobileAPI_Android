@@ -65,7 +65,7 @@ class MessageActivity : AppCompatActivity() {
             }
         }
 
-        api.getCaseHistory(ChatDemo.chatID) { r -> resultProcessing(r) }
+        api.getChatHistory(ChatDemo.chatID) { r -> resultProcessing(r) }
 
         messageInput.setInputListener { messageText ->
             val messageID = UUID.randomUUID()
