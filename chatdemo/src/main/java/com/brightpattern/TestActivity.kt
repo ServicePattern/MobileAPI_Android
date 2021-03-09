@@ -89,7 +89,7 @@ class TestActivity : AppCompatActivity() {
                 Log.e("Success", ">>> ${result.value}")
                 tvResult.text = "Success\n${result.value}"
 
-                (result.value as? List<ContactCenterEvent>)?.firstOrNull {
+                (result.value as? List<*>)?.firstOrNull {
                     (it as? ContactCenterEvent.ChatSessionMessage) != null
                 }?.let {
                     (it as ContactCenterEvent.ChatSessionMessage)

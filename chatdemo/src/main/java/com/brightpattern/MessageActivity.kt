@@ -104,7 +104,7 @@ class MessageActivity : AppCompatActivity() {
                     val incomingMessage = MyMessage(message.message, systemUser)
                     messageListAdapter.addToStart(incomingMessage, true)
                 }
-                (it as? ContactCenterEvent.ChatSessionEnded)?.let { message ->
+                (it as? ContactCenterEvent.ChatSessionEnded)?.let { _ ->
                     val incomingMessage = MyMessage("The session has ended", systemUser)
                     messageListAdapter.addToStart(incomingMessage, true)
                 }
