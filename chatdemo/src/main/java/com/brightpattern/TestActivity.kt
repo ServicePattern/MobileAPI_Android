@@ -36,6 +36,9 @@ class TestActivity : AppCompatActivity() {
         findViewById(R.id.tvResult)
     }
 
+    private val btnRunMessaging: Button by lazy {
+        findViewById(R.id.btnRunMessaging)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -63,7 +66,7 @@ class TestActivity : AppCompatActivity() {
             }
         }
 
-        findViewById<Button>(R.id.btnRunMessaging).setOnClickListener {
+        btnRunMessaging.setOnClickListener {
             startActivity(Intent(applicationContext, MessageActivity::class.java))
         }
     }
@@ -77,6 +80,7 @@ class TestActivity : AppCompatActivity() {
                 this@TestActivity.resultProcessing(result)
             }
         }
+        btnRunMessaging.isEnabled = ChatDemo.chatID.isNotEmpty()
     }
 
     fun resultProcessing(result: Any) {
@@ -100,6 +104,8 @@ class TestActivity : AppCompatActivity() {
                 (result.value as? ContactCenterChatSessionProperties)?.let {
                     ChatDemo.chatID = it.chatID
                     ChatDemo.partyID = it.chatID
+                    adapter.notifyDataSetChanged()
+                    btnRunMessaging.isEnabled = ChatDemo.chatID.isNotEmpty()
                 }
             }
         }

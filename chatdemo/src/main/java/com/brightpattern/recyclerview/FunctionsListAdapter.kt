@@ -6,11 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
+import com.brightpattern.ChatDemo
 import com.brightpattern.chatdemo.R
 
 class FunctionsListAdapter : RecyclerView.Adapter<FunctionsListAdapter.MyViewHolder>() {
 
-    val functionList = listOf("checkAvailability", "requestChat", "getChatHistory",
+    private val functionList = listOf("checkAvailability", "requestChat", "getChatHistory",
             "getCaseHistory",
             "sendChatMessage",
             "chatMessageDelivered",
@@ -22,6 +23,8 @@ class FunctionsListAdapter : RecyclerView.Adapter<FunctionsListAdapter.MyViewHol
             "subscribeForRemoteNotificationsFirebase",
             "subscribeForRemoteNotificationsAPNs")
 
+    private val alwaysActive = listOf("checkAvailability", "requestChat")
+
     var selection: ((String) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -31,9 +34,13 @@ class FunctionsListAdapter : RecyclerView.Adapter<FunctionsListAdapter.MyViewHol
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.cmdName.text = functionList[position]
+        val cmdName = functionList[position]
+        holder.cmdName.text = cmdName
         holder.cmdName.setOnClickListener {
-            selection?.invoke(functionList[position])
+            selection?.invoke(cmdName)
+        }
+        holder.cmdName.isEnabled = if (alwaysActive.contains(cmdName)) true else {
+            ChatDemo.chatID.isNotEmpty()
         }
     }
 
