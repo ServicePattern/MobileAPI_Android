@@ -10,9 +10,11 @@ import com.brightpattern.bpcontactcenter.interfaces.ContactCenterEventsInterface
 import com.brightpattern.bpcontactcenter.utils.Result
 import com.brightpattern.bpcontactcenter.utils.Success
 import com.brightpattern.chatdemo.R
+import com.brightpattern.customview.CustomIncomingTextMessageViewHolder
 import com.stfalcon.chatkit.commons.ImageLoader
 import com.stfalcon.chatkit.commons.models.IMessage
 import com.stfalcon.chatkit.commons.models.IUser
+import com.stfalcon.chatkit.messages.MessageHolders
 import com.stfalcon.chatkit.messages.MessageInput
 import com.stfalcon.chatkit.messages.MessagesList
 import com.stfalcon.chatkit.messages.MessagesListAdapter
@@ -35,19 +37,24 @@ class MessageActivity : AppCompatActivity() {
 
     var imageLoader: ImageLoader = ImageLoader { imageView, url, _ -> imageView?.load(url) }
 
-    val myUser = MyUser(ChatDemo.chatID, "Me")
-    val systemUser = MyUser(UUID.randomUUID().toString(), "")
+    private val myUser = MyUser(ChatDemo.chatID, "Me")
+    private val systemUser = MyUser(UUID.randomUUID().toString(), "")
 
-    private val parties = HashMap<String, MyUser>().apply {
+    private val parties = HashMap<String, IUser>().apply {
         this[myUser.userId] = myUser
     }
 
-    private fun getParty(id: String?) : IUser {
+    private fun getParty(id: String?): IUser {
         return parties[id] ?: systemUser
     }
 
     private val messageListAdapter: MessagesListAdapter<MyMessage> by lazy {
-        MessagesListAdapter<MyMessage>(ChatDemo.chatID, imageLoader)
+        val holdersConfig = MessageHolders()
+                .setIncomingTextConfig(
+                        CustomIncomingTextMessageViewHolder::class.java,
+                        R.layout.item_custom_incoming_text_message)
+
+        MessagesListAdapter<MyMessage>(ChatDemo.chatID, holdersConfig, imageLoader)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
