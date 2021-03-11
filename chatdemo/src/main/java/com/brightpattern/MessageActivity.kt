@@ -94,6 +94,18 @@ class MessageActivity : AppCompatActivity() {
                 (it as? ContactCenterEvent.ChatSessionMessage)?.let { message ->
                     val incomingMessage = MyMessage(message.message, getParty(message.partyID), message.messageID)
                     messageListAdapter.addToStart(incomingMessage, true)
+
+                    api.chatMessageDelivered(ChatDemo.chatID, message.messageID) { r ->
+                        if (r is Success) {
+                            Log.e("S_DELIVERED", "OK")
+                        }
+                    }
+
+                    api.chatMessageRead(ChatDemo.chatID, message.messageID) { r ->
+                        if (r is Success) {
+                            Log.e("S_READ", "OK")
+                        }
+                    }
                 }
                 (it as? ContactCenterEvent.ChatSessionPartyJoined)?.let { message ->
                     val user = MyUser(message.partyID, message.displayName ?: ((message.firstName ?: "") + " " + (message.lastName ?: "")))
