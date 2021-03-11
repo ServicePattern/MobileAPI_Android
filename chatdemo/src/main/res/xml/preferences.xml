@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="App preferences">
+        <EditTextPreference
+            android:key="clientID"
+            android:summary="Please provide your client ID"
+            android:title="Client ID" />
+        <EditTextPreference
+            android:defaultValue="https://alvm.bugfocus.com"
+            android:key="baseURL"
+            android:summary="Please provide your base URL"
+            android:title="Base URL" />
+        <EditTextPreference
+            android:defaultValue="devs.alvm.bugfocus.com"
+            android:key="tenantURL"
+            android:summary="Please provide your teneat URL"
+            android:title="Tenant URL" />
+        <EditTextPreference
+            android:defaultValue="Android"
+            android:key="appID"
+            android:summary="Please provide the app ID"
+            android:title="App ID" />
+
+    </PreferenceCategory>
+</PreferenceScreen>

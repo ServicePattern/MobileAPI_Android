@@ -23,9 +23,10 @@ import java.util.*
 
 class MessageActivity : AppCompatActivity() {
 
-    private val api: ContactCenterCommunicator by lazy {
-        ChatDemo.api
-    }
+    private val api: ContactCenterCommunicator?
+        get() {
+            return ChatDemo.api
+        }
 
     private val messagesList: MessagesList by lazy {
         findViewById(R.id.messagesList)
@@ -67,24 +68,26 @@ class MessageActivity : AppCompatActivity() {
     override fun onResume() {
         Log.e("MessageActivity", "************** onResume **************")
         super.onResume()
-        api.callback = object : ContactCenterEventsInterface {
-            override fun chatSessionEvents(result: Result<List<ContactCenterEvent>, Error>) {
-                Log.e("&&&&&&&&&&&&", " &&&&&&&&&&&&&&&&&&&&&&&&&&& \t\n\t $result")
-                this@MessageActivity.resultProcessing(result)
-            }
-        }
-
-        api.getChatHistory(ChatDemo.chatID) { r -> resultProcessing(r) }
-
-        messageInput.setInputListener { messageText ->
-            val messageID = UUID.randomUUID()
-            api.sendChatMessage(ChatDemo.chatID, "$messageText", messageID) { result ->
-                if (result is Success) {
-                    val myMessage = MyMessage("$messageText", myUser, messageID.toString())
-                    messageListAdapter.addToStart(myMessage, true)
+        api?.let { api ->
+            api.callback = object : ContactCenterEventsInterface {
+                override fun chatSessionEvents(result: Result<List<ContactCenterEvent>, Error>) {
+                    Log.e("&&&&&&&&&&&&", " &&&&&&&&&&&&&&&&&&&&&&&&&&& \t\n\t $result")
+                    this@MessageActivity.resultProcessing(result)
                 }
             }
-            return@setInputListener true
+
+            api.getChatHistory(ChatDemo.chatID) { r -> resultProcessing(r) }
+
+            messageInput.setInputListener { messageText ->
+                val messageID = UUID.randomUUID()
+                api.sendChatMessage(ChatDemo.chatID, "$messageText", messageID) { result ->
+                    if (result is Success) {
+                        val myMessage = MyMessage("$messageText", myUser, messageID.toString())
+                        messageListAdapter.addToStart(myMessage, true)
+                    }
+                }
+                return@setInputListener true
+            }
         }
     }
 
