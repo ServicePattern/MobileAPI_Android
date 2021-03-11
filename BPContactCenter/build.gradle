@@ -3,11 +3,25 @@ plugins {
     id 'kotlin-android'
     id 'kotlinx-serialization'
     id 'maven-publish'
+    id 'org.jetbrains.dokka'
+
 }
 
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.2"
+
+    dokka {
+        outputFormat = 'javadoc'
+        outputDirectory = "javadoc"
+
+        configuration {
+            reportUndocumented = true
+            noStdlibLink = true
+            noJdkLink = true
+            noAndroidSdkLink = true
+        }
+    }
 
     defaultConfig {
         minSdkVersion 26
