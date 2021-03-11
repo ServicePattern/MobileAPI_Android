@@ -25,9 +25,24 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
 
+/**
+ *  ContactCenterCommunicator is the entry point to use API
+ *  create an instance of class using static init functions
+ */
 class ContactCenterCommunicator private constructor(override val baseURL: String, override val tenantURL: String, override val appID: String, override val clientID: String) : ContactCenterCommunicating {
 
     companion object {
+        /**
+         *  This static function returns an instance of ContactCenterCommunicator class
+         *  @param baseURL
+         *  @param tenantURL
+         *  @param appID
+         *  @param clientID
+         *  @param networkService [NetworkServiceable]
+         *  @param pollRequestService [PollRequestInterface]
+         *
+         *  @return [ContactCenterCommunicator]
+         */
         fun init(baseURL: String, tenantURL: String, appID: String, clientID: String, networkService: NetworkServiceable, pollRequestService: PollRequestInterface): ContactCenterCommunicator {
             return ContactCenterCommunicator(baseURL, tenantURL, appID, clientID).apply {
                 this.networkService = networkService
@@ -39,6 +54,16 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             }
         }
 
+        /**
+         *  This simple static function returns an instance of ContactCenterCommunicator class
+         *  @param baseURL
+         *  @param tenantURL
+         *  @param appID
+         *  @param clientID
+         *  @param context
+         *
+         *  @return [ContactCenterCommunicator]
+         */
         fun init(baseURL: String, tenantURL: String, appID: String, clientID: String, context: Context): ContactCenterCommunicator {
             val queue = Volley.newRequestQueue(context, object : HurlStack() {
                 override fun createConnection(url: URL): HttpURLConnection {
@@ -69,6 +94,9 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
         classDiscriminator = "event"
     }
 
+    /**
+     * time between callback requests
+     */
     var callbackWaitingTimeMS: Int
         get() {
             return pollRequestService.pollInterval
