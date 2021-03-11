@@ -50,28 +50,6 @@ class TestActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_test)
 
-//        recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-//        recyclerView.adapter = adapter
-//        adapter.selection = { it ->
-//            Log.e("FB", "${ChatDemo.gcmToken}")
-//            when (it) {
-//                "checkAvailability" -> api.checkAvailability { r -> resultProcessing(r) }
-//                "requestChat" -> api.requestChat("555-555-5555", "Someone", JSONObject()) { r -> resultProcessing(r) }
-//                "getChatHistory" -> api.getChatHistory(ChatDemo.chatID) { r -> resultProcessing(r) }
-//                "getCaseHistory" -> api.getCaseHistory(ChatDemo.chatID) { r -> resultProcessing(r) }
-//                "sendChatMessage" -> api.sendChatMessage(ChatDemo.chatID, "MY MESSAGE") { r -> resultProcessing(r) }
-//                "subscribeForRemoteNotificationsFirebase" -> api.subscribeForRemoteNotificationsFirebase(ChatDemo.chatID, ChatDemo.gcmToken ?: "unknown") { r -> resultProcessing(r) }
-//                "subscribeForRemoteNotificationsAPNs" -> api.subscribeForRemoteNotificationsAPNs(ChatDemo.chatID, ChatDemo.gcmToken ?: "unknown") { r -> resultProcessing(r) }
-//                "chatMessageDelivered" -> api.chatMessageDelivered(ChatDemo.chatID, ChatDemo.lastMessageID) { r -> resultProcessing(r) }
-//                "chatMessageRead" -> api.chatMessageRead(ChatDemo.chatID, ChatDemo.lastMessageID) { r -> resultProcessing(r) }
-//                "chatTyping" -> api.chatTyping(ChatDemo.chatID) { r -> resultProcessing(r) }
-//                "chatNotTyping" -> api.chatNotTyping(ChatDemo.chatID) { r -> resultProcessing(r) }
-//                "disconnectChat" -> api.disconnectChat(ChatDemo.chatID) { r -> resultProcessing(r) }
-//                "endChat" -> api.endChat(ChatDemo.chatID) { r -> resultProcessing(r) }
-//                else -> Log.e("EEEEE", "########################################################")
-//            }
-//        }
-
         btnRunMessaging.setOnClickListener {
             startActivityForResult(Intent(applicationContext, MessageActivity::class.java), ChatDemo.OPEN_MESSAGE_ACTIVITY_REQUEST_ID)
         }
@@ -91,12 +69,6 @@ class TestActivity : AppCompatActivity() {
     override fun onResume() {
         Log.e("TestActivity", "************** onResume **************")
         super.onResume()
-//        api.callback = object : ContactCenterEventsInterface {
-//            override fun chatSessionEvents(result: Result<List<ContactCenterEvent>, Error>) {
-//                Log.e("&&&&&&&&&&&&", " &&&&&&&&&&&&&&&&&&&&&&&&&&& \t\n\t $result")
-//                this@TestActivity.resultProcessing(result)
-//            }
-//        }
         initAPI()
         btnRunMessaging.isEnabled = ChatDemo.chatID.isNotEmpty()
     }
