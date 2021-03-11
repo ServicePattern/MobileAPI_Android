@@ -11,15 +11,17 @@ android {
     compileSdkVersion 30
     buildToolsVersion "30.0.2"
 
-    dokka {
-        outputFormat = 'javadoc'
-        outputDirectory = "javadoc"
+    dokkaHtml.configure {
+        dokkaSourceSets {
+            named("main") {
+                outputDirectory.set("$buildDir/docs")
 
-        configuration {
-            reportUndocumented = true
-            noStdlibLink = true
-            noJdkLink = true
-            noAndroidSdkLink = true
+                // Do not create index pages for empty packages
+                skipEmptyPackages.set(true)
+                noAndroidSdkLink.set(true)
+                reportUndocumented.set(false)
+                noStdlibLink.set(true)
+            }
         }
     }
 
