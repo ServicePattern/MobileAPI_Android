@@ -26,7 +26,7 @@ sealed class ContactCenterEvent {
     @Serializable
     @SerialName("chat_session_message_delivered")
     data class ChatSessionMessageDelivered(
-            @SerialName(FieldName.MSG_ID) val messageID: String,
+            @SerialName(FieldName.REF_MSG_ID) val messageID: String,
             @SerialName(FieldName.PARTY_ID) val partyID: String?,
              val timestamp: Long = Instant.now().epochSecond) : ContactCenterEvent()
 
@@ -35,7 +35,7 @@ sealed class ContactCenterEvent {
     @Serializable
     @SerialName("chat_session_message_read")
     data class ChatSessionMessageRead(
-            @SerialName(FieldName.MSG_ID) val messageID: String,
+            @SerialName(FieldName.REF_MSG_ID) val messageID: String,
             @SerialName(FieldName.PARTY_ID) val partyID: String?,
              val timestamp: Long = Instant.now().epochSecond) : ContactCenterEvent()
 
