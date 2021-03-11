@@ -7,6 +7,7 @@ internal class FieldName {
         const val SESSIONS = "sessions"
         const val EVENTS = "events"
         const val MSG_ID = "msg_id"
+        const val REF_MSG_ID = "ref_msg_id"
         const val PARTY_ID = "party_id"
         const val MSG = "msg"
         const val FIRST_NAME = "first_name"
