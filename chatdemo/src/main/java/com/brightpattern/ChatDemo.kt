@@ -1,17 +1,16 @@
 package com.brightpattern
 
 import android.app.Application
-import android.content.Context
 import android.util.Log
+import androidx.preference.PreferenceManager
 import com.brightpattern.bpcontactcenter.ContactCenterCommunicator
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
-import java.util.*
 
 class ChatDemo : Application() {
 
     companion object {
-        lateinit var api: ContactCenterCommunicator
+        var api: ContactCenterCommunicator? = null
         var gcmToken: String? = null
         var chatID: String = ""
         var partyID: String = ""
@@ -22,32 +21,51 @@ class ChatDemo : Application() {
 
     }
 
-    val baseURL = "https://alvm.bugfocus.com"
-    val tenantURL = "devs.alvm.bugfocus.com"
-    val appID = "Android"
-
-    val clientID: String by lazy {
-        val default = UUID.randomUUID().toString()
-        val preferences = applicationContext.getSharedPreferences("ChatDemo", Context.MODE_PRIVATE)
-        preferences.getString("clientID", null)?.let {
-            it
-        } ?: run {
-            preferences.edit().putString("clientID", default).apply()
-            default
-        }
+    private val preferences by lazy {
+        PreferenceManager.getDefaultSharedPreferences(applicationContext)
     }
+
+    private val baseURL: String?
+        get() {
+            return preferences.getString("baseURL", null)
+        }
+
+    private val tenantURL: String?
+        get() {
+            return preferences.getString("tenantURL", null)
+        }
+
+    private val appID: String?
+        get() {
+            return preferences.getString("tenantURL", null)
+        }
+
+    private val clientID: String?
+        get() {
+            return preferences.getString("clientID", null)
+        }
 
     override fun onCreate() {
         super.onCreate()
 
-        api = ContactCenterCommunicator.init(baseURL, tenantURL, appID, clientID, applicationContext)
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+        registerAPI()
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (!task.isSuccessful) {
                 Log.w("*****", "Fetching FCM registration token failed", task.exception)
                 gcmToken = null
             }
             gcmToken = task.result
-        })
+        }
 
+    }
+
+    fun registerAPI(): Boolean {
+        return ifNotNull(baseURL, tenantURL, appID, clientID) { (baseURL, tenantURL, appID, clientID) ->
+
+            api = ContactCenterCommunicator.init(baseURL as String, tenantURL as String, appID as String, clientID as String, applicationContext)
+
+            return true
+        } ?: return false
     }
 }

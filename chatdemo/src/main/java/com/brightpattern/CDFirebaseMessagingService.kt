@@ -8,11 +8,15 @@ class CDFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         Log.d("FBMessageService", ">> ${remoteMessage.data}")
         if (remoteMessage.data.containsKey("chatID"))
-            ChatDemo.api.appDidReceiveMessage(remoteMessage.data.toMap())
+            ChatDemo.api?.appDidReceiveMessage(remoteMessage.data.toMap())
     }
 
     override fun onNewToken(token: String) {
-        // TODO: handle it!
         Log.e("FBMessageService", "Refreshed token: $token")
+        ifNotNull(token.isNotEmpty(), ChatDemo.chatID) {
+            ChatDemo.api?.subscribeForRemoteNotificationsFirebase(token, ChatDemo.chatID) {
+                Log.e("onNewToken", " subscribeForRemoteNotificationsFirebase > $it")
+            }
+        }
     }
 }
