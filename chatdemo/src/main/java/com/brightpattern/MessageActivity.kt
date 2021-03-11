@@ -98,13 +98,13 @@ class MessageActivity : AppCompatActivity() {
                     val incomingMessage = MyMessage(message.message, getParty(message.partyID), message.messageID)
                     messageListAdapter.addToStart(incomingMessage, true)
 
-                    api.chatMessageDelivered(ChatDemo.chatID, message.messageID) { r ->
+                    api?.chatMessageDelivered(ChatDemo.chatID, message.messageID) { r ->
                         if (r is Success) {
                             Log.e("S_DELIVERED", "OK")
                         }
                     }
 
-                    api.chatMessageRead(ChatDemo.chatID, message.messageID) { r ->
+                    api?.chatMessageRead(ChatDemo.chatID, message.messageID) { r ->
                         if (r is Success) {
                             Log.e("S_READ", "OK")
                         }
