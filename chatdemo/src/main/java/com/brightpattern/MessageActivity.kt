@@ -18,7 +18,6 @@ import com.stfalcon.chatkit.messages.MessageHolders
 import com.stfalcon.chatkit.messages.MessageInput
 import com.stfalcon.chatkit.messages.MessagesList
 import com.stfalcon.chatkit.messages.MessagesListAdapter
-import java.time.Instant
 import java.util.*
 
 class MessageActivity : AppCompatActivity() {
@@ -141,7 +140,7 @@ class MessageActivity : AppCompatActivity() {
     }
 }
 
-data class MyMessage(val message: String, val messageUser: IUser, val messageID: String = "", val timestamp: Long = Instant.now().epochSecond) : IMessage {
+data class MyMessage(val message: String, val messageUser: IUser, val messageID: String = "", val timestamp: Long = System.currentTimeMillis() / 1000) : IMessage {
     override fun getId(): String {
         return messageID
     }
