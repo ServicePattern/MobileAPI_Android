@@ -15,7 +15,7 @@
     <application
         android:name="com.brightpattern.ChatDemo"
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/company_name"
         android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/AppTheme">
