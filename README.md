@@ -31,16 +31,20 @@ dependencies {
 
 ### How to use
 
-3. Сreate an instance of the `ContactCenterCommunicator` class which would handle communications with the BPCC server:
+3. Generate the unique `clientID` for your application. The `clientID` should be generated when application runs for the first time on the  mobile device and saved in the local storage. The application should use same value until it is deleted from the device. The `clientID` should be unique for the application / device combination. 
 ```kotlin
   val clientID = UUID.randomUUID().toString()
+```
+
+4. Сreate an instance of the `ContactCenterCommunicator` class which would handle communications with the BPCC server:
+```kotlin
   val baseURL = "https://<your server URL>"
   val tenantURL = "<your tenant URL>"
   var appID = "<your messaging scenario entry ID>"
   val api = ContactCenterCommunicator.init(baseURL, tenantURL, appID, clientID, applicationContext)
 ```
 
-4. Register for push notifications. Request for a token and register it in the API
+5. Register for push notifications. Request for a token and register it in the API
 ```kotlin
 FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
   if (!task.isSuccessful) {
@@ -51,7 +55,7 @@ FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
 }
 ```
 
-5. Creeate FireBaseMessaging service
+6. Creeate FireBaseMessaging service
 ```kotlin
 class CDFirebaseMessagingService : FirebaseMessagingService() {
     val api: ContactCenterCommunicator? = <API reference>
@@ -70,7 +74,7 @@ class CDFirebaseMessagingService : FirebaseMessagingService() {
 }
 ```
 
-6. Add the callback
+7. Add the callback
 ```kotlin
 api.callback = object : ContactCenterEventsInterface {
   override fun chatSessionEvents(result: Result<List<ContactCenterEvent>, Error>) {
