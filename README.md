@@ -33,7 +33,7 @@ dependencies {
 
 3. Сreate an instance of the `ContactCenterCommunicator` class which would handle communications with the BPCC server:
 ```kotlin
-  val clientID = "D3577669-EB4B-4565-B9C6-27DD857CE8E5"
+  val clientID = UUID.randomUUID().toString()
   val baseURL = "https://<your server URL>"
   val tenantURL = "<your tenant URL>"
   var appID = "<your messaging scenario entry ID>"
