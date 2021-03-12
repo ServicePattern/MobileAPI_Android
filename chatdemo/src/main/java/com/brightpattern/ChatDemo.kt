@@ -37,7 +37,7 @@ class ChatDemo : Application() {
 
     private val appID: String?
         get() {
-            return preferences.getString("tenantURL", null)
+            return preferences.getString("appID", null)
         }
 
     private val clientID: String?
