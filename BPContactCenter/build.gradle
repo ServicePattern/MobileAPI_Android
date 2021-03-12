@@ -3,11 +3,27 @@ plugins {
     id 'kotlin-android'
     id 'kotlinx-serialization'
     id 'maven-publish'
+    id 'org.jetbrains.dokka'
+
 }
 
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
+
+    dokkaHtml.configure {
+        dokkaSourceSets {
+            named("main") {
+                outputDirectory.set("$buildDir/docs")
+
+                // Do not create index pages for empty packages
+                skipEmptyPackages.set(true)
+                noAndroidSdkLink.set(true)
+                reportUndocumented.set(false)
+                noStdlibLink.set(true)
+            }
+        }
+    }
 
     defaultConfig {
         minSdkVersion 22
