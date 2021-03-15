@@ -34,10 +34,10 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
     companion object {
         /**
          *  This static function returns an instance of ContactCenterCommunicator class
-         *  @param baseURL
-         *  @param tenantURL
-         *  @param appID
-         *  @param clientID
+         *  @param baseURL your server URL
+         *  @param tenantURL your tenant URL
+         *  @param appID your messaging scenario entry ID
+         *  @param clientID unique `clientID` for your application
          *  @param networkService [NetworkServiceable]
          *  @param pollRequestService [PollRequestInterface]
          *
@@ -56,11 +56,11 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
 
         /**
          *  This simple static function returns an instance of ContactCenterCommunicator class
-         *  @param baseURL
-         *  @param tenantURL
-         *  @param appID
-         *  @param clientID
-         *  @param context
+         *  @param baseURL your server URL
+         *  @param tenantURL your tenant URL
+         *  @param appID your messaging scenario entry ID
+         *  @param clientID unique `clientID` for your application
+         *  @param context application Context
          *
          *  @return [ContactCenterCommunicator]
          */
