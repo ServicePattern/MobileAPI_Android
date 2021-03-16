@@ -9,7 +9,7 @@ data class ContactCenterErrorResponse(
 
     fun toModel(): ContactCenterError? {
         return if (error_code == "5005") {
-            ContactCenterError.chatSessionNotFound()
+            ContactCenterError.ChatSessionNotFound()
         } else null
     }
 }
