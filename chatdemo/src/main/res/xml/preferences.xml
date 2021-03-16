@@ -6,14 +6,14 @@
             android:summary="Please provide your client ID"
             android:title="Client ID" />
         <EditTextPreference
-            android:defaultValue="https://alvm.bugfocus.com"
+            android:defaultValue="-* REQUEST FROM THE SERVICE PROVIDER *-"
             android:key="baseURL"
             android:summary="Please provide your base URL"
             android:title="Base URL" />
         <EditTextPreference
-            android:defaultValue="devs.alvm.bugfocus.com"
+            android:defaultValue="-* REQUEST FROM THE SERVICE PROVIDER *-"
             android:key="tenantURL"
-            android:summary="Please provide your teneat URL"
+            android:summary="Please provide your tenant URL"
             android:title="Tenant URL" />
         <EditTextPreference
             android:defaultValue="Android"
