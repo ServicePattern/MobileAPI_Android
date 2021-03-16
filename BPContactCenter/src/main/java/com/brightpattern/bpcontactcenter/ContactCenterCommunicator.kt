@@ -4,6 +4,7 @@ import android.content.Context
 import com.android.volley.Request
 import com.android.volley.toolbox.HurlStack
 import com.android.volley.toolbox.Volley
+import com.brightpattern.bpcontactcenter.entity.ContactCenterError
 import com.brightpattern.bpcontactcenter.entity.ContactCenterEvent
 import com.brightpattern.bpcontactcenter.interfaces.ContactCenterCommunicating
 import com.brightpattern.bpcontactcenter.interfaces.ContactCenterEventsInterface
@@ -120,10 +121,10 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
                 val state = format.decodeFromString(ContactCenterServiceAvailability.serializer(), it.toString())
                 completion.invoke(Success(state))
             }, {
-                completion.invoke(Failure(java.lang.Error(it)))
+                completion.invoke(Failure(ContactCenterError.CommonCCError(it.localizedMessage)))
             })
         } catch (e: java.lang.Exception) {
-            completion.invoke(Failure(java.lang.Error(e)))
+            completion.invoke(Failure(ContactCenterError.CommonCCError(e.toString())))
         }
     }
 
@@ -134,10 +135,10 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
                 val result = format.decodeFromString(ContactCenterEventsContainerDto.serializer(), it.toString())
                 completion.invoke(Success(result.events))
             }, {
-                completion.invoke(Failure(java.lang.Error(it)))
+                completion.invoke(Failure(ContactCenterError.CommonCCError(it.toString())))
             })
         } catch (e: java.lang.Exception) {
-            completion.invoke(Failure(java.lang.Error(e)))
+            completion.invoke(Failure(ContactCenterError.CommonCCError(e.toString())))
         }
     }
 
@@ -148,10 +149,10 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
                 val list = format.decodeFromString(ChatSessionCaseHistoryDto.serializer(), it.toString())
                 completion.invoke(Success(list))
             }, {
-                completion.invoke(Failure(java.lang.Error(it)))
+                completion.invoke(Failure(ContactCenterError.CommonCCError(it.toString())))
             })
         } catch (e: java.lang.Exception) {
-            completion.invoke(Failure(java.lang.Error(e)))
+            completion.invoke(Failure(ContactCenterError.CommonCCError(e.toString())))
         }
     }
 
@@ -163,10 +164,10 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
                 pollRequestService.addChatID(result.chatID, baseURL, tenantURL)
                 completion.invoke(Success(result))
             }, {
-                completion.invoke(Failure(java.lang.Error(it)))
+                completion.invoke(Failure(ContactCenterError.CommonCCError(it.toString())))
             })
         } catch (e: java.lang.Exception) {
-            completion.invoke(Failure(java.lang.Error(e)))
+            completion.invoke(Failure(ContactCenterError.CommonCCError(e.toString())))
         }
     }
 
@@ -178,10 +179,10 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
                 completion.invoke(Success(it.toString()))
             }, {
-                completion.invoke(Failure(java.lang.Error(it)))
+                completion.invoke(Failure(ContactCenterError.CommonCCError(it.toString())))
             })
         } catch (e: java.lang.Exception) {
-            completion.invoke(Failure(java.lang.Error(e)))
+            completion.invoke(Failure(ContactCenterError.CommonCCError(e.toString())))
         }
     }
 
@@ -193,10 +194,10 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
                 completion.invoke(Success(it.toString()))
             }, {
-                completion.invoke(Failure(java.lang.Error(it)))
+                completion.invoke(Failure(ContactCenterError.CommonCCError(it.toString())))
             })
         } catch (e: java.lang.Exception) {
-            completion.invoke(Failure(java.lang.Error(e)))
+            completion.invoke(Failure(ContactCenterError.CommonCCError(e.toString())))
         }
     }
 
@@ -208,10 +209,10 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
                 completion.invoke(Success(it.toString()))
             }, {
-                completion.invoke(Failure(java.lang.Error(it)))
+                completion.invoke(Failure(ContactCenterError.CommonCCError(it.toString())))
             })
         } catch (e: java.lang.Exception) {
-            completion.invoke(Failure(java.lang.Error(e)))
+            completion.invoke(Failure(ContactCenterError.CommonCCError(e.toString())))
         }
     }
 
@@ -223,10 +224,10 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
                 completion.invoke(Success(it.toString()))
             }, {
-                completion.invoke(Failure(java.lang.Error(it)))
+                completion.invoke(Failure(ContactCenterError.CommonCCError(it.toString())))
             })
         } catch (e: java.lang.Exception) {
-            completion.invoke(Failure(java.lang.Error(e)))
+            completion.invoke(Failure(ContactCenterError.CommonCCError(e.toString())))
         }
     }
 
@@ -238,10 +239,10 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
                 completion.invoke(Success(it.toString()))
             }, {
-                completion.invoke(Failure(java.lang.Error(it)))
+                completion.invoke(Failure(ContactCenterError.CommonCCError(it.toString())))
             })
         } catch (e: java.lang.Exception) {
-            completion.invoke(Failure(java.lang.Error(e)))
+            completion.invoke(Failure(ContactCenterError.CommonCCError(e.toString())))
         }
     }
 
@@ -253,10 +254,10 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
                 completion.invoke(Success(it.toString()))
             }, {
-                completion.invoke(Failure(java.lang.Error(it)))
+                completion.invoke(Failure(ContactCenterError.CommonCCError(it.toString())))
             })
         } catch (e: java.lang.Exception) {
-            completion.invoke(Failure(java.lang.Error(e)))
+            completion.invoke(Failure(ContactCenterError.CommonCCError(e.toString())))
         }
     }
 
@@ -268,10 +269,10 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
                 completion.invoke(Success(it.toString()))
             }, {
-                completion.invoke(Failure(java.lang.Error(it)))
+                completion.invoke(Failure(ContactCenterError.CommonCCError(it.toString())))
             })
         } catch (e: java.lang.Exception) {
-            completion.invoke(Failure(java.lang.Error(e)))
+            completion.invoke(Failure(ContactCenterError.CommonCCError(e.toString())))
         }
     }
 
@@ -287,10 +288,10 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, json, {
                 completion.invoke(Success(it.toString()))
             }, {
-                completion.invoke(Failure(java.lang.Error(it)))
+                completion.invoke(Failure(ContactCenterError.CommonCCError(it.toString())))
             })
         } catch (e: java.lang.Exception) {
-            completion.invoke(Failure(java.lang.Error(e)))
+            completion.invoke(Failure(ContactCenterError.CommonCCError(e.toString())))
         }
     }
 
@@ -309,10 +310,10 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
                 completion.invoke(Success(it.toString()))
             }, {
-                completion.invoke(Failure(java.lang.Error(it)))
+                completion.invoke(Failure(ContactCenterError.CommonCCError(it.toString())))
             })
         } catch (e: java.lang.Exception) {
-            completion.invoke(Failure(java.lang.Error(e)))
+            completion.invoke(Failure(ContactCenterError.CommonCCError(e.toString())))
         }
     }
 
