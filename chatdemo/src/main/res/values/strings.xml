@@ -4,6 +4,6 @@
     <string name="company_name">Bright Pattern Inc.</string>
     <string name="app_name">ChatDemo</string>
 
-    <string name="keyChatNewMessageTitle">*** KEY ***</string>
+<!--    <string name="keyChatNewMessageTitle">*** KEY ***</string>-->
 
 </resources>

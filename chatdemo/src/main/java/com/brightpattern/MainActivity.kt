@@ -22,7 +22,7 @@ import org.json.JSONObject
 import java.util.*
 
 @SuppressLint("SetTextI18n")
-class TestActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
     val api: ContactCenterCommunicator?
         get() {
@@ -93,13 +93,12 @@ class TestActivity : AppCompatActivity() {
                     "chatNotTyping" -> api.chatNotTyping(ChatDemo.chatID) { r -> resultProcessing(r) }
                     "disconnectChat" -> api.disconnectChat(ChatDemo.chatID) { r -> resultProcessing(r) }
                     "endChat" -> api.endChat(ChatDemo.chatID) { r -> resultProcessing(r) }
-                    else -> Log.e("EEEEE", "########################################################")
+                    else -> Log.e("adapter", "##################### UNKNOWN ACTION ######################")
                 }
 
                 api.callback = object : ContactCenterEventsInterface {
                     override fun chatSessionEvents(result: Result<List<ContactCenterEvent>, Error>) {
-                        Log.e("&&&&&&&&&&&&", " &&&&&&&&&&&&&&&&&&&&&&&&&&& \t\n\t $result")
-                        this@TestActivity.resultProcessing(result)
+                        this@MainActivity.resultProcessing(result)
                     }
                 }
             }
@@ -109,18 +108,17 @@ class TestActivity : AppCompatActivity() {
     fun resultProcessing(result: Any) {
         when (result) {
             is Failure<*> -> {
-                Log.e("Failure", ">>> ${result.reason}")
+                Log.e("resultProcessing > Failure", ">>> ${result.reason}")
                 tvResult.text = "Failure\n${result.reason}"
             }
             is Success<*> -> {
-                Log.e("Success", ">>> ${result.value}")
+                Log.e("resultProcessing > Success", ">>> ${result.value}")
                 tvResult.text = "Success\n${result.value}"
 
                 (result.value as? List<*>)?.firstOrNull {
                     (it as? ContactCenterEvent.ChatSessionMessage) != null
                 }?.let {
                     (it as ContactCenterEvent.ChatSessionMessage)
-                    Log.e("TestActivity", "MessageId = ${it.messageID}")
                     ChatDemo.lastMessageID = it.messageID
                 }
 

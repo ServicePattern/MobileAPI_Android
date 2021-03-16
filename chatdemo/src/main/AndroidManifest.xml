@@ -24,7 +24,7 @@
             android:required="false" />
 
         <activity
-            android:name="com.brightpattern.TestActivity"
+            android:name="com.brightpattern.MainActivity"
             android:label="@string/company_name"
             android:screenOrientation="portrait"
             android:theme="@style/TransparentActionBar">

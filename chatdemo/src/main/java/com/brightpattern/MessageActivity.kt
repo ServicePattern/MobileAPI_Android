@@ -70,7 +70,6 @@ class MessageActivity : AppCompatActivity() {
         api?.let { api ->
             api.callback = object : ContactCenterEventsInterface {
                 override fun chatSessionEvents(result: Result<List<ContactCenterEvent>, Error>) {
-                    Log.e("&&&&&&&&&&&&", " &&&&&&&&&&&&&&&&&&&&&&&&&&& \t\n\t $result")
                     this@MessageActivity.resultProcessing(result)
                 }
             }
