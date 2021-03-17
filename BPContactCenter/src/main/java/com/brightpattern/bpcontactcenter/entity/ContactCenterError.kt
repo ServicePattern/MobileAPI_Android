@@ -1,15 +1,13 @@
 package com.brightpattern.bpcontactcenter.entity
 
-import com.brightpattern.bpcontactcenter.network.ContactCenterErrorResponse
+import org.json.JSONException
 
-sealed class ContactCenterError(text: String): Error(text) {
-    data class FailedToBuildBaseURL(val text: String): ContactCenterError(text)
-    data class FailedToCodeJCON(val nestedErrors: List<Error>): ContactCenterError("failedToCodeJCON")
-    data class FailedToCreateURLRequest(val text: String): ContactCenterError(text)
-    data class BadStatusCode(val statusCode: Int, val errorResponse: ContactCenterErrorResponse?): ContactCenterError("badStatusCode")
-    data class UnexpectedResponse(val text: String, val response: String?): ContactCenterError(text)
-    data class DataEmpty(val text: String): ContactCenterError(text)
-    data class FailedToCast(val value: String): ContactCenterError(value)
-    data class ChatSessionNotFound(val text: String): ContactCenterError(text)
-    data class CommonCCError(val text: String): ContactCenterError(text)
+sealed class ContactCenterError(text: String) : Error(text) {
+    data class FailedToBuildBaseURL(val text: String) : ContactCenterError(text)
+    data class FailedToCodeJSON(val event: ContactCenterEvent, val jsonException: JSONException) : ContactCenterError("FailedToCodeJCON")
+    data class FailedToCreateURLRequest(val volleyException: com.android.volley.VolleyError) : ContactCenterError("FailedToCreateURLRequest")
+    data class BadStatusCode(val statusCode: Int, val volleyException: com.android.volley.VolleyError) : ContactCenterError("badStatusCode")
+    data class VolleyError(val volleyException: com.android.volley.VolleyError) : ContactCenterError("VolleyError")
+    data class ChatSessionNotFound(val text: String) : ContactCenterError(text)
+    data class CommonCCError(val text: String) : ContactCenterError(text)
 }

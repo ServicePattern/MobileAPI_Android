@@ -6,6 +6,7 @@ internal class FieldName {
         const val CREATED_TIME = "created_time"
         const val SESSIONS = "sessions"
         const val EVENTS = "events"
+        const val EVENT = "event"
         const val MSG_ID = "msg_id"
         const val REF_MSG_ID = "ref_msg_id"
         const val PARTY_ID = "party_id"
@@ -25,5 +26,7 @@ internal class FieldName {
         const val IS_NEW_CHAT = "is_new_chat"
         const val PHONE_NUMBER = "phone_number"
         const val CHAT = "chat"
+        const val DEVICE_TOKEN = "android_firebase_device_token"
+        const val NOTIFICATION_CHAT_ID = "chatID"
     }
 }
