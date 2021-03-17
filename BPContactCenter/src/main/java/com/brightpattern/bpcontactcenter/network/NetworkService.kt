@@ -4,6 +4,7 @@ import android.util.Log
 import com.android.volley.*
 import com.android.volley.toolbox.HttpHeaderParser
 import com.android.volley.toolbox.JsonObjectRequest
+import com.brightpattern.bpcontactcenter.BuildConfig
 import com.brightpattern.bpcontactcenter.entity.FieldName
 import com.brightpattern.bpcontactcenter.interfaces.NetworkServiceable
 import com.brightpattern.bpcontactcenter.network.support.HttpHeaderFields
@@ -31,7 +32,7 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
                     return Response.success(responseObject, HttpHeaderParser.parseCacheHeaders(response))
                 }
                 if (BuildConfig.DEBUG)
-                    Log.d("NetworkService", "Received from server: ${response?.data}")
+                    Log.d("NetworkService", "Received from server: ${response?.data?.let { String(it)}}")
                 return super.parseNetworkResponse(response)
             }
         }
@@ -51,7 +52,7 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
 
             override fun parseNetworkResponse(response: NetworkResponse?): Response<JSONObject> {
                 if (BuildConfig.DEBUG)
-                    Log.d("NetworkService", "Received from server: ${response?.data}")
+                    Log.d("NetworkService", "Received from server: ${response?.data?.let { String(it)}}")
                 return super.parseNetworkResponse(response)
             }
         }
@@ -76,7 +77,7 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
                     return Response.success(responseObject, HttpHeaderParser.parseCacheHeaders(response))
                 }
                 if (BuildConfig.DEBUG)
-                    Log.d("NetworkService", "Received from server: ${response?.data}")
+                    Log.d("NetworkService", "Received from server: ${response?.data?.let { String(it)}}")
                 return super.parseNetworkResponse(response)
             }
         }
