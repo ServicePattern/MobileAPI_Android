@@ -1,9 +1,7 @@
 package com.brightpattern.bpcontactcenter.network
 
-import com.android.volley.DefaultRetryPolicy
-import com.android.volley.NetworkResponse
-import com.android.volley.RequestQueue
-import com.android.volley.Response
+import android.util.Log
+import com.android.volley.*
 import com.android.volley.toolbox.HttpHeaderParser
 import com.android.volley.toolbox.JsonObjectRequest
 import com.brightpattern.bpcontactcenter.entity.FieldName
@@ -32,6 +30,8 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
                     responseObject.put(FieldName.STATE, "success")
                     return Response.success(responseObject, HttpHeaderParser.parseCacheHeaders(response))
                 }
+                if (BuildConfig.DEBUG)
+                    Log.d("NetworkService", "Received from server: ${response?.data}")
                 return super.parseNetworkResponse(response)
             }
         }
@@ -47,6 +47,12 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
                 errorListener) {
             override fun getHeaders(): MutableMap<String, String> {
                 return headerFields?.fields?.toMutableMap() ?: mutableMapOf()
+            }
+
+            override fun parseNetworkResponse(response: NetworkResponse?): Response<JSONObject> {
+                if (BuildConfig.DEBUG)
+                    Log.d("NetworkService", "Received from server: ${response?.data}")
+                return super.parseNetworkResponse(response)
             }
         }
         queue.add(request)
@@ -69,6 +75,8 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
                     responseObject.put(FieldName.STATE, "success")
                     return Response.success(responseObject, HttpHeaderParser.parseCacheHeaders(response))
                 }
+                if (BuildConfig.DEBUG)
+                    Log.d("NetworkService", "Received from server: ${response?.data}")
                 return super.parseNetworkResponse(response)
             }
         }

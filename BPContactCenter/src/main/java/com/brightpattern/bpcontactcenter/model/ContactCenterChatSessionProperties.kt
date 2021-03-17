@@ -32,7 +32,7 @@ data class ContactCenterChatSessionProperties(
         @SerialName(FieldName.STATE)
         val state: ContactCenterChatSessionState,
         @SerialName(FieldName.EWT)
-        val estimatedWaitTime: Int,
+        val estimatedWaitTime: Int? = null,
         @SerialName(FieldName.IS_NEW_CHAT)
         val isNewChat: Boolean,
         @SerialName(FieldName.PHONE_NUMBER)
