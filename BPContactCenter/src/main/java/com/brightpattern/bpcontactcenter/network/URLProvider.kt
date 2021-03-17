@@ -39,7 +39,7 @@ internal class URLProvider {
             val result =  "$baseURL/$basePath/$apiVersion/${endpointPathString}?tenantUrl=$tenantURL"
             if (!URLUtil.isValidUrl(result))
                 throw ContactCenterError.FailedToBuildBaseURL("Failed to build URL from baseURL=$baseURL\ttenantURL=$tenantURL\tchatID=$chatID ")
-            if(URLUtil.isHttpsUrl(result))
+            if(!URLUtil.isHttpsUrl(result))
                 throw ContactCenterError.FailedToBuildBaseURL("The URL=$result doesn't contain SSL protocol keyword ")
             return result
         }
