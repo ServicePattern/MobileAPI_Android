@@ -4,6 +4,7 @@ import android.util.Log
 import com.android.volley.*
 import com.android.volley.toolbox.HttpHeaderParser
 import com.android.volley.toolbox.JsonObjectRequest
+import com.brightpattern.bpcontactcenter.BuildConfig
 import com.brightpattern.bpcontactcenter.entity.FieldName
 import com.brightpattern.bpcontactcenter.interfaces.NetworkServiceable
 import com.brightpattern.bpcontactcenter.network.support.HttpHeaderFields
