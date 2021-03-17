@@ -1,5 +1,8 @@
 package com.brightpattern.bpcontactcenter.network
 
+import android.webkit.URLUtil
+import com.brightpattern.bpcontactcenter.entity.ContactCenterError
+
 internal class URLProvider {
     companion object {
         const val apiVersion = "v2"
@@ -30,9 +33,15 @@ internal class URLProvider {
                 CloseCase -> "chats/$chatID/closecase"
             }
 
+        @Throws(ContactCenterError::class)
         fun generateFullUrl(baseURL: String, tenantURL: String, chatID: String = ""): String {
             URLProvider.chatID = chatID
-            return "$baseURL/$basePath/$apiVersion/${endpointPathString}?tenantUrl=$tenantURL"
+            val result =  "$baseURL/$basePath/$apiVersion/${endpointPathString}?tenantUrl=$tenantURL"
+            if (!URLUtil.isValidUrl(result))
+                throw ContactCenterError.FailedToBuildBaseURL("Failed to build URL from baseURL=$baseURL\ttenantURL=$tenantURL\tchatID=$chatID ")
+            if(URLUtil.isHttpsUrl(result))
+                throw ContactCenterError.FailedToBuildBaseURL("The URL=$result doesn't contain SSL protocol keyword ")
+            return result
         }
     }
 }
