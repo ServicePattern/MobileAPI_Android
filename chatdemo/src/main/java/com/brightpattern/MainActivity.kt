@@ -84,6 +84,7 @@ class MainActivity : AppCompatActivity() {
                     "requestChat" -> api.requestChat("555-555-5555", "Someone", JSONObject()) { r -> resultProcessing(r) }
                     "getChatHistory" -> api.getChatHistory(ChatDemo.chatID) { r -> resultProcessing(r) }
                     "getCaseHistory" -> api.getCaseHistory(ChatDemo.chatID) { r -> resultProcessing(r) }
+                    "closeCase" -> api.closeCase(ChatDemo.chatID) { r -> resultProcessing(r) }
                     "sendChatMessage" -> api.sendChatMessage(ChatDemo.chatID, "MY MESSAGE") { r -> resultProcessing(r) }
                     "subscribeForRemoteNotificationsFirebase" -> api.subscribeForRemoteNotificationsFirebase(ChatDemo.chatID, ChatDemo.gcmToken ?: "unknown") { r -> resultProcessing(r) }
                     "subscribeForRemoteNotificationsAPNs" -> api.subscribeForRemoteNotificationsAPNs(ChatDemo.chatID, ChatDemo.gcmToken ?: "unknown") { r -> resultProcessing(r) }

@@ -11,8 +11,11 @@ import com.brightpattern.chatdemo.R
 
 class FunctionsListAdapter : RecyclerView.Adapter<FunctionsListAdapter.MyViewHolder>() {
 
-    private val functionList = listOf("checkAvailability", "requestChat", "getChatHistory",
+    private val functionList = listOf("checkAvailability",
+            "requestChat",
+            "getChatHistory",
             "getCaseHistory",
+            "closeCase",
             "sendChatMessage",
             "chatMessageDelivered",
             "chatMessageRead",
