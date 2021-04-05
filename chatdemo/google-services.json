@@ -39,10 +39,10 @@
               "client_type": 3
             },
             {
-              "client_id": "241329601132-jnecevvrt5l4n9pb7bh6q27rjtumklmg.apps.googleusercontent.com",
+              "client_id": "241329601132-1inkh63g4lvcpvmiv89gevhlchqvtq81.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "BrightPattern.NotificationsTest"
+                "bundle_id": "com.BP.contactcenter.BPMobileMessaging-Example"
               }
             }
           ]
