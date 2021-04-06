@@ -129,7 +129,7 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
                 it.localizedMessage?.let{ localizedMessage ->
                     completion.invoke(Failure(ContactCenterError.CommonCCError(localizedMessage)))
                 } ?: run{
-                    completion.invoke(Failure(ContactCenterError.CommonCCError("No localized message, please provide the info to the dev team")))
+                    completion.invoke(Failure(ContactCenterError.EmptyLocalizedMessageError("No localized message, please provide the info to the dev team")))
                 }
             })
         } catch (e: ContactCenterError) {
