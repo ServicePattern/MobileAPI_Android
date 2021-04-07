@@ -112,16 +112,7 @@ interface ContactCenterCommunicating {
      **/
     fun endChat(chatID: String, completion: (Result<String, Error>) -> Unit)
 
-    /** Subscribes for push notifications from APNs server
-     * This function should be called each time `chatID` is changed
-     * @param chatID: The current chat ID
-     * @param deviceToken: Unique to both the device and the app. Which is received in `didRegisterForRemoteNotificationsWithDeviceToken`
-     * @param completion: Returns `.success` or [Error] otherwise
-     **/
-    fun subscribeForRemoteNotificationsAPNs(chatID: String, deviceToken: String, completion: (Result<Void, Error>) -> Unit)
-
-    /** Subscribes for push notifications from APNs server when using Firebase service.
-     * Firebase gives one more layer of flexibility to have event more granular control of notifications that are sent to the users devices.
+    /** Subscribes for push notifications using Firebase service.
      *
      * This function should be called each time `chatID` is changed
      * @param chatID: The current chat ID
