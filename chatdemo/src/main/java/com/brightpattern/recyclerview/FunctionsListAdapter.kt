@@ -23,8 +23,7 @@ class FunctionsListAdapter : RecyclerView.Adapter<FunctionsListAdapter.MyViewHol
             "chatNotTyping",
             "disconnectChat",
             "endChat",
-            "subscribeForRemoteNotificationsFirebase",
-            "subscribeForRemoteNotificationsAPNs")
+            "subscribeForRemoteNotificationsFirebase")
 
     private val alwaysActive = listOf("checkAvailability", "requestChat")
 

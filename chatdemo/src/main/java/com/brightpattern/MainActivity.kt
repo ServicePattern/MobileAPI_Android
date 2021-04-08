@@ -87,7 +87,6 @@ class MainActivity : AppCompatActivity() {
                     "closeCase" -> api.closeCase(ChatDemo.chatID) { r -> resultProcessing(r) }
                     "sendChatMessage" -> api.sendChatMessage(ChatDemo.chatID, "MY MESSAGE") { r -> resultProcessing(r) }
                     "subscribeForRemoteNotificationsFirebase" -> api.subscribeForRemoteNotificationsFirebase(ChatDemo.chatID, ChatDemo.gcmToken ?: "unknown") { r -> resultProcessing(r) }
-                    "subscribeForRemoteNotificationsAPNs" -> api.subscribeForRemoteNotificationsAPNs(ChatDemo.chatID, ChatDemo.gcmToken ?: "unknown") { r -> resultProcessing(r) }
                     "chatMessageDelivered" -> api.chatMessageDelivered(ChatDemo.chatID, ChatDemo.lastMessageID) { r -> resultProcessing(r) }
                     "chatMessageRead" -> api.chatMessageRead(ChatDemo.chatID, ChatDemo.lastMessageID) { r -> resultProcessing(r) }
                     "chatTyping" -> api.chatTyping(ChatDemo.chatID) { r -> resultProcessing(r) }
