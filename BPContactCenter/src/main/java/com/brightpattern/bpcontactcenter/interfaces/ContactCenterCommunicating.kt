@@ -131,4 +131,16 @@ interface ContactCenterCommunicating {
      * @param completion: Returns `.success` or [ContactCenterError](x-source-tag://ContactCenterError) otherwise
      **/
     fun closeCase(chatID: String, completion: (Result<String, Error>) -> Unit)
+
+    /** Starts polling for chat session server events.
+     * @param  chatID: The current chat ID
+     * @param completion: Returns `.success` or [ContactCenterError](x-source-tag://ContactCenterError) otherwise
+     **/
+    fun startPolling(chatID: String, completion: (Result<Boolean, Error>) -> Unit)
+
+    /** Stops polling for chat session server events. Note that the server will terminate a session after configured timeput unless application does not start polling again.
+     * @param  chatID: The current chat ID
+     * @param completion: Returns `.success` or [ContactCenterError](x-source-tag://ContactCenterError) otherwise
+     **/
+    fun stopPolling(chatID: String, completion: (Result<Boolean, Error>) -> Unit)
 }

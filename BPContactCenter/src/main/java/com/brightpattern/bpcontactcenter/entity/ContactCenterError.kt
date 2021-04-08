@@ -9,6 +9,7 @@ sealed class ContactCenterError(text: String) : Error(text) {
     data class FailedToCreateURLRequest(val volleyException: com.android.volley.VolleyError) : ContactCenterError("FailedToCreateURLRequest")
     data class BadStatusCode(val statusCode: Int, val volleyException: com.android.volley.VolleyError) : ContactCenterError("badStatusCode")
     data class VolleyError(val volleyException: com.android.volley.VolleyError) : ContactCenterError("VolleyError")
+    data class SessionNotCreated(val text: String = "") : ContactCenterError("There is no active chat session")
 
     data class ChatSessionBadTenantUrl(val text: String) : ContactCenterError(text)
     data class ChatSessionNoAuthHeader(val text: String) : ContactCenterError(text)
