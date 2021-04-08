@@ -64,10 +64,29 @@ class MessageActivity : AppCompatActivity() {
         messagesList.setAdapter(messageListAdapter)
     }
 
+    override fun onPause() {
+        Log.e("MessageActivity", "************** onPause **************")
+        api?.let { api ->
+            api.stopPolling(ChatDemo.chatID) { r->
+                if (r is Success) {
+                    Log.d("MessageActivity", "stopped event polling")
+                }
+            }
+        }
+        super.onPause()
+    }
+
     override fun onResume() {
         Log.e("MessageActivity", "************** onResume **************")
         super.onResume()
+
         api?.let { api ->
+            api.startPolling(ChatDemo.chatID) { r->
+                if (r is Success) {
+                    Log.d("MessageActivity", "started event polling")
+                }
+            }
+
             api.callback = object : ContactCenterEventsInterface {
                 override fun chatSessionEvents(result: Result<List<ContactCenterEvent>, Error>) {
                     this@MessageActivity.resultProcessing(result)

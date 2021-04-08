@@ -188,6 +188,22 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
         }
     }
 
+    override fun startPolling(chatID: String, completion: (Result<Boolean, Error>) -> Unit) {
+        if (pollRequestService.startPolling(chatID)) {
+            completion.invoke(Success(true))
+        } else {
+            completion.invoke(Failure(ContactCenterError.SessionNotCreated()))
+        }
+    }
+
+    override fun stopPolling(chatID: String, completion: (Result<Boolean, Error>) -> Unit) {
+        if (pollRequestService.stopPolling(chatID)) {
+            completion.invoke(Success(true))
+        } else {
+            completion.invoke(Failure(ContactCenterError.SessionNotCreated()))
+        }
+    }
+
     override fun sendChatMessage(chatID: String, message: String, messageID: UUID?, completion: (Result<String, Error>) -> Unit) {
         try {
             val url = URLProvider.Endpoint.SendEvents.generateFullUrl(baseURL, tenantURL, chatID)

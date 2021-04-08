@@ -15,6 +15,8 @@ interface PollRequestInterface {
     val pollInterval: Int
     var callback: ContactCenterEventsInterface?
     fun addChatID(chatID: String, baseURL: String, tenantURL: String)
+    fun startPolling(chatID: String) : Boolean
+    fun stopPolling(chatID: String) : Boolean
 }
 
 class PollRequest private constructor(
@@ -35,6 +37,9 @@ class PollRequest private constructor(
 
     override var callback: ContactCenterEventsInterface? = null
     private var chatID: String = ""
+    private var baseUrl: String = ""
+    private var tenantUrl: String = ""
+    private var isPaused: Boolean = false
     private lateinit var networkService: NetworkServiceable
     private val format: Json = Json {
         isLenient = true
@@ -45,21 +50,45 @@ class PollRequest private constructor(
     // TODO: check for threadsafe !!!!!
     override fun addChatID(chatID: String, baseURL: String, tenantURL: String) {
         this.chatID = chatID
-        runObservation(baseURL, tenantURL)
+        this.baseUrl = baseURL
+        this.tenantUrl = tenantURL
+        this.isPaused = false
+        runObservation()
     }
 
-    private fun runObservation(baseURL: String, tenantURL: String) {
+    override fun startPolling(chatID: String) : Boolean {
+        if (this.chatID.isEmpty() || !chatID.equals(this.chatID)) {
+            return false
+        }
 
-        val url = URLProvider.Endpoint.GetNewChatEvents.generateFullUrl(baseURL, tenantURL, chatID)
-        if (chatID.isNotEmpty())
+        isPaused = false;
+        runObservation()
+
+        return true;
+    }
+
+    override fun stopPolling(chatID: String) : Boolean {
+        if (this.chatID.isEmpty() || !chatID.equals(this.chatID)) {
+            return false
+        }
+
+        isPaused = true
+
+        return true
+    }
+
+    private fun runObservation() {
+
+        val url = URLProvider.Endpoint.GetNewChatEvents.generateFullUrl(baseUrl, tenantUrl, chatID)
+        if (chatID.isNotEmpty() && !isPaused)
             networkService.executePollRequest(Request.Method.GET, url, defaultHttpHeaderFields, null, pollInterval, {
                 val result = format.decodeFromString(ContactCenterEventsContainerDto.serializer(), it.toString())
                 callback?.chatSessionEvents(Success(result.events))
-                runObservation(baseURL, tenantURL)
+                runObservation()
             }, {
                 callback?.chatSessionEvents(Failure(Error(it)))
                 if (it.networkResponse.statusCode != 404) {
-                    runObservation(baseURL, tenantURL)
+                    runObservation()
                 } else {
                     chatID = ""
                 }
