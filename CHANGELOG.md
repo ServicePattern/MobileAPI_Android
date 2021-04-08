@@ -9,10 +9,12 @@ The changelog for `BPContactCenter`. Also see the [releases](https://github.com/
 
 ### Added
  - Missing error codes added to the `ContactCenterError` enumeration
+ - startPolling() and stopPolling() methods
  
 ### Changed
 
 ### Removed
+ - subscribeForRemoteNotificationsAPNs() method (not applicable to Android environment)
 
 
 ## [0.1.0-beta](https://github.com/ServicePattern/MobileAPI_Android/releases/tag/0.1.0-beta)
