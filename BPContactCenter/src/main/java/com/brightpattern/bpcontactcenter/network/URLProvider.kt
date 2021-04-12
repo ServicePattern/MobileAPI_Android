@@ -11,6 +11,7 @@ internal class URLProvider {
     }
 
     enum class Endpoint {
+        Version,
         CheckAvailability,
         GetChatHistory,
         GetCaseHistory,
@@ -23,6 +24,7 @@ internal class URLProvider {
         private val endpointPathString: String
             get() = when (this) {
 
+                Version -> "version"
                 CheckAvailability -> "availability"
                 GetChatHistory -> "chats/$chatID/history"
                 GetCaseHistory -> "chats/$chatID/casehistory"

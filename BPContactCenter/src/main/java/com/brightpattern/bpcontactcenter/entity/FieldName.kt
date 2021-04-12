@@ -27,6 +27,7 @@ internal class FieldName {
         const val PHONE_NUMBER = "phone_number"
         const val REF_MSG_ID = "ref_msg_id"
         const val REQ_ID = "req_id"
+        const val SERVER_VERSION = "server_version"
         const val SESSIONS = "sessions"
         const val STATE = "state"
         const val TIMESTAMP = "timestamp"

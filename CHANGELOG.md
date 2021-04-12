@@ -10,6 +10,7 @@ The changelog for `BPContactCenter`. Also see the [releases](https://github.com/
 ### Added
  - Missing error codes added to the `ContactCenterError` enumeration
  - startPolling() and stopPolling() methods
+ - getVersion() method and corresponding ContactCenterVersion class
  
 ### Changed
 
