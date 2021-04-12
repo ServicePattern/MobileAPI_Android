@@ -173,8 +173,9 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
 
     override fun requestChat(phoneNumber: String, from: String, parameters: JSONObject, completion: (Result<ContactCenterChatSessionProperties, Error>) -> Unit) {
         try {
+            val payload = createRequestChatPayload(phoneNumber, from, parameters)
             val url = URLProvider.Endpoint.RequestChat.generateFullUrl(baseURL, tenantURL)
-            networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, parameters, {
+            networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
                 val result = format.decodeFromString(ContactCenterChatSessionProperties.serializer(), it.toString())
                 pollRequestService.addChatID(result.chatID, baseURL, tenantURL)
                 completion.invoke(Success(result))
@@ -362,6 +363,14 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
         } catch (e: java.lang.Exception) {
             completion.invoke(Failure(ContactCenterError.CommonCCError(e.toString())))
         }
+    }
+
+    private fun createRequestChatPayload(phoneNumber: String, from: String, parameters: JSONObject): JSONObject {
+        val payload = JSONObject()
+        payload.put(FieldName.PHONE_NUMBER, phoneNumber)
+        payload.put(FieldName.FROM, from)
+        payload.put(FieldName.PARAMETERS, parameters)
+        return payload
     }
 
     @Throws(ContactCenterError::class)
