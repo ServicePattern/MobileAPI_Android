@@ -3,6 +3,7 @@ package com.brightpattern.bpcontactcenter.interfaces
 import com.brightpattern.bpcontactcenter.entity.ContactCenterEvent
 import com.brightpattern.bpcontactcenter.model.ContactCenterChatSessionProperties
 import com.brightpattern.bpcontactcenter.model.ContactCenterServiceAvailability
+import com.brightpattern.bpcontactcenter.model.ContactCenterVersion
 import com.brightpattern.bpcontactcenter.model.http.ChatSessionCaseHistoryDto
 import com.brightpattern.bpcontactcenter.utils.Result
 import org.json.JSONObject
@@ -35,6 +36,12 @@ interface ContactCenterCommunicating {
      * Event' callback
      * **/
     var delegate: ContactCenterEventsInterface?
+
+    /**
+     * Returns server version.
+     * @param completion: Chat client and server events or [Error] otherwise
+     **/
+    fun getVersion(completion: (result: Result<ContactCenterVersion, Error>) -> Unit)
 
     // -- Chat
     /** Checks the current status of configured services

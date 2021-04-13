@@ -80,6 +80,7 @@ class MainActivity : AppCompatActivity() {
             adapter.selection = { it ->
                 Log.e("FB", "${ChatDemo.gcmToken}")
                 when (it) {
+                    "getVersion" -> api.getVersion { r -> resultProcessing(r) }
                     "checkAvailability" -> api.checkAvailability { r -> resultProcessing(r) }
                     "requestChat" -> api.requestChat("555-555-5555", "Someone", JSONObject()) { r -> resultProcessing(r) }
                     "getChatHistory" -> api.getChatHistory(ChatDemo.chatID) { r -> resultProcessing(r) }

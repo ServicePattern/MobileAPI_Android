@@ -15,6 +15,7 @@ import com.brightpattern.bpcontactcenter.interfaces.ContactCenterEventsInterface
 import com.brightpattern.bpcontactcenter.interfaces.NetworkServiceable
 import com.brightpattern.bpcontactcenter.model.ContactCenterChatSessionProperties
 import com.brightpattern.bpcontactcenter.model.ContactCenterServiceAvailability
+import com.brightpattern.bpcontactcenter.model.ContactCenterVersion
 import com.brightpattern.bpcontactcenter.model.http.ChatSessionCaseHistoryDto
 import com.brightpattern.bpcontactcenter.model.http.ContactCenterEventsContainerDto
 import com.brightpattern.bpcontactcenter.network.NetworkService
@@ -118,6 +119,26 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
         set(value) {
             pollRequestService.callback = value
         }
+
+    override fun getVersion(completion: (result: Result<ContactCenterVersion, Error>) -> Unit) {
+        try {
+            val url = URLProvider.Endpoint.Version.generateFullUrl(baseURL, tenantURL)
+            networkService.executeSimpleRequest(Request.Method.GET, url, defaultHttpHeaderFields, {
+                val version = format.decodeFromString(ContactCenterVersion.serializer(), it.toString())
+                completion.invoke(Success(version))
+            }, {
+                it.localizedMessage?.let{ localizedMessage ->
+                    completion.invoke(Failure(ContactCenterError.CommonCCError(localizedMessage)))
+                } ?: run{
+                    completion.invoke(Failure(ContactCenterError.EmptyLocalizedMessageError("No localized message, please provide the info to the dev team")))
+                }
+            })
+        } catch (e: ContactCenterError) {
+            completion.invoke(Failure(e))
+        } catch (e: java.lang.Exception) {
+            completion.invoke(Failure(ContactCenterError.CommonCCError(e.toString())))
+        }
+    }
 
     override fun checkAvailability(completion: ((result: Result<ContactCenterServiceAvailability, Error>) -> Unit)) {
         try {
