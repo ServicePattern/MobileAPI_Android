@@ -2,10 +2,11 @@
 
 The changelog for `BPContactCenter`. Also see the [releases](https://github.com/ServicePattern/MobileAPI_Android/releases) on GitHub.
 
-## [X.X.X](https://github.com/ServicePattern/MobileAPI_Android/releases/tag/X.X.X)
+## [0.1.1](https://github.com/ServicePattern/MobileAPI_Android/releases/tag/0.1.1)
 
 ### Fixed
-- [Issue 20](https://github.com/ServicePattern/MobileAPI_Android/issues/20): Demo crashes immediately after entering credentials. Verification of tenantUrl is added.
+- [Issue 20](https://github.com/ServicePattern/MobileAPI_Android/issues/20): Demo crashes immediately after entering credentials.
+- [Issue 23](https://github.com/ServicePattern/MobileAPI_Android/issues/23): Missing fields in Android compared to iOS.
 
 ### Added
  - Missing error codes added to the `ContactCenterError` enumeration
@@ -13,6 +14,7 @@ The changelog for `BPContactCenter`. Also see the [releases](https://github.com/
  - getVersion() method and corresponding ContactCenterVersion class
  
 ### Changed
+ - Sample application improvements
 
 ### Removed
  - subscribeForRemoteNotificationsAPNs() method (not applicable to Android environment)
