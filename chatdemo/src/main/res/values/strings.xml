@@ -4,6 +4,8 @@
     <string name="company_name">Bright Pattern Inc.</string>
     <string name="app_name">ChatDemo</string>
 
-<!--    <string name="keyChatNewMessageTitle">*** KEY ***</string>-->
+    <string name="keyChatNewMessageTitle">You have new chat message from %1$s</string>
+    <string name="keyChatTimeoutWarningTitle">The chat session is about to time out</string>
+    <string name="keyChatInactivityTimeoutTitle">We have not heard from you for a while</string>
 
 </resources>

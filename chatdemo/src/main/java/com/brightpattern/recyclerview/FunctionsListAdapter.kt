@@ -15,6 +15,8 @@ class FunctionsListAdapter : RecyclerView.Adapter<FunctionsListAdapter.MyViewHol
             "getVersion",
             "checkAvailability",
             "requestChat",
+            "endChat",
+            "subscribeForRemoteNotificationsFirebase",
             "getChatHistory",
             "getCaseHistory",
             "closeCase",
@@ -23,9 +25,7 @@ class FunctionsListAdapter : RecyclerView.Adapter<FunctionsListAdapter.MyViewHol
             "chatMessageRead",
             "chatTyping",
             "chatNotTyping",
-            "disconnectChat",
-            "endChat",
-            "subscribeForRemoteNotificationsFirebase")
+            "disconnectChat")
 
     private val alwaysActive = listOf("getVersion", "checkAvailability", "requestChat")
 

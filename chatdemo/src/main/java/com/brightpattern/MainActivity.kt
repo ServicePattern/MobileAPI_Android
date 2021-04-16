@@ -83,17 +83,17 @@ class MainActivity : AppCompatActivity() {
                     "getVersion" -> api.getVersion { r -> resultProcessing(r) }
                     "checkAvailability" -> api.checkAvailability { r -> resultProcessing(r) }
                     "requestChat" -> api.requestChat("555-555-5555", "Someone", JSONObject()) { r -> resultProcessing(r) }
+                    "subscribeForRemoteNotificationsFirebase" -> api.subscribeForRemoteNotificationsFirebase(ChatDemo.chatID, ChatDemo.gcmToken ?: "unknown") { r -> resultProcessing(r) }
+                    "endChat" -> api.endChat(ChatDemo.chatID) { r -> resultProcessing(r) }
                     "getChatHistory" -> api.getChatHistory(ChatDemo.chatID) { r -> resultProcessing(r) }
                     "getCaseHistory" -> api.getCaseHistory(ChatDemo.chatID) { r -> resultProcessing(r) }
                     "closeCase" -> api.closeCase(ChatDemo.chatID) { r -> resultProcessing(r) }
                     "sendChatMessage" -> api.sendChatMessage(ChatDemo.chatID, "MY MESSAGE") { r -> resultProcessing(r) }
-                    "subscribeForRemoteNotificationsFirebase" -> api.subscribeForRemoteNotificationsFirebase(ChatDemo.chatID, ChatDemo.gcmToken ?: "unknown") { r -> resultProcessing(r) }
                     "chatMessageDelivered" -> api.chatMessageDelivered(ChatDemo.chatID, ChatDemo.lastMessageID) { r -> resultProcessing(r) }
                     "chatMessageRead" -> api.chatMessageRead(ChatDemo.chatID, ChatDemo.lastMessageID) { r -> resultProcessing(r) }
                     "chatTyping" -> api.chatTyping(ChatDemo.chatID) { r -> resultProcessing(r) }
                     "chatNotTyping" -> api.chatNotTyping(ChatDemo.chatID) { r -> resultProcessing(r) }
                     "disconnectChat" -> api.disconnectChat(ChatDemo.chatID) { r -> resultProcessing(r) }
-                    "endChat" -> api.endChat(ChatDemo.chatID) { r -> resultProcessing(r) }
                     else -> Log.e("adapter", "##################### UNKNOWN ACTION ######################")
                 }
 
