@@ -1,9 +1,7 @@
 package com.brightpattern.bpcontactcenter
 
 import android.content.Context
-import com.android.volley.NoConnectionError
 import com.android.volley.Request
-import com.android.volley.TimeoutError
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.HurlStack
 import com.android.volley.toolbox.Volley
@@ -127,11 +125,7 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
                 val version = format.decodeFromString(ContactCenterVersion.serializer(), it.toString())
                 completion.invoke(Success(version))
             }, {
-                it.localizedMessage?.let{ localizedMessage ->
-                    completion.invoke(Failure(ContactCenterError.CommonCCError(localizedMessage)))
-                } ?: run{
-                    completion.invoke(Failure(ContactCenterError.EmptyLocalizedMessageError("No localized message, please provide the info to the dev team")))
-                }
+                completion.invoke(Failure(parseVolleyError(it)))
             })
         } catch (e: ContactCenterError) {
             completion.invoke(Failure(e))
@@ -147,11 +141,7 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
                 val state = format.decodeFromString(ContactCenterServiceAvailability.serializer(), it.toString())
                 completion.invoke(Success(state))
             }, {
-                it.localizedMessage?.let{ localizedMessage ->
-                    completion.invoke(Failure(ContactCenterError.CommonCCError(localizedMessage)))
-                } ?: run{
-                    completion.invoke(Failure(ContactCenterError.EmptyLocalizedMessageError("No localized message, please provide the info to the dev team")))
-                }
+                completion.invoke(Failure(parseVolleyError(it)))
             })
         } catch (e: ContactCenterError) {
             completion.invoke(Failure(e))
@@ -405,9 +395,9 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
     }
 
     private fun parseVolleyError(volleyError: VolleyError): ContactCenterError {
-        return when  {
-            volleyError.networkResponse.statusCode !in 200..299 -> ContactCenterError.BadStatusCode(volleyError.networkResponse.statusCode, volleyError)
-            volleyError is TimeoutError || volleyError is NoConnectionError -> ContactCenterError.FailedToCreateURLRequest(volleyError)
+        return when {
+            volleyError.networkResponse == null -> ContactCenterError.FailedToCreateURLRequest(volleyError)
+            volleyError.networkResponse?.statusCode !in 200..299 -> ContactCenterError.BadStatusCode(volleyError.networkResponse.statusCode, volleyError)
             else -> ContactCenterError.VolleyError(volleyError)
         }
 
