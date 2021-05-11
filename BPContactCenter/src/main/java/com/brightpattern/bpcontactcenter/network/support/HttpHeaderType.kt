@@ -4,13 +4,15 @@ package com.brightpattern.bpcontactcenter.network.support
 enum class HttpHeaderType(val value: String) {
     ContentType("Content-Type"),
     Authorization("Authorization"),
-    UserAgent("UserAgent");
+    UserAgent("UserAgent"),
+    CacheControl("Cache-Control");
 
     fun getPaiDefaultPair(appID: String = "", clientID: String = ""): Pair<String, String> {
         return when (this) {
             ContentType -> value to "application/json; charset=utf-8"
             Authorization -> value to "MOBILE-API-140-327-PLAIN appId=$appID, clientId=$clientID"
             UserAgent -> value to "MobileClient"
+            CacheControl -> value to "no-cache"
         }
     }
 }

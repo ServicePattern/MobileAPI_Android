@@ -10,7 +10,8 @@ data class HttpHeaderFields(val fields: Map<String, String>) {
             val headerMap = mapOf(
                     HttpHeaderType.Authorization.getPaiDefaultPair(appID, clientID),
                     HttpHeaderType.ContentType.getPaiDefaultPair(),
-                    HttpHeaderType.UserAgent.getPaiDefaultPair())
+                    HttpHeaderType.UserAgent.getPaiDefaultPair(),
+                    HttpHeaderType.CacheControl.getPaiDefaultPair())
             return HttpHeaderFields(headerMap)
         }
     }
