@@ -2,7 +2,6 @@ package com.brightpattern.bpcontactcenter.network
 
 import android.webkit.URLUtil
 import com.brightpattern.bpcontactcenter.entity.ContactCenterError
-import java.util.*
 
 internal class URLProvider {
     companion object {
