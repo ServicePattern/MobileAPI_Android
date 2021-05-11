@@ -39,7 +39,7 @@ class PollRequest private constructor(
     private var chatID: String = ""
     private var baseUrl: String = ""
     private var tenantUrl: String = ""
-    private var isPaused: Boolean = false
+    private var isPaused: Boolean = true
     private lateinit var networkService: NetworkServiceable
     private val format: Json = Json {
         isLenient = true
@@ -57,7 +57,7 @@ class PollRequest private constructor(
     }
 
     override fun startPolling(chatID: String) : Boolean {
-        if (this.chatID.isEmpty() || !chatID.equals(this.chatID)) {
+        if (this.chatID.isEmpty() || !chatID.equals(this.chatID) || !isPaused) {
             return false
         }
 
