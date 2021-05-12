@@ -36,5 +36,4 @@ sealed class ContactCenterError(text: String) : Error(text) {
     data class ChatSessionUnspecifiedServerError(val text: String) : ContactCenterError(text)
 
     data class CommonCCError(val text: String) : ContactCenterError(text)
-    data class EmptyLocalizedMessageError(val text: String) : ContactCenterError(text)
 }

@@ -2,6 +2,14 @@
 
 The changelog for `BPContactCenter`. Also see the [releases](https://github.com/ServicePattern/MobileAPI_Android/releases) on GitHub.
 
+## [0.1.2](https://github.com/ServicePattern/MobileAPI_Android/releases/tag/0.1.2)
+
+### Fixed
+- [Issue 32](https://github.com/ServicePattern/MobileAPI_Android/issues/32): Crash when connecting to new URL.
+
+### Changed
+ - Sample application improvements (localized push notification content; buttons reordering)
+
 ## [0.1.1](https://github.com/ServicePattern/MobileAPI_Android/releases/tag/0.1.1)
 
 ### Fixed

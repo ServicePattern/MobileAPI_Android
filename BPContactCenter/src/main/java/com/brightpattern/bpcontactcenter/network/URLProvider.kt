@@ -39,7 +39,8 @@ internal class URLProvider {
         fun generateFullUrl(baseURL: String, tenantURL: String, chatID: String = ""): String {
             URLProvider.chatID = chatID
             val rgx = "^(http|https):\\/\\/".toRegex()
-            val result =  "$baseURL/$basePath/$apiVersion/${endpointPathString}?tenantUrl=$tenantURL"
+            val nonce = System.currentTimeMillis().toString()
+            val result =  "$baseURL/$basePath/$apiVersion/${endpointPathString}?tenantUrl=$tenantURL&nonce=$nonce"
             if (rgx.containsMatchIn(tenantURL))
                 throw ContactCenterError.FailedTenantURL("TenantURL MUST NOT starts with http:// or https://")
             if (!URLUtil.isValidUrl(result))

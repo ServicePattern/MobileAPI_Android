@@ -31,11 +31,14 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
                     responseObject.put(FieldName.STATE, "success")
                     return Response.success(responseObject, HttpHeaderParser.parseCacheHeaders(response))
                 }
-                if (BuildConfig.DEBUG)
-                    Log.d("NetworkService", "Received from server: ${response?.data?.let { String(it)}}")
+
+                response?.let { logResponse(it) }
                 return super.parseNetworkResponse(response)
             }
         }
+
+        logRequest(request)
+
         queue.add(request)
     }
 
@@ -51,11 +54,13 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
             }
 
             override fun parseNetworkResponse(response: NetworkResponse?): Response<JSONObject> {
-                if (BuildConfig.DEBUG)
-                    Log.d("NetworkService", "Received from server: ${response?.data?.let { String(it)}}")
+                response?.let { logResponse(it) }
                 return super.parseNetworkResponse(response)
             }
         }
+
+        logRequest(request)
+
         queue.add(request)
     }
 
@@ -76,8 +81,9 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
                     responseObject.put(FieldName.STATE, "success")
                     return Response.success(responseObject, HttpHeaderParser.parseCacheHeaders(response))
                 }
-                if (BuildConfig.DEBUG)
-                    Log.d("NetworkService", "Received from server: ${response?.data?.let { String(it)}}")
+
+                response?.let { logResponse(it) }
+
                 return super.parseNetworkResponse(response)
             }
         }
@@ -86,6 +92,56 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
 
+        logRequest(request)
+
         queue.add(request)
+    }
+
+    private fun logRequest(request: JsonObjectRequest) {
+        if (!BuildConfig.DEBUG)
+            return
+
+        var logStr = "\n---------- OUT ---------->\n"
+
+        when {
+            request.method == Request.Method.GET -> logStr += "GET"
+            request.method == Request.Method.DELETE -> logStr += "DELETE"
+            request.method == Request.Method.HEAD -> logStr += "HEAD"
+            request.method == Request.Method.OPTIONS -> logStr += "OPTIONS"
+            request.method == Request.Method.PATCH -> logStr += "PATCH"
+            request.method == Request.Method.POST -> logStr += "POST"
+            request.method == Request.Method.PUT -> logStr += "PUT"
+            request.method == Request.Method.TRACE -> logStr += "TRACE"
+        }
+
+        logStr += " ${request.getUrl()} HTTP/1.1\n"
+//        requestLog += "Host: \(host)\n"
+        request.headers.forEach {
+            logStr += "${it.key}: ${it.value}\n"
+        }
+
+        logStr += "\n${request.body?.let { String(it) }}\n"
+
+        logStr += "\n------------------------->\n";
+
+        Log.d("NetworkService", logStr)
+    }
+
+    private fun logResponse(response: NetworkResponse) {
+        if (!BuildConfig.DEBUG)
+            return
+
+        var logStr = "\n---------- IN ---------->\n"
+
+        logStr += "${response.statusCode}\n"
+        response.headers.forEach {
+            logStr += "${it.key}: ${it.value}\n"
+        }
+
+        logStr += "\n${response.data?.let { String(it) }}\n"
+
+        logStr += "\n------------------------->\n";
+
+        Log.d("NetworkService", logStr)
     }
 }
