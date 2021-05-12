@@ -5,6 +5,7 @@
     <string name="app_name">ChatDemo</string>
 
     <string name="keyChatNewMessageTitle">You have new chat message from %1$s</string>
+    <string name="keyChatNewFileTitle">You have new file from %1$s</string>
     <string name="keyChatTimeoutWarningTitle">The chat session is about to time out</string>
     <string name="keyChatInactivityTimeoutTitle">We have not heard from you for a while</string>
 

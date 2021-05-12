@@ -1,6 +1,11 @@
 package com.brightpattern.bpcontactcenter
 
+import android.os.Build
 import android.content.Context
+import com.android.volley.Request
+import com.android.volley.VolleyError
+import com.android.volley.toolbox.HurlStack
+import com.android.volley.toolbox.Volley
 import com.android.volley.Request
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.HurlStack
@@ -380,7 +385,26 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
         val payload = JSONObject()
         payload.put(FieldName.PHONE_NUMBER, phoneNumber)
         payload.put(FieldName.FROM, from)
-        payload.put(FieldName.PARAMETERS, parameters)
+
+        var parms = parameters
+
+        if (parms == null) {
+            parms = JSONObject()
+        }
+
+        //  Add system info
+        val userPlatform = JSONObject()
+        userPlatform.put("os", Build.FINGERPRINT)
+        userPlatform.put("sdk", Build.VERSION.SDK_INT)
+        userPlatform.put("patch", Build.VERSION.SECURITY_PATCH)
+        userPlatform.put("manufacturer", Build.MANUFACTURER)
+        userPlatform.put("model", Build.MODEL)
+        userPlatform.put("hardware", Build.HARDWARE)
+
+        parms.put("user_platform", userPlatform)
+
+        payload.put(FieldName.PARAMETERS, parms)
+
         return payload
     }
 
