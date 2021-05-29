@@ -6,10 +6,6 @@ import com.android.volley.Request
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.HurlStack
 import com.android.volley.toolbox.Volley
-import com.android.volley.Request
-import com.android.volley.VolleyError
-import com.android.volley.toolbox.HurlStack
-import com.android.volley.toolbox.Volley
 import com.brightpattern.bpcontactcenter.entity.ContactCenterError
 import com.brightpattern.bpcontactcenter.entity.ContactCenterEvent
 import com.brightpattern.bpcontactcenter.entity.FieldName
@@ -160,6 +156,12 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             val url = URLProvider.Endpoint.GetChatHistory.generateFullUrl(baseURL, tenantURL, chatID)
             networkService.executeSimpleRequest(Request.Method.GET, url, defaultHttpHeaderFields, {
                 val result = format.decodeFromString(ContactCenterEventsContainerDto.serializer(), it.toString())
+                //  Add URL for file events
+                result.events?.forEach {
+                    (it as? ContactCenterEvent.ChatSessionFile)?.let { message ->
+                        message.url = URLProvider.Endpoint.File.generateFileUrl(baseURL, message.fileUUID)
+                    }
+                }
                 completion.invoke(Success(result.events))
             }, {
                 completion.invoke(Failure(parseVolleyError(it)))
@@ -176,6 +178,14 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             val url = URLProvider.Endpoint.GetCaseHistory.generateFullUrl(baseURL, tenantURL, chatID)
             networkService.executeSimpleRequest(Request.Method.GET, url, defaultHttpHeaderFields, {
                 val list = format.decodeFromString(ChatSessionCaseHistoryDto.serializer(), it.toString())
+                list.sessions.forEach {
+                    //  Add URL for file events
+                    it.events?.forEach {
+                        (it as? ContactCenterEvent.ChatSessionFile)?.let { message ->
+                            message.url = URLProvider.Endpoint.File.generateFileUrl(baseURL, message.fileUUID)
+                        }
+                    }
+                }
                 completion.invoke(Success(list))
             }, {
                 completion.invoke(Failure(parseVolleyError(it)))

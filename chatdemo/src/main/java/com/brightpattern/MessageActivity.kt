@@ -14,6 +14,7 @@ import com.brightpattern.customview.CustomIncomingTextMessageViewHolder
 import com.stfalcon.chatkit.commons.ImageLoader
 import com.stfalcon.chatkit.commons.models.IMessage
 import com.stfalcon.chatkit.commons.models.IUser
+import com.stfalcon.chatkit.commons.models.MessageContentType
 import com.stfalcon.chatkit.messages.MessageHolders
 import com.stfalcon.chatkit.messages.MessageInput
 import com.stfalcon.chatkit.messages.MessagesList
@@ -99,7 +100,7 @@ class MessageActivity : AppCompatActivity() {
                 val messageID = UUID.randomUUID()
                 api.sendChatMessage(ChatDemo.chatID, "$messageText", messageID) { result ->
                     if (result is Success) {
-                        val myMessage = MyMessage("$messageText", myUser, messageID.toString())
+                        val myMessage = MyMessage( "$messageText", null, myUser, messageID.toString())
                         messageListAdapter.addToStart(myMessage, true)
                     }
                 }
@@ -112,7 +113,7 @@ class MessageActivity : AppCompatActivity() {
         if (result is Success<*>) {
             (result.value as? List<ContactCenterEvent>)?.forEach {
                 (it as? ContactCenterEvent.ChatSessionMessage)?.let { message ->
-                    val incomingMessage = MyMessage(message.message, getParty(message.partyID), message.messageID)
+                    val incomingMessage = MyMessage(message.message, null, getParty(message.partyID), message.messageID)
                     messageListAdapter.addToStart(incomingMessage, true)
 
                     api?.chatMessageDelivered(ChatDemo.chatID, message.messageID) { r ->
@@ -127,26 +128,35 @@ class MessageActivity : AppCompatActivity() {
                         }
                     }
                 }
+                (it as? ContactCenterEvent.ChatSessionFile)?.let { message ->
+                    if (message.fileType == "image") {
+                        val incomingMessage = message.url?.let { it1 -> MyMessage("", it1, getParty(message.partyID)) }
+                        messageListAdapter.addToStart(incomingMessage, true)
+                    } else {
+                        val incomingMessage = MyMessage("Unsupported ${message.fileType} file ${message.fileName}", null, getParty(message.partyID))
+                        messageListAdapter.addToStart(incomingMessage, true)
+                    }
+                }
                 (it as? ContactCenterEvent.ChatSessionPartyJoined)?.let { message ->
                     val user = MyUser(message.partyID, message.displayName ?: ((message.firstName ?: "") + " " + (message.lastName ?: "")))
                     parties[user.userId] = user
-                    val incomingMessage = MyMessage("Joined the session", user)
+                    val incomingMessage = MyMessage("Joined the session", null, user)
                     messageListAdapter.addToStart(incomingMessage, true)
                 }
                 (it as? ContactCenterEvent.ChatSessionPartyLeft)?.let { message ->
-                    val incomingMessage = MyMessage("Left the session", getParty(message.partyID))
+                    val incomingMessage = MyMessage("Left the session", null, getParty(message.partyID))
                     messageListAdapter.addToStart(incomingMessage, true)
                 }
                 (it as? ContactCenterEvent.ChatSessionTimeoutWarning)?.let { message ->
-                    val incomingMessage = MyMessage(message.message, systemUser)
+                    val incomingMessage = MyMessage(message.message, null, systemUser)
                     messageListAdapter.addToStart(incomingMessage, true)
                 }
                 (it as? ContactCenterEvent.ChatSessionInactivityTimeout)?.let { message ->
-                    val incomingMessage = MyMessage(message.message, systemUser)
+                    val incomingMessage = MyMessage(message.message, null, systemUser)
                     messageListAdapter.addToStart(incomingMessage, true)
                 }
                 (it as? ContactCenterEvent.ChatSessionEnded)?.let { _ ->
-                    val incomingMessage = MyMessage("The session has ended", systemUser)
+                    val incomingMessage = MyMessage("The session has ended", null, systemUser)
                     messageListAdapter.addToStart(incomingMessage, true)
 
                     // Set the result and close the activity
@@ -158,7 +168,7 @@ class MessageActivity : AppCompatActivity() {
     }
 }
 
-data class MyMessage(val message: String, val messageUser: IUser, val messageID: String = "", val timestamp: Long = System.currentTimeMillis() / 1000) : IMessage {
+data class MyMessage(val message: String, val url: String?, val messageUser: IUser, val messageID: String = "", val timestamp: Long = System.currentTimeMillis() / 1000) : IMessage, MessageContentType.Image {
     override fun getId(): String {
         return messageID
     }
@@ -174,6 +184,10 @@ data class MyMessage(val message: String, val messageUser: IUser, val messageID:
     override fun getCreatedAt(): Date {
         return Date(timestamp * 1000)
     }
+
+    override fun getImageUrl(): String? {
+        return url;
+    }
 }
 
 data class MyUser(val userId: String, val displayName: String) : IUser {
@@ -188,5 +202,5 @@ data class MyUser(val userId: String, val displayName: String) : IUser {
     override fun getAvatar(): String {
         return ""
     }
-
 }
+

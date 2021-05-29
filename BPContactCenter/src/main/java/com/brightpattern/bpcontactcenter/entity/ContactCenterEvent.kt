@@ -141,7 +141,9 @@ sealed class ContactCenterEvent {
             val fileType: String,
             @SerialName(FieldName.PARTY_ID)
             val partyID: String,
-             val timestamp: Long = System.currentTimeMillis() / 1000) : ContactCenterEvent()
+             val timestamp: Long = System.currentTimeMillis() / 1000) : ContactCenterEvent() {
+        var url: String? = null
+    }
 
     @Serializable
     @SerialName("chat_session_form_submit")
