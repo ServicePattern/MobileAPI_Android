@@ -6,10 +6,6 @@ import com.android.volley.Request
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.HurlStack
 import com.android.volley.toolbox.Volley
-import com.android.volley.Request
-import com.android.volley.VolleyError
-import com.android.volley.toolbox.HurlStack
-import com.android.volley.toolbox.Volley
 import com.brightpattern.bpcontactcenter.entity.ContactCenterError
 import com.brightpattern.bpcontactcenter.entity.ContactCenterEvent
 import com.brightpattern.bpcontactcenter.entity.FieldName
