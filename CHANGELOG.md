@@ -7,6 +7,7 @@ The changelog for `BPContactCenter`. Also see the [releases](https://github.com/
 ### Fixed
 - [Issue 34](https://github.com/ServicePattern/MobileAPI_Android/issues/34): Receiving same message with same timestamp 70 times per second.
 - [Issue 36](https://github.com/ServicePattern/MobileAPI_Android/issues/36): Duplicate events after calling startPolling() when polling is already started.
+- [Issue 39](https://github.com/ServicePattern/MobileAPI_Android/issues/39): checkAvailability serialization exception if service not available.
 
 ### Changed
  - Polling HTTP requests add Cache-Control header and nonce URL parameter. Cache-Control:no-cache prevents caching f the poll request in HTTP proxies (Nginx). Nonce prevents local Volley caching.
