@@ -2,17 +2,10 @@
 
 The changelog for `BPContactCenter`. Also see the [releases](https://github.com/ServicePattern/MobileAPI_Android/releases) on GitHub.
 
-## [0.1.4](https://github.com/ServicePattern/MobileAPI_Android/releases/tag/0.1.4)
-
-### Fixed
-- [Issue 38](https://github.com/ServicePattern/MobileAPI_Android/issues/38): Messages are not properly escaped.
-
-### Added
- - To address issue #38, the text chat message content added to the chatSessionMessage event (text content is created from HTML content by the server) and 'format' parameter (text or HTML) added to the sendChatMessage request. Application may choose either text or HTML version to display, depending on application rendering capabilities.
-
 ## [0.1.3](https://github.com/ServicePattern/MobileAPI_Android/releases/tag/0.1.3)
 
 ### Fixed
+- [Issue 38](https://github.com/ServicePattern/MobileAPI_Android/issues/38): Messages are not properly escaped.
 - [Issue 34](https://github.com/ServicePattern/MobileAPI_Android/issues/34): Receiving same message with same timestamp 70 times per second.
 - [Issue 36](https://github.com/ServicePattern/MobileAPI_Android/issues/36): Duplicate events after calling startPolling() when polling is already started.
 - [Issue 39](https://github.com/ServicePattern/MobileAPI_Android/issues/39): checkAvailability serialization exception if service not available.
@@ -23,6 +16,7 @@ The changelog for `BPContactCenter`. Also see the [releases](https://github.com/
 ### Added
  - Debug logging of entire HTTP requests and responses including HTTP headers
  - Reporting client device OS/SDK versions
+ - To address issue #38, the text chat message content added to the chatSessionMessage event (text content is created from HTML content by the server) and 'format' parameter (text or HTML) added to the sendChatMessage request. Application may choose either text or HTML version to display, depending on application rendering capabilities.
 
 ## [0.1.2](https://github.com/ServicePattern/MobileAPI_Android/releases/tag/0.1.2)
 
