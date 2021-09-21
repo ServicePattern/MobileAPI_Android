@@ -21,6 +21,7 @@ internal class FieldName {
         const val LAST_NAME = "last_name"
         const val MSG = "msg"
         const val MSG_ID = "msg_id"
+        const val MSG_TEXT = "msg_text"
         const val NOTIFICATION_CHAT_ID = "chatID"
         const val PARAMETERS = "parameters"
         const val PARTY_ID = "party_id"

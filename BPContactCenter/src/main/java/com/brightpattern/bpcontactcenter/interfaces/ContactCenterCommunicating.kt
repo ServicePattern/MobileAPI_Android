@@ -10,6 +10,10 @@ import org.json.JSONObject
 import java.util.*
 
 interface ContactCenterCommunicating {
+    enum class ContentFormat {
+        TEXT, HTML
+    }
+
     // -- Initialization
     /** Base URL to make requests **/
     val baseURL: String
@@ -75,10 +79,11 @@ interface ContactCenterCommunicating {
     /**
      * Send a chat message. Before message is sent the function generates a `messageID` which is returned in a completion
      * @param chatID: The current chat ID
-     * @param message: Text of the message
-     * @param completion: Returns  `messageID` in the format chatId:messageNumber where messageNumber is ordinal number of the given message in the chat exchange or [Error] otherwise
+     * @param content: Content of the message (text or HTML depending on format)
+     * @param format: Message content format (plain text or HTML)
+     * @param completion: Returns unique `messageID` in the chat exchange or [Error] otherwise
      **/
-    fun sendChatMessage(chatID: String, message: String, messageID: UUID? = null, completion: (Result<String, Error>) -> Unit)
+    fun sendChatMessage(chatID: String, content: String, format: ContentFormat, messageID: UUID? = null, completion: (Result<String, Error>) -> Unit)
 
     /**
      * Confirms that a chat message has been delivered to the application

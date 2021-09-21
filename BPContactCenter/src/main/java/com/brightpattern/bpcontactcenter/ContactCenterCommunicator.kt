@@ -217,10 +217,22 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
         }
     }
 
-    override fun sendChatMessage(chatID: String, message: String, messageID: UUID?, completion: (Result<String, Error>) -> Unit) {
+    override fun sendChatMessage(chatID: String, content: String, format: ContactCenterCommunicating.ContentFormat, messageID: UUID?, completion: (Result<String, Error>) -> Unit) {
         try {
             val url = URLProvider.Endpoint.SendEvents.generateFullUrl(baseURL, tenantURL, chatID)
-            val payload = createSendEventPayload(ContactCenterEvent.ChatSessionMessage(messageID.toString(), UUID.randomUUID().toString(), message))
+
+            var html = "";
+            var text = "";
+
+            if (ContactCenterCommunicating.ContentFormat.TEXT == format) {
+                text = content
+                html = content.replace("\n", "<br>")
+            }
+            else if (ContactCenterCommunicating.ContentFormat.HTML == format) {
+                html = content;
+            }
+
+            val payload = createSendEventPayload(ContactCenterEvent.ChatSessionMessage(messageID.toString(), UUID.randomUUID().toString(), html, text))
 
             networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
                 completion.invoke(Success(it.toString()))
