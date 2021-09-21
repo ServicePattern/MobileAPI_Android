@@ -17,7 +17,8 @@ sealed class ContactCenterEvent {
     data class ChatSessionMessage(
             @SerialName(FieldName.MSG_ID) val messageID: String = "",
             @SerialName(FieldName.PARTY_ID) val partyID: String?,
-            @SerialName(FieldName.MSG) val message: String,
+            @SerialName(FieldName.MSG) val message: String? = null,
+            @SerialName(FieldName.MSG_TEXT) val messageText: String? = null,
             val timestamp: Long = System.currentTimeMillis() / 1000) : ContactCenterEvent()
 
     /// Indicates that a message has been delivered

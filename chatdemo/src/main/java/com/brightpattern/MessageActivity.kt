@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import coil.load
 import com.brightpattern.bpcontactcenter.ContactCenterCommunicator
 import com.brightpattern.bpcontactcenter.entity.ContactCenterEvent
+import com.brightpattern.bpcontactcenter.interfaces.ContactCenterCommunicating
 import com.brightpattern.bpcontactcenter.interfaces.ContactCenterEventsInterface
 import com.brightpattern.bpcontactcenter.utils.Result
 import com.brightpattern.bpcontactcenter.utils.Success
@@ -97,7 +98,7 @@ class MessageActivity : AppCompatActivity() {
 
             messageInput.setInputListener { messageText ->
                 val messageID = UUID.randomUUID()
-                api.sendChatMessage(ChatDemo.chatID, "$messageText", messageID) { result ->
+                api.sendChatMessage(ChatDemo.chatID, "$messageText", ContactCenterCommunicating.ContentFormat.TEXT, messageID) { result ->
                     if (result is Success) {
                         val myMessage = MyMessage("$messageText", myUser, messageID.toString())
                         messageListAdapter.addToStart(myMessage, true)
@@ -112,7 +113,7 @@ class MessageActivity : AppCompatActivity() {
         if (result is Success<*>) {
             (result.value as? List<ContactCenterEvent>)?.forEach {
                 (it as? ContactCenterEvent.ChatSessionMessage)?.let { message ->
-                    val incomingMessage = MyMessage(message.message, getParty(message.partyID), message.messageID)
+                    val incomingMessage = MyMessage(message.messageText?: message.message?:"", getParty(message.partyID), message.messageID)
                     messageListAdapter.addToStart(incomingMessage, true)
 
                     api?.chatMessageDelivered(ChatDemo.chatID, message.messageID) { r ->
