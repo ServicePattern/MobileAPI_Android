@@ -103,18 +103,18 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
 
         var logStr = "\n---------- OUT ---------->\n"
 
-        when {
-            request.method == Request.Method.GET -> logStr += "GET"
-            request.method == Request.Method.DELETE -> logStr += "DELETE"
-            request.method == Request.Method.HEAD -> logStr += "HEAD"
-            request.method == Request.Method.OPTIONS -> logStr += "OPTIONS"
-            request.method == Request.Method.PATCH -> logStr += "PATCH"
-            request.method == Request.Method.POST -> logStr += "POST"
-            request.method == Request.Method.PUT -> logStr += "PUT"
-            request.method == Request.Method.TRACE -> logStr += "TRACE"
+        when (request.method) {
+            Request.Method.GET -> logStr += "GET"
+            Request.Method.DELETE -> logStr += "DELETE"
+            Request.Method.HEAD -> logStr += "HEAD"
+            Request.Method.OPTIONS -> logStr += "OPTIONS"
+            Request.Method.PATCH -> logStr += "PATCH"
+            Request.Method.POST -> logStr += "POST"
+            Request.Method.PUT -> logStr += "PUT"
+            Request.Method.TRACE -> logStr += "TRACE"
         }
 
-        logStr += " ${request.getUrl()} HTTP/1.1\n"
+        logStr += " ${request.url} HTTP/1.1\n"
 //        requestLog += "Host: \(host)\n"
         request.headers.forEach {
             logStr += "${it.key}: ${it.value}\n"
@@ -134,7 +134,7 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
         var logStr = "\n---------- IN ---------->\n"
 
         logStr += "${response.statusCode}\n"
-        response.headers.forEach {
+        response.headers?.forEach {
             logStr += "${it.key}: ${it.value}\n"
         }
 
