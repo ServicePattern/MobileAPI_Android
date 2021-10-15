@@ -8,5 +8,21 @@
     <string name="keyChatNewFileTitle">You have new file from %1$s</string>
     <string name="keyChatTimeoutWarningTitle">The chat session is about to time out</string>
     <string name="keyChatInactivityTimeoutTitle">We have not heard from you for a while</string>
+    <string name="tv_header_cmd_list">Cmd List</string>
+    <string name="btn_run_chat">Run Chat</string>
+    <string name="btn_preferences">Preferences</string>
+
+    <!--    Preferences    -->
+    <string name="pref_client_id_summary">Please provide your client ID</string>
+    <string name="pref_client_id_title">Client ID</string>
+    <string name="pref_base_url_default">-* REQUEST FROM THE SERVICE PROVIDER *-</string>
+    <string name="pref_base_url_summary">Please provide your base URL</string>
+    <string name="pref_base_url_title">Base URL</string>
+    <string name="pref_tenant_url_default">-* REQUEST FROM THE SERVICE PROVIDER *-</string>
+    <string name="pref_tenant_url_summary">Please provide your tenant URL</string>
+    <string name="pref_tenant_url_title">Tenant URL</string>
+    <string name="pref_app_id_default">Android</string>
+    <string name="pref_app_id_summary">Please provide the app ID</string>
+    <string name="pref_app_id_title">App ID</string>
 
 </resources>

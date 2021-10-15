@@ -21,7 +21,8 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvDisplayName" />
+        app:layout_constraintTop_toBottomOf="@+id/tvDisplayName"
+        tools:ignore="ContentDescription" />
 
 
     <LinearLayout
