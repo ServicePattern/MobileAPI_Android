@@ -157,8 +157,8 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             networkService.executeSimpleRequest(Request.Method.GET, url, defaultHttpHeaderFields, {
                 val result = format.decodeFromString(ContactCenterEventsContainerDto.serializer(), it.toString())
                 //  Add URL for file events
-                result.events?.forEach {
-                    (it as? ContactCenterEvent.ChatSessionFile)?.let { message ->
+                result.events.forEach { event ->
+                    (event as? ContactCenterEvent.ChatSessionFile)?.let { message ->
                         message.url = URLProvider.Endpoint.File.generateFileUrl(baseURL, message.fileUUID)
                     }
                 }
@@ -178,10 +178,10 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             val url = URLProvider.Endpoint.GetCaseHistory.generateFullUrl(baseURL, tenantURL, chatID)
             networkService.executeSimpleRequest(Request.Method.GET, url, defaultHttpHeaderFields, {
                 val list = format.decodeFromString(ChatSessionCaseHistoryDto.serializer(), it.toString())
-                list.sessions.forEach {
+                list.sessions.forEach { session ->
                     //  Add URL for file events
-                    it.events?.forEach {
-                        (it as? ContactCenterEvent.ChatSessionFile)?.let { message ->
+                    session.events.forEach { event ->
+                        (event as? ContactCenterEvent.ChatSessionFile)?.let { message ->
                             message.url = URLProvider.Endpoint.File.generateFileUrl(baseURL, message.fileUUID)
                         }
                     }
@@ -396,24 +396,24 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
         payload.put(FieldName.PHONE_NUMBER, phoneNumber)
         payload.put(FieldName.FROM, from)
 
-        var parms = parameters
-
-        if (parms == null) {
-            parms = JSONObject()
-        }
+        //        if (parms == null) {
+//            parms = JSONObject()
+//        }
 
         //  Add system info
         val userPlatform = JSONObject()
         userPlatform.put("os", Build.FINGERPRINT)
         userPlatform.put("sdk", Build.VERSION.SDK_INT)
-        userPlatform.put("patch", Build.VERSION.SECURITY_PATCH)
         userPlatform.put("manufacturer", Build.MANUFACTURER)
         userPlatform.put("model", Build.MODEL)
         userPlatform.put("hardware", Build.HARDWARE)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            userPlatform.put("patch", Build.VERSION.SECURITY_PATCH)
+        }
 
-        parms.put("user_platform", userPlatform)
+        parameters.put("user_platform", userPlatform)
 
-        payload.put(FieldName.PARAMETERS, parms)
+        payload.put(FieldName.PARAMETERS, parameters)
 
         return payload
     }

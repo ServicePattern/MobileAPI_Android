@@ -109,11 +109,11 @@ class MainActivity : AppCompatActivity() {
     fun resultProcessing(result: Any) {
         when (result) {
             is Failure<*> -> {
-                Log.e("resultProcessing > Failure", ">>> ${result.reason}")
+                Log.e("resultProcessing", " > Failure >>> ${result.reason}")
                 tvResult.text = "Failure\n${result.reason}"
             }
             is Success<*> -> {
-                Log.e("resultProcessing > Success", ">>> ${result.value}")
+                Log.e("resultProcessing", " > Success >>> ${result.value}")
                 tvResult.text = "Success\n${result.value}"
 
                 (result.value as? List<*>)?.firstOrNull {

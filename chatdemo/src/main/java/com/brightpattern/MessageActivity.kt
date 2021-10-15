@@ -138,7 +138,7 @@ class MessageActivity : AppCompatActivity() {
                     }
                 }
                 (it as? ContactCenterEvent.ChatSessionPartyJoined)?.let { message ->
-                    val user = MyUser(message.partyID, message.displayName ?: ((message.firstName ?: "") + " " + (message.lastName ?: "")))
+                    val user = MyUser(message.partyID, message.displayName)
                     parties[user.userId] = user
                     val incomingMessage = MyMessage("Joined the session", null, user)
                     messageListAdapter.addToStart(incomingMessage, true)
@@ -186,7 +186,7 @@ data class MyMessage(val message: String, val url: String?, val messageUser: IUs
     }
 
     override fun getImageUrl(): String? {
-        return url;
+        return url
     }
 }
 

@@ -85,8 +85,8 @@ class PollRequest private constructor(
             networkService.executePollRequest(Request.Method.GET, url, defaultHttpHeaderFields, null, pollInterval, {
                 val result = format.decodeFromString(ContactCenterEventsContainerDto.serializer(), it.toString())
                 //  Add URL for file events
-                result.events?.forEach {
-                    (it as? ContactCenterEvent.ChatSessionFile)?.let { message ->
+                result.events.forEach { event ->
+                    (event as? ContactCenterEvent.ChatSessionFile)?.let { message ->
                         message.url = URLProvider.Endpoint.File.generateFileUrl(baseUrl, message.fileUUID)
                     }
                 }

@@ -53,7 +53,7 @@ class FunctionsListAdapter : RecyclerView.Adapter<FunctionsListAdapter.MyViewHol
     }
 
     class MyViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        val cmdName = v.findViewById<Button>(R.id.btnCmdName)
+        val cmdName: Button = v.findViewById(R.id.btnCmdName)
     }
 
 }

@@ -4,7 +4,6 @@ import android.app.Application
 import android.util.Log
 import androidx.preference.PreferenceManager
 import com.brightpattern.bpcontactcenter.ContactCenterCommunicator
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 
 class ChatDemo : Application() {
