@@ -114,7 +114,7 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
             request.method == Request.Method.TRACE -> logStr += "TRACE"
         }
 
-        logStr += " ${request.getUrl()} HTTP/1.1\n"
+        logStr += " ${request.url} HTTP/1.1\n"
 //        requestLog += "Host: \(host)\n"
         request.headers.forEach {
             logStr += "${it.key}: ${it.value}\n"
@@ -122,7 +122,7 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
 
         logStr += "\n${request.body?.let { String(it) }}\n"
 
-        logStr += "\n------------------------->\n";
+        logStr += "\n------------------------->\n"
 
         Log.d("NetworkService", logStr)
     }
@@ -134,13 +134,13 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
         var logStr = "\n---------- IN ---------->\n"
 
         logStr += "${response.statusCode}\n"
-        response.headers.forEach {
+        response.headers?.forEach {
             logStr += "${it.key}: ${it.value}\n"
         }
 
         logStr += "\n${response.data?.let { String(it) }}\n"
 
-        logStr += "\n------------------------->\n";
+        logStr += "\n------------------------->\n"
 
         Log.d("NetworkService", logStr)
     }
