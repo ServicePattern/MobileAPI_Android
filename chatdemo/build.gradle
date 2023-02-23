@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'com.google.gms.google-services'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion "30.0.3"
 
     defaultConfig {
@@ -64,6 +64,7 @@ dependencies {
     implementation "com.android.volley:volley:$volley"
     implementation project(path: ':BPContactCenter')
     implementation "androidx.preference:preference-ktx:$pref_ktx"
+    implementation 'com.google.android.material:material:1.6.0'
 }
 repositories {
     mavenCentral()
