@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
@@ -8,21 +9,42 @@
         android:id="@+id/messagesList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/input" />
+        android:layout_above="@+id/separationLayout"
+        android:contentDescription="Message list"
+        tools:ignore="HardcodedText" />
 
-    <View
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/separationLayout"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/input"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:background="#e8e8e8" />
+        android:orientation="vertical"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/imagesList"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:paddingBottom="4dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:background="#e8e8e8" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <com.stfalcon.chatkit.messages.MessageInput
         android:id="@+id/input"
+        app:delayTypingStatus="100"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:importantForAutofill="no"
         app:inputHint="Enter a message"
         app:showAttachmentButton="true" />
 
