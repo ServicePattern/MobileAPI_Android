@@ -2,7 +2,7 @@
 
 The changelog for `BPContactCenter`. Also see the [releases](https://github.com/ServicePattern/MobileAPI_Android/releases) on GitHub.
 
-## [0.1.3](https://github.com/ServicePattern/MobileAPI_Android/releases/tag/0.1.3)
+## [2.0.0](https://github.com/ServicePattern/MobileAPI_Android/releases/tag/2.0.0)
 
 ### Fixed
 - [Issue 34](https://github.com/ServicePattern/MobileAPI_Android/issues/34): Receiving same message with same timestamp 70 times per second.
