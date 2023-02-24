@@ -15,4 +15,12 @@ data class HttpHeaderFields(val fields: Map<String, String>) {
             return HttpHeaderFields(headerMap)
         }
     }
+
+    fun fileUploadFields(boundary: String): HttpHeaderFields {
+        val imageContentTypePair = HttpHeaderType.ImageContentType.getPaiDefaultPair(boundary = boundary)
+        val newFieldsMap = fields.filter { it.key != HttpHeaderType.ContentType.value }.toMutableMap()
+        newFieldsMap[imageContentTypePair.first] = imageContentTypePair.second
+
+        return HttpHeaderFields(newFieldsMap)
+    }
 }

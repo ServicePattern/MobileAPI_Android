@@ -9,6 +9,7 @@ import com.brightpattern.bpcontactcenter.entity.FieldName
 import com.brightpattern.bpcontactcenter.interfaces.NetworkServiceable
 import com.brightpattern.bpcontactcenter.network.support.HttpHeaderFields
 import org.json.JSONObject
+import java.lang.Integer.min
 
 class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
 
@@ -97,6 +98,33 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
         queue.add(request)
     }
 
+    override fun executeFileUpload(url: String, headerFields: HttpHeaderFields?, body: ByteArray, listener: Response.Listener<JSONObject>, errorListener: Response.ErrorListener?) {
+        val request = object : JsonObjectRequest(Method.POST, url, null, listener, errorListener) {
+            override fun getHeaders(): MutableMap<String, String> {
+                return headerFields?.fields?.toMutableMap() ?: mutableMapOf()
+            }
+
+            override fun parseNetworkResponse(response: NetworkResponse?): Response<JSONObject> {
+                if (response?.statusCode == 200 && response.data.isEmpty()) {
+                    val responseObject = JSONObject()
+                    responseObject.put(FieldName.STATE, "success")
+                    return Response.success(responseObject, HttpHeaderParser.parseCacheHeaders(response))
+                }
+                response?.let { logResponse(it) }
+
+                return super.parseNetworkResponse(response)
+            }
+
+            override fun getBody(): ByteArray {
+                return body
+            }
+        }
+
+        logRequest(request)
+
+        queue.add(request)
+    }
+
     private fun logRequest(request: JsonObjectRequest) {
         if (!BuildConfig.DEBUG)
             return
@@ -120,9 +148,9 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
             logStr += "${it.key}: ${it.value}\n"
         }
 
-        logStr += "\n${request.body?.let { String(it) }}\n"
+        logStr += "\n${request.body?.let { String(it.copyOfRange(0, min(it.size, 500))) }}\n"
 
-        logStr += "\n------------------------->\n";
+        logStr += "\n------------------------->\n"
 
         Log.d("NetworkService", logStr)
     }
@@ -140,7 +168,7 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
 
         logStr += "\n${response.data?.let { String(it) }}\n"
 
-        logStr += "\n------------------------->\n";
+        logStr += "\n------------------------->\n"
 
         Log.d("NetworkService", logStr)
     }

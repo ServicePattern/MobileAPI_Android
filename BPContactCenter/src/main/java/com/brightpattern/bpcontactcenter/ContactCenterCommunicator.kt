@@ -2,6 +2,7 @@ package com.brightpattern.bpcontactcenter
 
 import android.os.Build
 import android.content.Context
+import android.graphics.Bitmap
 import com.android.volley.Request
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.HurlStack
@@ -17,6 +18,7 @@ import com.brightpattern.bpcontactcenter.model.ContactCenterServiceAvailability
 import com.brightpattern.bpcontactcenter.model.ContactCenterVersion
 import com.brightpattern.bpcontactcenter.model.http.ChatSessionCaseHistoryDto
 import com.brightpattern.bpcontactcenter.model.http.ContactCenterEventsContainerDto
+import com.brightpattern.bpcontactcenter.model.ContactCenterUploadedFileInfo
 import com.brightpattern.bpcontactcenter.network.NetworkService
 import com.brightpattern.bpcontactcenter.network.URLProvider
 import com.brightpattern.bpcontactcenter.network.support.HttpHeaderFields
@@ -24,9 +26,11 @@ import com.brightpattern.bpcontactcenter.network.support.HttpRequestDefaultParam
 import com.brightpattern.bpcontactcenter.utils.Failure
 import com.brightpattern.bpcontactcenter.utils.Result
 import com.brightpattern.bpcontactcenter.utils.Success
+import com.brightpattern.bpcontactcenter.utils.toBodyEncoded
 import kotlinx.serialization.json.Json
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.ByteArrayOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
@@ -228,6 +232,51 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             completion.invoke(Success(true))
         } else {
             completion.invoke(Failure(ContactCenterError.SessionNotCreated()))
+        }
+    }
+
+    override fun sendChatFile(chatID: String, fileID: String, fileName: String, fileType: String, completion: (Result<List<ContactCenterEvent.ChatSessionFile>, Error>) -> Unit) {
+        try {
+            val url = URLProvider.Endpoint.SendEvents.generateFullUrl(baseURL, tenantURL, chatID)
+            val chatSessionFile = ContactCenterEvent.ChatSessionFile(fileName, fileID, fileType, UUID.randomUUID().toString())
+            val payload = createSendEventPayload(chatSessionFile)
+            networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
+                chatSessionFile.url = URLProvider.Endpoint.File.generateFileUrl(baseURL, fileID)
+                completion.invoke(Success(listOf(chatSessionFile)))
+            }, {
+                completion.invoke(Failure(parseVolleyError(it)))
+            })
+        } catch (e: ContactCenterError) {
+            completion.invoke(Failure(e))
+        } catch (e: java.lang.Exception) {
+            completion.invoke(Failure(ContactCenterError.CommonCCError(e.toString())))
+        }
+    }
+
+    override fun uploadFile(fileName: String, image: Bitmap, completion: (Result<ContactCenterUploadedFileInfo, Error>) -> Unit) {
+        try {
+
+            val boundary = UUID.randomUUID().toString()
+
+            val bos = ByteArrayOutputStream()
+            image.compress(Bitmap.CompressFormat.JPEG, 80, bos)
+            val bitmapData = bos.toByteArray()
+
+            val url = URLProvider.Endpoint.UploadFile.generateFullUrl(baseURL, tenantURL)
+
+
+            networkService.executeFileUpload(url, defaultHttpHeaderFields.fileUploadFields(boundary), bitmapData.toBodyEncoded(boundary, fileName),
+                {
+                    val result = format.decodeFromString(ContactCenterUploadedFileInfo.serializer(), it.toString())
+                    completion.invoke((Success(result)))
+                }, {
+                    completion.invoke(Failure(parseVolleyError(it)))
+                })
+
+        } catch (e: ContactCenterError) {
+            completion.invoke(Failure(e))
+        } catch (e: java.lang.Exception) {
+            completion.invoke(Failure(ContactCenterError.FileUploadError(e.toString())))
         }
     }
 

@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -71,8 +72,7 @@ class MessageActivity : AppCompatActivity() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 images.removeAt(viewHolder.bindingAdapterPosition)
                 sendingImagesListAdapter.removedAt(viewHolder.bindingAdapterPosition)
-                imagesListView.visibility = if (images.isNotEmpty()) View.VISIBLE else View.GONE
-                messageInput.button.isEnabled = images.isNotEmpty() or messageInput.inputEditText.text.isNotEmpty()
+                imageListUpdate()
             }
 
             override fun isItemViewSwipeEnabled(): Boolean {
@@ -92,6 +92,11 @@ class MessageActivity : AppCompatActivity() {
                 return true
             }
         }
+    }
+
+    private fun imageListUpdate() {
+        imagesListView.visibility = if (images.isNotEmpty()) View.VISIBLE else View.GONE
+        messageInput.button.isEnabled = images.isNotEmpty() or messageInput.inputEditText.text.isNotEmpty()
     }
 
     private val touchHelper: ItemTouchHelper by lazy {
@@ -169,15 +174,38 @@ class MessageActivity : AppCompatActivity() {
             api.getChatHistory(ChatDemo.chatID) { r -> resultProcessing(r) }
 
             messageInput.setTypingListener(object : TypingListener {
-                override fun onStartTyping() { }
+                override fun onStartTyping() {}
 
                 override fun onStopTyping() {
-                    messageInput.button.isEnabled = images.isNotEmpty() or messageInput.inputEditText.text.isNotEmpty()
+                    imageListUpdate()
                 }
 
             })
 
             messageInput.setInputListener { messageText ->
+
+                images.forEach { uri ->
+                    val bitmap = applicationContext.contentResolver.openInputStream(uri).use { data ->
+                        BitmapFactory.decodeStream(data)
+                    }
+                    api.uploadFile(uri.lastPathSegment ?: "unknown.png", bitmap) { result ->
+
+                        if (result is Success) {
+                            api.sendChatFile(ChatDemo.chatID, result.value.fileUUID, result.value.fileName, "image") { sendMessageResult ->
+
+                                if (sendMessageResult is Success) {
+                                    val myImageMessage = sendMessageResult.value.first().url?.let { it1 -> MyMessage("", it1, myUser) }
+                                    messageListAdapter.addToStart(myImageMessage, true)
+
+                                    images.removeAt(images.indexOf(uri))
+                                    imageListUpdate()
+                                }
+                            }
+
+                        }
+                    }
+                }
+
                 val messageID = UUID.randomUUID()
                 api.sendChatMessage(ChatDemo.chatID, "$messageText", messageID) { result ->
                     if (result is Success) {
@@ -230,6 +258,7 @@ class MessageActivity : AppCompatActivity() {
     }
 
     //handle result of picked image
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE) {
@@ -267,6 +296,7 @@ class MessageActivity : AppCompatActivity() {
                 (it as? ContactCenterEvent.ChatSessionFile)?.let { message ->
                     if (message.fileType == "image") {
                         val incomingMessage = message.url?.let { it1 -> MyMessage("", it1, getParty(message.partyID)) }
+                        Log.e(LOG_TAG, " $incomingMessage")
                         messageListAdapter.addToStart(incomingMessage, true)
                     } else {
                         val incomingMessage = MyMessage("Unsupported ${message.fileType} file ${message.fileName}", null, getParty(message.partyID))

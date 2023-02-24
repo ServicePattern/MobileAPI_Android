@@ -1,10 +1,12 @@
 package com.brightpattern.bpcontactcenter.interfaces
 
+import android.graphics.Bitmap
 import com.brightpattern.bpcontactcenter.entity.ContactCenterEvent
 import com.brightpattern.bpcontactcenter.model.ContactCenterChatSessionProperties
 import com.brightpattern.bpcontactcenter.model.ContactCenterServiceAvailability
 import com.brightpattern.bpcontactcenter.model.ContactCenterVersion
 import com.brightpattern.bpcontactcenter.model.http.ChatSessionCaseHistoryDto
+import com.brightpattern.bpcontactcenter.model.ContactCenterUploadedFileInfo
 import com.brightpattern.bpcontactcenter.utils.Result
 import org.json.JSONObject
 import java.util.*
@@ -150,4 +152,23 @@ interface ContactCenterCommunicating {
      * @param completion: Returns `.success` or [ContactCenterError](x-source-tag://ContactCenterError) otherwise
      **/
     fun stopPolling(chatID: String, completion: (Result<Boolean, Error>) -> Unit)
+
+    /** Send a file to the chat session. The file should be uploaded to the server first using `uploadFile` method.
+     * @param chatID: The current chat ID
+     * @param fileID: The file ID. Returned by `uploadFile` method.
+     * @param fileName: The file name.
+     * @param fileType: The file type.
+     * @param completion: Returns  ChatSessionFile object or ContactCenterError
+     **/
+    fun sendChatFile(chatID: String, fileID: String, fileName: String, fileType: String, completion: (Result<List<ContactCenterEvent.ChatSessionFile>, Error>) -> Unit)
+
+    /** Uploads an image to the server.
+    *
+    *   @param fileName: The file name.
+    *   @param image: image to upload
+    *   @param completion: Returns ContactCenterUploadedFileInfo or ContactCenterError
+    *
+    **/
+    fun uploadFile(fileName: String, image: Bitmap, completion: (Result<ContactCenterUploadedFileInfo, Error>) -> Unit)
+
 }
