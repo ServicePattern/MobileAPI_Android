@@ -176,6 +176,24 @@ sealed class ContactCenterEvent {
             val errorDescription: String = "API received unknown event entry"
     ) : ContactCenterEvent()
 
+    @Serializable
+    @SerialName("chat_session_signaling")
+    data class ChatSessionSignaling(
+        @SerialName("data") val data: SignalingData,
+        @SerialName(FieldName.PARTY_ID)
+        val party_id: String,
+        @SerialName(FieldName.TIMESTAMP)
+        val timestamp: String
+    ) :ContactCenterEvent()
+
+    @Serializable
+    data class SignalingData(
+        val candidate: String? = null,
+        val sdpMLineIndex: String? = null,
+        val sdpMid: String? = null,
+        val type: String? = null
+    )
+
     // TODO: need to implement
     companion object {
         val jsonSerializer = SerializersModule {
@@ -202,6 +220,8 @@ sealed class ContactCenterEvent {
                 subclass(ChatSessionFormSubmit::class)
                 subclass(ChatSessionCaseSet::class)
                 subclass(ChatSessionStatus::class)
+
+                subclass(ChatSessionSignaling::class)
 
                 default { ChatSessionUnknownEvent.serializer() }
 
