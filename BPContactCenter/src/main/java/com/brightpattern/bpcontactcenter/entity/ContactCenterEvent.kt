@@ -194,6 +194,21 @@ sealed class ContactCenterEvent {
         val type: String? = null
     )
 
+    @Serializable
+    @SerialName("chat_session_form_show")
+    data class ChatSessionFormShow(
+        @SerialName("channel")
+        val channel:String,
+        @SerialName("form_name")
+        val formName: String,
+        @SerialName("form_request_id")
+        val requestID: Int,
+        @SerialName("form_timeout")
+        val timeout: Int,
+        @SerialName(FieldName.TIMESTAMP)
+        val timestamp: String
+    ) : ContactCenterEvent ()
+
     // TODO: need to implement
     companion object {
         val jsonSerializer = SerializersModule {
