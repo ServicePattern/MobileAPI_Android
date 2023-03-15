@@ -4,3 +4,4 @@
 # IntelliJ IDEA
 *.iml
 *.keystore
+google-services.json
