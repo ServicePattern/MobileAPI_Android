@@ -65,8 +65,10 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
         queue.add(request)
     }
 
+    private lateinit var pollRequest: JsonObjectRequest
     override fun executePollRequest(method: Int, url: String, headerFields: HttpHeaderFields?, jsonRequest: JSONObject?, timeoutMs: Int, listener: Response.Listener<JSONObject>, errorListener: Response.ErrorListener?) {
-        val request = object : JsonObjectRequest(
+        queue.cancelAll("PollRequest")
+        pollRequest = object : JsonObjectRequest(
                 method,
                 url,
                 jsonRequest,
@@ -88,14 +90,16 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
                 return super.parseNetworkResponse(response)
             }
         }
-        request.retryPolicy = DefaultRetryPolicy(
+        pollRequest.retryPolicy = DefaultRetryPolicy(
                 timeoutMs,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
 
-        logRequest(request)
+        pollRequest.tag = "PollRequest"
 
-        queue.add(request)
+        logRequest(pollRequest)
+
+        queue.add(pollRequest)
     }
 
     override fun executeFileUpload(url: String, headerFields: HttpHeaderFields?, body: ByteArray, listener: Response.Listener<JSONObject>, errorListener: Response.ErrorListener?) {
