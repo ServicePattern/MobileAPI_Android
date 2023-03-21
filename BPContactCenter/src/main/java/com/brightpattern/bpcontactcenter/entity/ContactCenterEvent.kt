@@ -181,17 +181,20 @@ sealed class ContactCenterEvent {
     data class ChatSessionSignaling(
         @SerialName("data") val data: SignalingData,
         @SerialName(FieldName.PARTY_ID)
-        val party_id: String,
+        val party_id: String? =  null,
+        val msg_id: String = "-1" ,
+        val destination_party_id: String? = null,
         @SerialName(FieldName.TIMESTAMP)
-        val timestamp: String
+        val timestamp: Long = System.currentTimeMillis() / 1000
     ) :ContactCenterEvent()
 
     @Serializable
     data class SignalingData(
         val candidate: String? = null,
+        val sdp: String? = null,
         val sdpMLineIndex: String? = null,
         val sdpMid: String? = null,
-        val type: String? = null
+        val type: SignalingType? = null
     )
 
     @Serializable

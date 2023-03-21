@@ -16,6 +16,7 @@ class ChatDemo : Application() {
         var lastMessageID: String = ""
 
         const val OPEN_MESSAGE_ACTIVITY_REQUEST_ID = 100
+        const val OPEN_CALL_ACTIVITY_REQUEST_ID = 100
         const val CLOSED_BY_SERVER = 1001
 
     }

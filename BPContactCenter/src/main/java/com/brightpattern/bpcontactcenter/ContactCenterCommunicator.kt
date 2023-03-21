@@ -3,6 +3,7 @@ package com.brightpattern.bpcontactcenter
 import android.os.Build
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
 import com.android.volley.Request
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.HurlStack
@@ -438,6 +439,26 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
         } catch (e: java.lang.Exception) {
             completion.invoke(Failure(ContactCenterError.CommonCCError(e.toString())))
         }
+    }
+
+    override fun sendSignalingData(chatID: String, partyID: String, messageID: Int, data: ContactCenterEvent.SignalingData, completion: (Result<Any, Error>) -> Unit) {
+
+        try {
+            val url = URLProvider.Endpoint.SendEvents.generateFullUrl(baseURL, tenantURL, chatID)
+            val signalingEvent = ContactCenterEvent.ChatSessionSignaling(data, destination_party_id = partyID, msg_id = "$messageID", party_id = partyID )
+            val payload = createSendEventPayload(signalingEvent)
+
+            networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
+                completion.invoke(Success(it.toString()))
+            }, {
+                completion.invoke(Failure(parseVolleyError(it)))
+            })
+        } catch (e: ContactCenterError) {
+            completion.invoke(Failure(e))
+        } catch (e: java.lang.Exception) {
+            completion.invoke(Failure(ContactCenterError.CommonCCError(e.toString())))
+        }
+
     }
 
     private fun createRequestChatPayload(phoneNumber: String, from: String, parameters: JSONObject): JSONObject {

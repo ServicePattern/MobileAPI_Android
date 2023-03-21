@@ -171,4 +171,5 @@ interface ContactCenterCommunicating {
     **/
     fun uploadFile(fileName: String, image: Bitmap, completion: (Result<ContactCenterUploadedFileInfo, Error>) -> Unit)
 
+    fun sendSignalingData(chatID: String, partyID: String, messageID: Int, data: ContactCenterEvent.SignalingData, completion: (Result<Any, Error>) -> Unit)
 }

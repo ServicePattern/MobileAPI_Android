@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.brightpattern.bpcontactcenter.ContactCenterCommunicator
 import com.brightpattern.bpcontactcenter.entity.ContactCenterEvent
+import com.brightpattern.bpcontactcenter.entity.SignalingType
 import com.brightpattern.bpcontactcenter.interfaces.ContactCenterEventsInterface
 import com.brightpattern.bpcontactcenter.utils.Result
 import com.brightpattern.bpcontactcenter.utils.Success
@@ -276,7 +277,8 @@ class MessageActivity : AppCompatActivity() {
     fun resultProcessing(result: Any) {
         if (result is Success<*>) {
             @Suppress("UNCHECKED_CAST")
-            (result.value as? List<ContactCenterEvent>)?.forEach {
+            val eventsList = result.value as? List<ContactCenterEvent>
+            eventsList?.forEach {
                 (it as? ContactCenterEvent.ChatSessionMessage)?.let { message ->
                     val incomingMessage = MyMessage(message.message, null, getParty(message.partyID), message.messageID)
                     messageListAdapter.addToStart(incomingMessage, true)
@@ -328,6 +330,14 @@ class MessageActivity : AppCompatActivity() {
                     // Set the result and close the activity
                     setResult(ChatDemo.CLOSED_BY_SERVER)
                     finish()
+                }
+                (it as? ContactCenterEvent.ChatSessionSignaling)?.let { signalingMessage ->
+                    if (signalingMessage.data.type == SignalingType.OFFER_CALL && eventsList.count() == 1) {
+                        val intent = Intent(applicationContext, CallActivity::class.java)
+                        intent.putExtra("party_id", signalingMessage.party_id)
+                        intent.putExtra("session_description", signalingMessage.data.sdp)
+                        startActivityForResult(intent, ChatDemo.OPEN_CALL_ACTIVITY_REQUEST_ID)
+                    }
                 }
             }
         }

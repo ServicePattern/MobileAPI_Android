@@ -11,6 +11,10 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
     <uses-sdk android:targetSdkVersion="30" />
 
     <application
@@ -38,6 +42,7 @@
 
         <activity android:name="com.brightpattern.MessageActivity" />
         <activity android:name="com.brightpattern.PreferencesActivity" />
+        <activity android:name="com.brightpattern.CallActivity"/>
 
         <service
             android:name="com.brightpattern.CDFirebaseMessagingService"
