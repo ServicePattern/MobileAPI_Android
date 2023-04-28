@@ -42,6 +42,7 @@ class RTCClient(
     private val iceServer = listOf(
 //        PeerConnection.IceServer.builder("stun:185.14.28.222:3478").createIceServer(),
         PeerConnection.IceServer.builder("stun:stun.l.google.com:19302").createIceServer(),
+//        PeerConnection.IceServer("turn:oceanturn1.brightpattern.com:443",  "turnserver","turnserverturnserver")
 //        PeerConnection.IceServer("turn:185.14.28.222:3478","alan","simplePassword"),
 //        PeerConnection.IceServer("stun:openrelay.metered.ca:80"),
 //        PeerConnection.IceServer("turn:openrelay.metered.ca:80", "openrelayproject", "openrelayproject"),
@@ -81,15 +82,14 @@ class RTCClient(
             )
             .setVideoDecoderFactory(DefaultVideoDecoderFactory(eglContext!!.eglBaseContext))
             .setOptions(PeerConnectionFactory.Options().apply {
-//                disableEncryption = true
-//                disableNetworkMonitor = true
+                disableEncryption = true
+                disableNetworkMonitor = true
             }).createPeerConnectionFactory()
     }
 
     private fun createPeerConnection(observer: PeerConnection.Observer): PeerConnection? {
         val rtcConfig = RTCConfiguration(iceServer)
         rtcConfig.disableIPv6OnWifi = true
-        rtcConfig.disableIpv6 = true
         rtcConfig.iceTransportsType = PeerConnection.IceTransportsType.ALL
         return peerConnectionFactory.createPeerConnection(rtcConfig, observer)
     }
@@ -117,13 +117,14 @@ class RTCClient(
         localVideoTrack?.addSink(surface)
         localAudioTrack =
             peerConnectionFactory.createAudioTrack("local_track_audio", localAudioSource)
-        val localStream = peerConnectionFactory.createLocalMediaStream("local_stream")
-        localStream.addTrack(localAudioTrack)
-        localStream.addTrack(localVideoTrack)
+//        val localStream = peerConnectionFactory.createLocalMediaStream("local_stream")
+//        localStream.addTrack(localAudioTrack)
+//        localStream.addTrack(localVideoTrack)
+//
+//        peerConnection?.addStream(localStream)
 
-        peerConnection?.addStream(localStream)
-
-
+        peerConnection?.addTransceiver(localAudioTrack)
+        peerConnection?.addTransceiver(localVideoTrack)
     }
 
     fun initializeSurfaceView(surface: SurfaceViewRenderer) {

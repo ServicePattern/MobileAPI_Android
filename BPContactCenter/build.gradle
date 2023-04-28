@@ -27,8 +27,6 @@ android {
     defaultConfig {
         minSdkVersion 22
         targetSdkVersion 33
-        versionCode 1
-        versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -47,6 +45,7 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    namespace 'com.brightpattern.bpcontactcenter'
 }
 
 // Because the components are created only during the afterEvaluate phase, you must

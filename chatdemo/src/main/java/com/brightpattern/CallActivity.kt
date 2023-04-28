@@ -17,10 +17,10 @@ import com.brightpattern.bpcontactcenter.interfaces.ContactCenterEventsInterface
 import com.brightpattern.bpcontactcenter.utils.Result
 import com.brightpattern.bpcontactcenter.utils.Success
 import com.brightpattern.chatdemo.R
+import com.brightpattern.chatdemo.databinding.ActivityCallBinding
 import com.brightpattern.webRTC.PeerConnectionObserver
 import com.brightpattern.webRTC.RTCAudioManager
 import com.brightpattern.webRTC.RTCClient
-import kotlinx.android.synthetic.main.activity_call.*
 import org.webrtc.IceCandidate
 import org.webrtc.MediaStream
 import org.webrtc.SessionDescription
@@ -48,13 +48,17 @@ class CallActivity : AppCompatActivity() {
     private var partyID: String = ""
     private var sessionDescription: String = ""
 
+    private lateinit var binding: ActivityCallBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         intent.extras?.getString("party_id")?.let { partyID = it }
         intent.extras?.getString("session_description")?.let { sessionDescription = it }
 
-        setContentView(R.layout.activity_call)
+        binding = ActivityCallBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         checkCameraAndAudioPermission()
 
@@ -77,15 +81,11 @@ class CallActivity : AppCompatActivity() {
                 api?.sendSignalingData(ChatDemo.chatID, partyID,lastKnownMessageID,data) {
                     Log.e(LOG_TAG, ">> $it")
                 }
-//                socketRepository?.sendMessageToSocket(
-//                    MessageModel("ice_candidate",userName,target,candidate)
-//                )
-
             }
 
             override fun onAddStream(p0: MediaStream?) {
                 super.onAddStream(p0)
-                p0?.videoTracks?.get(0)?.addSink(remote_view)
+                p0?.videoTracks?.get(0)?.addSink(binding.remoteView)
                 Log.d(LOG_TAG, "onAddStream: $p0")
 
 
@@ -95,58 +95,53 @@ class CallActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        incomingCallLayout.visibility = View.VISIBLE
+        binding.incomingCallLayout.visibility = View.VISIBLE
 
-        switch_camera_button.setOnClickListener {
+        binding.switchCameraButton.setOnClickListener {
             rtcClient?.switchCamera()
         }
 
-        mic_button.setOnClickListener {
+        binding.micButton.setOnClickListener {
             if (isMute) {
                 isMute = false
-                mic_button.setImageResource(R.drawable.ic_baseline_mic_off_24)
+                binding.micButton.setImageResource(R.drawable.ic_baseline_mic_off_24)
             } else {
                 isMute = true
-                mic_button.setImageResource(R.drawable.ic_baseline_mic_24)
+                binding.micButton.setImageResource(R.drawable.ic_baseline_mic_24)
             }
             rtcClient?.toggleAudio(isMute)
         }
 
-        video_button.setOnClickListener {
+        binding.videoButton.setOnClickListener {
             if (isCameraPause) {
                 isCameraPause = false
-                video_button.setImageResource(R.drawable.ic_baseline_videocam_off_24)
+                binding.videoButton.setImageResource(R.drawable.ic_baseline_videocam_off_24)
             } else {
                 isCameraPause = true
-                video_button.setImageResource(R.drawable.ic_baseline_videocam_24)
+                binding.videoButton.setImageResource(R.drawable.ic_baseline_videocam_24)
             }
             rtcClient?.toggleCamera(isCameraPause)
         }
 
-        audio_output_button.setOnClickListener {
+        binding.audioOutputButton.setOnClickListener {
             if (isSpeakerMode) {
                 isSpeakerMode = false
-                audio_output_button.setImageResource(R.drawable.ic_baseline_hearing_24)
+                binding.audioOutputButton.setImageResource(R.drawable.ic_baseline_hearing_24)
                 rtcAudioManager.setDefaultAudioDevice(RTCAudioManager.AudioDevice.EARPIECE)
             } else {
                 isSpeakerMode = true
-                audio_output_button.setImageResource(R.drawable.ic_baseline_speaker_up_24)
+                binding.audioOutputButton.setImageResource(R.drawable.ic_baseline_speaker_up_24)
                 rtcAudioManager.setDefaultAudioDevice(RTCAudioManager.AudioDevice.SPEAKER_PHONE)
 
             }
 
         }
-        end_call_button.setOnClickListener {
+        binding.endCallButton.setOnClickListener {
             setCallLayoutGone()
             setIncomingCallLayoutGone()
             lastKnownMessageID += 1
             rtcClient?.endCall(lastKnownMessageID)
         }
-
-//        acceptButton.setOnClickListener {
-//            lastKnownMessageID += 1
-//            rtcClient?.answer(lastKnownMessageID, candidates)
-//        }
 
         incomingCallAction()
     }
@@ -181,7 +176,7 @@ class CallActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        rtcClient?.release(local_view)
+        rtcClient?.release(binding.localView)
         rtcClient = null
 
         super.onDestroy()
@@ -273,14 +268,14 @@ class CallActivity : AppCompatActivity() {
     private fun incomingCallAction() {
         runOnUiThread {
             setIncomingCallLayoutVisible()
-            incomingNameTV.text = "Operator is calling you"
-            acceptButton.setOnClickListener {
+            binding.incomingNameTV.text = "Operator is calling you"
+            binding.acceptButton.setOnClickListener {
                 setIncomingCallLayoutGone()
                 setCallLayoutVisible()
 
-                rtcClient?.initializeSurfaceView(local_view)
-                rtcClient?.initializeSurfaceView(remote_view)
-                rtcClient?.startLocalVideo(local_view)
+                rtcClient?.initializeSurfaceView(binding.localView)
+                rtcClient?.initializeSurfaceView(binding.remoteView)
+                rtcClient?.startLocalVideo(binding.localView)
 
                 val session = SessionDescription(
                     SessionDescription.Type.OFFER,
@@ -291,10 +286,10 @@ class CallActivity : AppCompatActivity() {
                 rtcClient?.onRemoteSessionReceived(session)
                 lastKnownMessageID += 1
                 rtcClient?.answer(lastKnownMessageID, session)
-                remote_view_loading.visibility = View.GONE
+                binding.remoteViewLoading.visibility = View.GONE
 
             }
-            rejectButton.setOnClickListener {
+            binding.rejectButton.setOnClickListener {
                 setIncomingCallLayoutGone()
 
                 lastKnownMessageID += 1
@@ -308,19 +303,19 @@ class CallActivity : AppCompatActivity() {
     }
 
     private fun setIncomingCallLayoutGone() {
-        incomingCallLayout.visibility = View.GONE
+        binding.incomingCallLayout.visibility = View.GONE
     }
 
     private fun setIncomingCallLayoutVisible() {
-        incomingCallLayout.visibility = View.VISIBLE
+        binding.incomingCallLayout.visibility = View.VISIBLE
     }
 
     private fun setCallLayoutGone() {
-        callLayout.visibility = View.GONE
+        binding.callLayout.visibility = View.GONE
     }
 
     private fun setCallLayoutVisible() {
-        callLayout.visibility = View.VISIBLE
+        binding.callLayout.visibility = View.VISIBLE
     }
 
 }

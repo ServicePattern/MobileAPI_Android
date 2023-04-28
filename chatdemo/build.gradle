@@ -1,10 +1,11 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.google.gms.google-services'
-apply plugin: 'kotlin-android-extensions'
+//apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-parcelize'
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
     buildToolsVersion "30.0.3"
 
     defaultConfig {
@@ -26,11 +27,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
     packagingOptions {
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/NOTICE'
+        resources {
+            excludes += ['META-INF/LICENSE', 'META-INF/NOTICE']
+        }
     }
+
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -41,17 +43,19 @@ android {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
-    lintOptions {
-        abortOnError false
-    }
 
     buildFeatures {
         viewBinding = true
     }
+
+    namespace 'com.brightpattern.chatdemo'
+    lint {
+        abortOnError false
+    }
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(include: ['*.jar','*.aar'], dir: 'libs')
     implementation "androidx.appcompat:appcompat:$app_compat"
     implementation "androidx.legacy:legacy-support-v4:$legacy_support"
     implementation "androidx.core:core-ktx:$core_ktx"
@@ -69,9 +73,10 @@ dependencies {
     implementation "com.android.volley:volley:$volley"
     implementation project(path: ':BPContactCenter')
     implementation "androidx.preference:preference-ktx:$pref_ktx"
-    implementation 'com.google.android.material:material:1.6.0'
+    implementation 'com.google.android.material:material:1.8.0'
 
-     implementation 'org.webrtc:google-webrtc:1.0.32006'
+//     implementation 'org.webrtc:google-webrtc:1.0.32006'
+//    implementation 'dev.bargen:webrtc-android:110.0.0'
 
 }
 repositories {
