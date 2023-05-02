@@ -85,8 +85,17 @@ class CallActivity : AppCompatActivity() {
 
             override fun onAddStream(p0: MediaStream?) {
                 super.onAddStream(p0)
-                p0?.videoTracks?.get(0)?.addSink(binding.remoteView)
-                Log.d(LOG_TAG, "onAddStream: $p0")
+                p0?.let { stream ->
+                    stream.videoTracks.firstOrNull()?.let {videoTrack ->  
+                        videoTrack.setEnabled(true)
+                        videoTrack.addSink(binding.remoteView)
+                        Log.d(LOG_TAG, "Video track enabled and added to sink")
+                    }
+                    stream.audioTracks.firstOrNull()?.let { audioTrack ->
+                        audioTrack.setEnabled(true)
+                        Log.d(LOG_TAG, "Audio track enabled")
+                    }
+                }
 
 
             }
@@ -281,7 +290,6 @@ class CallActivity : AppCompatActivity() {
                     SessionDescription.Type.OFFER,
                     sessionDescription
                 )
-//                rtcClient?.call("")
 
                 rtcClient?.onRemoteSessionReceived(session)
                 lastKnownMessageID += 1

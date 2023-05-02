@@ -73,10 +73,7 @@ dependencies {
     implementation "com.android.volley:volley:$volley"
     implementation project(path: ':BPContactCenter')
     implementation "androidx.preference:preference-ktx:$pref_ktx"
-    implementation 'com.google.android.material:material:1.8.0'
-
-//     implementation 'org.webrtc:google-webrtc:1.0.32006'
-//    implementation 'dev.bargen:webrtc-android:110.0.0'
+    implementation "com.google.android.material:material:$material"
 
 }
 repositories {

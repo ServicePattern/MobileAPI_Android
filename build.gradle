@@ -19,6 +19,7 @@ buildscript {
         dokka                   = '1.4.20'
         pref_ktx                = '1.2.0'
         kotlin_gradle_plugin    = '1.6.21'
+        material                = '1.8.0'
     }
     repositories {
         jcenter() // do not delete ChatKit critical dep

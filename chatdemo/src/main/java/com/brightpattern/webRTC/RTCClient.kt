@@ -6,6 +6,7 @@ import com.brightpattern.ChatDemo
 import com.brightpattern.bpcontactcenter.ContactCenterCommunicator
 import com.brightpattern.bpcontactcenter.entity.ContactCenterEvent
 import com.brightpattern.bpcontactcenter.entity.SignalingType
+import org.webrtc.AddIceObserver
 import org.webrtc.AudioTrack
 import org.webrtc.Camera2Enumerator
 import org.webrtc.CameraVideoCapturer
@@ -31,6 +32,9 @@ class RTCClient(
 
     companion object {
         private const val LOG_TAG = "RTCClient"
+        private const val VIDEO_TRACK_ID = "video0"
+        private const val AUDIO_TRACK_ID = "audio0"
+        private const val STREAM_ID = "stream-0"
     }
 
     init {
@@ -40,14 +44,7 @@ class RTCClient(
     private var eglContext: EglBase? = EglBase.create()
     private val peerConnectionFactory by lazy { createPeerConnectionFactory() }
     private val iceServer = listOf(
-//        PeerConnection.IceServer.builder("stun:185.14.28.222:3478").createIceServer(),
         PeerConnection.IceServer.builder("stun:stun.l.google.com:19302").createIceServer(),
-//        PeerConnection.IceServer("turn:oceanturn1.brightpattern.com:443",  "turnserver","turnserverturnserver")
-//        PeerConnection.IceServer("turn:185.14.28.222:3478","alan","simplePassword"),
-//        PeerConnection.IceServer("stun:openrelay.metered.ca:80"),
-//        PeerConnection.IceServer("turn:openrelay.metered.ca:80", "openrelayproject", "openrelayproject"),
-//        PeerConnection.IceServer("turn:openrelay.metered.ca:443", "openrelayproject", "openrelayproject"),
-//        PeerConnection.IceServer("turn:openrelay.metered.ca:443?transport=tcp", "openrelayproject", "openrelayproject"),
     )
 
     private val peerConnection by lazy { createPeerConnection(observer) }
@@ -82,7 +79,7 @@ class RTCClient(
             )
             .setVideoDecoderFactory(DefaultVideoDecoderFactory(eglContext!!.eglBaseContext))
             .setOptions(PeerConnectionFactory.Options().apply {
-                disableEncryption = true
+//                disableEncryption = true
                 disableNetworkMonitor = true
             }).createPeerConnectionFactory()
     }
@@ -90,6 +87,7 @@ class RTCClient(
     private fun createPeerConnection(observer: PeerConnection.Observer): PeerConnection? {
         val rtcConfig = RTCConfiguration(iceServer)
         rtcConfig.disableIPv6OnWifi = true
+        rtcConfig.bundlePolicy = PeerConnection.BundlePolicy.MAXBUNDLE
         rtcConfig.iceTransportsType = PeerConnection.IceTransportsType.ALL
         return peerConnectionFactory.createPeerConnection(rtcConfig, observer)
     }
@@ -113,18 +111,11 @@ class RTCClient(
             surface.context, localVideoSource.capturerObserver
         )
         videoCapturer?.startCapture(320, 240, 30)
-        localVideoTrack = peerConnectionFactory.createVideoTrack("local_track", localVideoSource)
+        localVideoTrack = peerConnectionFactory.createVideoTrack(VIDEO_TRACK_ID, localVideoSource)
         localVideoTrack?.addSink(surface)
-        localAudioTrack =
-            peerConnectionFactory.createAudioTrack("local_track_audio", localAudioSource)
-//        val localStream = peerConnectionFactory.createLocalMediaStream("local_stream")
-//        localStream.addTrack(localAudioTrack)
-//        localStream.addTrack(localVideoTrack)
-//
-//        peerConnection?.addStream(localStream)
-
-        peerConnection?.addTransceiver(localAudioTrack)
-        peerConnection?.addTransceiver(localVideoTrack)
+        localAudioTrack = peerConnectionFactory.createAudioTrack(AUDIO_TRACK_ID, localAudioSource)
+        peerConnection?.addTrack(localVideoTrack, mutableListOf(STREAM_ID))
+        peerConnection?.addTrack(localAudioTrack, mutableListOf(STREAM_ID))
     }
 
     fun initializeSurfaceView(surface: SurfaceViewRenderer) {
@@ -139,12 +130,10 @@ class RTCClient(
         peerConnection?.setRemoteDescription(object : SdpObserver {
             override fun onCreateSuccess(p0: SessionDescription?) {
                 Log.e(LOG_TAG, " setRD onCreateSuccess >>>  $p0")
-
             }
 
             override fun onSetSuccess() {
-                Log.e(LOG_TAG, " setRD onSetSuccess ")
-
+                Log.e(LOG_TAG, " setRD onSetSuccess State ${peerConnection?.connectionState()} ")
             }
 
             override fun onCreateFailure(p0: String?) {
@@ -160,84 +149,34 @@ class RTCClient(
 
     }
 
-    fun call(target: String) {
-        val mediaConstraints = MediaConstraints()
-        mediaConstraints.mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
-
-
-        peerConnection?.createOffer(object : SdpObserver {
-            override fun onCreateSuccess(desc: SessionDescription?) {
-                Log.e(LOG_TAG, " >> ${desc!!.description}")
-                peerConnection?.setLocalDescription(object : SdpObserver {
-                    override fun onCreateSuccess(p0: SessionDescription?) {
-                    }
-
-                    override fun onSetSuccess() {
-                        val offer = hashMapOf(
-                            "sdp" to desc?.description,
-                            "type" to desc?.type
-                        )
-
-//                        socketRepository.sendMessageToSocket(
-//                            MessageModel(
-//                                "create_offer", username, target, offer
-//                            )
-//                        )
-                    }
-
-                    override fun onCreateFailure(p0: String?) {
-                    }
-
-                    override fun onSetFailure(p0: String?) {
-                    }
-
-                }, desc)
-
-            }
-
-            override fun onSetSuccess() {
-            }
-
-            override fun onCreateFailure(p0: String?) {
-            }
-
-            override fun onSetFailure(p0: String?) {
-            }
-        }, mediaConstraints)
-    }
-
     fun answer(messageID: Int, session: SessionDescription) {
         val constraints = MediaConstraints()
         constraints.mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
 
+        candidatesToAdd.forEach { iceCandidate ->
+            addIceCandidate(iceCandidate)
+        }
+
         peerConnection?.createAnswer(object : SdpObserver {
             override fun onCreateSuccess(desc: SessionDescription?) {
-                Log.e(LOG_TAG, "createAnswer > onCreateSuccess >>>  ${desc?.type}")
 
                 peerConnection?.setLocalDescription(object : SdpObserver {
                     override fun onCreateSuccess(p0: SessionDescription?) {
                         Log.e(LOG_TAG, "onCreateSuccess >>>  $p0")
-
                     }
 
-
                     override fun onSetSuccess() {
-                        Log.e(LOG_TAG, "onSetSuccess >>>  *************************************************** ")
-
                         api?.sendSignalingData(ChatDemo.chatID, partyID, messageID, ContactCenterEvent.SignalingData(sdp = desc!!.description, type = SignalingType.ANSWER_CALL)) {
-                            Log.e(LOG_TAG, "Result <<<<  $it")
+                            Log.e(LOG_TAG, "Result $it")
                         }
-
                     }
 
                     override fun onCreateFailure(p0: String?) {
                         Log.e(LOG_TAG, "onCreateFailure >>>  $p0")
-
                     }
 
                     override fun onSetFailure(p0: String?) {
                         Log.e(LOG_TAG, "onSetFailure >>>  $p0")
-
                     }
 
                 }, desc)
@@ -257,23 +196,38 @@ class RTCClient(
 
     fun rejectCall(messageID: Int) {
         api?.sendSignalingData(ChatDemo.chatID, partyID, messageID, ContactCenterEvent.SignalingData(type = SignalingType.CALL_REJECTED)) {
-            Log.e(LOG_TAG, ">>>  $it")
-
+            Log.e(LOG_TAG, "Result: $it")
         }
     }
 
     fun endCall(messageID: Int) {
 
         api?.sendSignalingData(ChatDemo.chatID, partyID, messageID, ContactCenterEvent.SignalingData(type = SignalingType.END_CALL)) {
-            Log.e(LOG_TAG, ">>>  $it")
+            Log.e(LOG_TAG, "Result:  $it")
         }
-
         peerConnection?.close()
-
     }
 
+    var candidatesToAdd = mutableListOf<IceCandidate>()
+
     fun addIceCandidate(p0: IceCandidate?) {
-        peerConnection?.addIceCandidate(p0)
+        p0?.let { candidate ->
+
+            if (peerConnection?.remoteDescription != null) {
+                peerConnection?.addIceCandidate(candidate, object : AddIceObserver {
+                    override fun onAddSuccess() {
+                        Log.e(LOG_TAG, "ice candidate added successfully ")
+                    }
+
+                    override fun onAddFailure(p0: String?) {
+                        Log.e(LOG_TAG, "ERROR ON add Ice candidate \n $p0")
+                    }
+
+                })
+            } else {
+                candidatesToAdd.add(candidate)
+            }
+        }
     }
 
     fun switchCamera() {

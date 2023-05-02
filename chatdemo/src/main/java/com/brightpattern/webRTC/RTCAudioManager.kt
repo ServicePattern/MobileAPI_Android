@@ -137,15 +137,20 @@ class RTCAudioManager(context: Context) {
                     AudioManager.AUDIOFOCUS_GAIN -> typeOfChange = "AUDIOFOCUS_GAIN"
                     AudioManager.AUDIOFOCUS_GAIN_TRANSIENT -> typeOfChange =
                         "AUDIOFOCUS_GAIN_TRANSIENT"
+
                     AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE -> typeOfChange =
                         "AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE"
+
                     AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK -> typeOfChange =
                         "AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK"
+
                     AudioManager.AUDIOFOCUS_LOSS -> typeOfChange = "AUDIOFOCUS_LOSS"
                     AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> typeOfChange =
                         "AUDIOFOCUS_LOSS_TRANSIENT"
+
                     AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> typeOfChange =
                         "AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK"
+
                     else -> typeOfChange = "AUDIOFOCUS_INVALID"
                 }
                 Log.d(TAG, "onAudioFocusChange: $typeOfChange")
@@ -240,6 +245,7 @@ class RTCAudioManager(context: Context) {
             } else {
                 defaultAudioDevice = AudioDevice.SPEAKER_PHONE
             }
+
             else -> Log.e(TAG, "Invalid default audio device selection")
         }
         Log.d(TAG, "setDefaultAudioDevice(device=$defaultAudioDevice)")
@@ -422,7 +428,6 @@ class RTCAudioManager(context: Context) {
     }
 
     init {
-        Log.d(TAG, "ctor")
         ThreadUtils.checkIsOnMainThread()
         apprtcContext = context
         audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
