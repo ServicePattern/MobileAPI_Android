@@ -23,6 +23,7 @@ import org.webrtc.SessionDescription
 import org.webrtc.SurfaceTextureHelper
 import org.webrtc.SurfaceViewRenderer
 import org.webrtc.VideoTrack
+import java.util.Collections
 
 class RTCClient(
     private val application: Application,
@@ -45,6 +46,15 @@ class RTCClient(
     private val peerConnectionFactory by lazy { createPeerConnectionFactory() }
     private val iceServer = listOf(
         PeerConnection.IceServer.builder("stun:stun.l.google.com:19302").createIceServer(),
+        PeerConnection.IceServer.builder("turn:openrelay.metered.ca:80").setUsername("openrelayproject").setPassword("openrelayproject").createIceServer(),
+//        PeerConnection.IceServer.builder("turn:crtmg.com:5349?transport=tcp ").setUsername("alan1").setPassword("simplePassword2").createIceServer(),
+//        PeerConnection.IceServer.builder("turn:oceanturn1.brightpattern.com:443").setUsername("turnserver").setPassword("turnserverturnserver").createIceServer(),
+//        PeerConnection.IceServer.builder("turn:turn.anyfirewall.com:443?transport=tcp").setUsername("webrtc").setPassword("webrtc").createIceServer(),
+
+        /*
+        RTCIceServer(urlStrings: ["turn:oceanturn1.brightpattern.com:443"], username: "turnserver", credential: "turnserverturnserver"),
+                              RTCIceServer(urlStrings: ["turn:turn.anyfirewall.com:443?transport=tcp"], username: "webrtc", credential: "webrtc")
+         */
     )
 
     private val peerConnection by lazy { createPeerConnection(observer) }
@@ -80,14 +90,16 @@ class RTCClient(
             .setVideoDecoderFactory(DefaultVideoDecoderFactory(eglContext!!.eglBaseContext))
             .setOptions(PeerConnectionFactory.Options().apply {
 //                disableEncryption = true
-                disableNetworkMonitor = true
+//                disableNetworkMonitor = true
             }).createPeerConnectionFactory()
     }
 
     private fun createPeerConnection(observer: PeerConnection.Observer): PeerConnection? {
         val rtcConfig = RTCConfiguration(iceServer)
         rtcConfig.disableIPv6OnWifi = true
+        rtcConfig.sdpSemantics = PeerConnection.SdpSemantics.UNIFIED_PLAN
         rtcConfig.bundlePolicy = PeerConnection.BundlePolicy.MAXBUNDLE
+        rtcConfig.candidateNetworkPolicy = PeerConnection.CandidateNetworkPolicy.ALL
         rtcConfig.iceTransportsType = PeerConnection.IceTransportsType.ALL
         return peerConnectionFactory.createPeerConnection(rtcConfig, observer)
     }
@@ -208,7 +220,7 @@ class RTCClient(
         peerConnection?.close()
     }
 
-    var candidatesToAdd = mutableListOf<IceCandidate>()
+    var candidatesToAdd = Collections.synchronizedList(mutableListOf<IceCandidate>())//mutableListOf<IceCandidate>()
 
     fun addIceCandidate(p0: IceCandidate?) {
         p0?.let { candidate ->

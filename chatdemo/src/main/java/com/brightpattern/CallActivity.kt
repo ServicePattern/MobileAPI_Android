@@ -23,6 +23,7 @@ import com.brightpattern.webRTC.RTCAudioManager
 import com.brightpattern.webRTC.RTCClient
 import org.webrtc.IceCandidate
 import org.webrtc.MediaStream
+import org.webrtc.RtpReceiver
 import org.webrtc.SessionDescription
 
 class CallActivity : AppCompatActivity() {
@@ -99,6 +100,12 @@ class CallActivity : AppCompatActivity() {
 
 
             }
+
+            override fun onAddTrack(p0: RtpReceiver?, p1: Array<out MediaStream>?) {
+                super.onAddTrack(p0, p1)
+                p1?.firstOrNull()?.audioTracks?.firstOrNull()?.setEnabled(true)
+            }
+
         })
         rtcAudioManager.setDefaultAudioDevice(RTCAudioManager.AudioDevice.SPEAKER_PHONE)
     }
