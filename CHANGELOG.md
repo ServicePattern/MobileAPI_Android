@@ -1,6 +1,15 @@
 # CHANGELOG
 
 The changelog for `BPContactCenter`. Also see the [releases](https://github.com/ServicePattern/MobileAPI_Android/releases) on GitHub.
+## [2.1.0](https://github.com/ServicePattern/MobileAPI_Android/releases/tag/2.0.1)
+
+### Changed
+ - Demo app strings extracted
+ - Gradle cleanup and upgrade
+
+### Added
+ - Upload files to server
+ - WebRTC feature
 
 ## [2.0.0](https://github.com/ServicePattern/MobileAPI_Android/releases/tag/2.0.0)
 
