@@ -7,7 +7,9 @@ internal class URLProvider {
     companion object {
         const val apiVersion = "v2"
         const val basePath = "clientweb/api"
+        const val filePath = "clientweb/file"
         var chatID: String = ""
+        var fileID: String = ""
     }
 
     enum class Endpoint {
@@ -19,7 +21,9 @@ internal class URLProvider {
         RequestChat,
         SendEvents,
         SubscribeForNotifications,
-        CloseCase;
+        CloseCase,
+        File,
+        UploadFile;
 
         private val endpointPathString: String
             get() = when (this) {
@@ -33,6 +37,8 @@ internal class URLProvider {
                 SendEvents -> "chats/$chatID/events"
                 SubscribeForNotifications -> "chats/$chatID/notifications"
                 CloseCase -> "chats/$chatID/closecase"
+                File -> fileID
+                UploadFile -> "files"
             }
 
         @Throws(ContactCenterError::class)
@@ -40,12 +46,23 @@ internal class URLProvider {
             URLProvider.chatID = chatID
             val rgx = "^(http|https):\\/\\/".toRegex()
             val nonce = System.currentTimeMillis().toString()
-            val result =  "$baseURL/$basePath/$apiVersion/${endpointPathString}?tenantUrl=$tenantURL&nonce=$nonce"
+            val result = "$baseURL/$basePath/$apiVersion/${endpointPathString}?tenantUrl=$tenantURL&nonce=$nonce"
             if (rgx.containsMatchIn(tenantURL))
                 throw ContactCenterError.FailedTenantURL("TenantURL MUST NOT starts with http:// or https://")
             if (!URLUtil.isValidUrl(result))
                 throw ContactCenterError.FailedToBuildBaseURL("Failed to build URL from baseURL=$baseURL\ttenantURL=$tenantURL\tchatID=$chatID ")
-            if(!URLUtil.isHttpsUrl(result))
+            if (!URLUtil.isHttpsUrl(result))
+                throw ContactCenterError.FailedToBuildBaseURL("The URL=$result doesn't contain SSL protocol keyword ")
+            return result
+        }
+
+        @Throws(ContactCenterError::class)
+        fun generateFileUrl(baseURL: String, fileID: String): String {
+            URLProvider.fileID = fileID
+            val result = "$baseURL/$filePath/${endpointPathString}"
+            if (!URLUtil.isValidUrl(result))
+                throw ContactCenterError.FailedToBuildBaseURL("Failed to build file URL from baseURL=$baseURL\tfileID=$fileID ")
+            if (!URLUtil.isHttpsUrl(result))
                 throw ContactCenterError.FailedToBuildBaseURL("The URL=$result doesn't contain SSL protocol keyword ")
             return result
         }

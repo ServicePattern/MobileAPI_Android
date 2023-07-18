@@ -4,7 +4,7 @@
 
 ## Example
 
-To run the example project, you have to request for valid credantials, than clone the repo and run it
+To run the example project, you have to request for valid credentials, than clone the repo and run it
 
 ## Requirements
 

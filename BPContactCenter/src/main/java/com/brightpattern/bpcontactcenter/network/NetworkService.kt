@@ -9,6 +9,7 @@ import com.brightpattern.bpcontactcenter.entity.FieldName
 import com.brightpattern.bpcontactcenter.interfaces.NetworkServiceable
 import com.brightpattern.bpcontactcenter.network.support.HttpHeaderFields
 import org.json.JSONObject
+import java.lang.Integer.min
 
 class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
 
@@ -64,8 +65,10 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
         queue.add(request)
     }
 
+    private lateinit var pollRequest: JsonObjectRequest
     override fun executePollRequest(method: Int, url: String, headerFields: HttpHeaderFields?, jsonRequest: JSONObject?, timeoutMs: Int, listener: Response.Listener<JSONObject>, errorListener: Response.ErrorListener?) {
-        val request = object : JsonObjectRequest(
+        queue.cancelAll("PollRequest")
+        pollRequest = object : JsonObjectRequest(
                 method,
                 url,
                 jsonRequest,
@@ -87,10 +90,39 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
                 return super.parseNetworkResponse(response)
             }
         }
-        request.retryPolicy = DefaultRetryPolicy(
+        pollRequest.retryPolicy = DefaultRetryPolicy(
                 timeoutMs,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+
+        pollRequest.tag = "PollRequest"
+
+        logRequest(pollRequest)
+
+        queue.add(pollRequest)
+    }
+
+    override fun executeFileUpload(url: String, headerFields: HttpHeaderFields?, body: ByteArray, listener: Response.Listener<JSONObject>, errorListener: Response.ErrorListener?) {
+        val request = object : JsonObjectRequest(Method.POST, url, null, listener, errorListener) {
+            override fun getHeaders(): MutableMap<String, String> {
+                return headerFields?.fields?.toMutableMap() ?: mutableMapOf()
+            }
+
+            override fun parseNetworkResponse(response: NetworkResponse?): Response<JSONObject> {
+                if (response?.statusCode == 200 && response.data.isEmpty()) {
+                    val responseObject = JSONObject()
+                    responseObject.put(FieldName.STATE, "success")
+                    return Response.success(responseObject, HttpHeaderParser.parseCacheHeaders(response))
+                }
+                response?.let { logResponse(it) }
+
+                return super.parseNetworkResponse(response)
+            }
+
+            override fun getBody(): ByteArray {
+                return body
+            }
+        }
 
         logRequest(request)
 
@@ -103,26 +135,26 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
 
         var logStr = "\n---------- OUT ---------->\n"
 
-        when {
-            request.method == Request.Method.GET -> logStr += "GET"
-            request.method == Request.Method.DELETE -> logStr += "DELETE"
-            request.method == Request.Method.HEAD -> logStr += "HEAD"
-            request.method == Request.Method.OPTIONS -> logStr += "OPTIONS"
-            request.method == Request.Method.PATCH -> logStr += "PATCH"
-            request.method == Request.Method.POST -> logStr += "POST"
-            request.method == Request.Method.PUT -> logStr += "PUT"
-            request.method == Request.Method.TRACE -> logStr += "TRACE"
+        when (request.method) {
+            Request.Method.GET -> logStr += "GET"
+            Request.Method.DELETE -> logStr += "DELETE"
+            Request.Method.HEAD -> logStr += "HEAD"
+            Request.Method.OPTIONS -> logStr += "OPTIONS"
+            Request.Method.PATCH -> logStr += "PATCH"
+            Request.Method.POST -> logStr += "POST"
+            Request.Method.PUT -> logStr += "PUT"
+            Request.Method.TRACE -> logStr += "TRACE"
         }
 
-        logStr += " ${request.getUrl()} HTTP/1.1\n"
+        logStr += " ${request.url} HTTP/1.1\n"
 //        requestLog += "Host: \(host)\n"
         request.headers.forEach {
             logStr += "${it.key}: ${it.value}\n"
         }
 
-        logStr += "\n${request.body?.let { String(it) }}\n"
+        logStr += "\n${request.body?.let { String(it.copyOfRange(0, min(it.size, 500))) }}\n"
 
-        logStr += "\n------------------------->\n";
+        logStr += "\n------------------------->\n"
 
         Log.d("NetworkService", logStr)
     }
@@ -134,13 +166,13 @@ class NetworkService(override val queue: RequestQueue) : NetworkServiceable {
         var logStr = "\n---------- IN ---------->\n"
 
         logStr += "${response.statusCode}\n"
-        response.headers.forEach {
+        response.headers?.forEach {
             logStr += "${it.key}: ${it.value}\n"
         }
 
         logStr += "\n${response.data?.let { String(it) }}\n"
 
-        logStr += "\n------------------------->\n";
+        logStr += "\n------------------------->\n"
 
         Log.d("NetworkService", logStr)
     }

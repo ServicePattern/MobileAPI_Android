@@ -2,6 +2,8 @@ package com.brightpattern.bpcontactcenter
 
 import android.os.Build
 import android.content.Context
+import android.graphics.Bitmap
+import android.util.Log
 import com.android.volley.Request
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.HurlStack
@@ -17,6 +19,7 @@ import com.brightpattern.bpcontactcenter.model.ContactCenterServiceAvailability
 import com.brightpattern.bpcontactcenter.model.ContactCenterVersion
 import com.brightpattern.bpcontactcenter.model.http.ChatSessionCaseHistoryDto
 import com.brightpattern.bpcontactcenter.model.http.ContactCenterEventsContainerDto
+import com.brightpattern.bpcontactcenter.model.ContactCenterUploadedFileInfo
 import com.brightpattern.bpcontactcenter.network.NetworkService
 import com.brightpattern.bpcontactcenter.network.URLProvider
 import com.brightpattern.bpcontactcenter.network.support.HttpHeaderFields
@@ -24,9 +27,11 @@ import com.brightpattern.bpcontactcenter.network.support.HttpRequestDefaultParam
 import com.brightpattern.bpcontactcenter.utils.Failure
 import com.brightpattern.bpcontactcenter.utils.Result
 import com.brightpattern.bpcontactcenter.utils.Success
+import com.brightpattern.bpcontactcenter.utils.toBodyEncoded
 import kotlinx.serialization.json.Json
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.ByteArrayOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
@@ -156,6 +161,12 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             val url = URLProvider.Endpoint.GetChatHistory.generateFullUrl(baseURL, tenantURL, chatID)
             networkService.executeSimpleRequest(Request.Method.GET, url, defaultHttpHeaderFields, {
                 val result = format.decodeFromString(ContactCenterEventsContainerDto.serializer(), it.toString())
+                //  Add URL for file events
+                result.events.forEach { event ->
+                    (event as? ContactCenterEvent.ChatSessionFile)?.let { message ->
+                        message.url = URLProvider.Endpoint.File.generateFileUrl(baseURL, message.fileUUID)
+                    }
+                }
                 completion.invoke(Success(result.events))
             }, {
                 completion.invoke(Failure(parseVolleyError(it)))
@@ -172,6 +183,14 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
             val url = URLProvider.Endpoint.GetCaseHistory.generateFullUrl(baseURL, tenantURL, chatID)
             networkService.executeSimpleRequest(Request.Method.GET, url, defaultHttpHeaderFields, {
                 val list = format.decodeFromString(ChatSessionCaseHistoryDto.serializer(), it.toString())
+                list.sessions.forEach { session ->
+                    //  Add URL for file events
+                    session.events.forEach { event ->
+                        (event as? ContactCenterEvent.ChatSessionFile)?.let { message ->
+                            message.url = URLProvider.Endpoint.File.generateFileUrl(baseURL, message.fileUUID)
+                        }
+                    }
+                }
                 completion.invoke(Success(list))
             }, {
                 completion.invoke(Failure(parseVolleyError(it)))
@@ -217,22 +236,55 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
         }
     }
 
-    override fun sendChatMessage(chatID: String, content: String, format: ContactCenterCommunicating.ContentFormat, messageID: UUID?, completion: (Result<String, Error>) -> Unit) {
+    override fun sendChatFile(chatID: String, fileID: String, fileName: String, fileType: String, completion: (Result<List<ContactCenterEvent.ChatSessionFile>, Error>) -> Unit) {
         try {
             val url = URLProvider.Endpoint.SendEvents.generateFullUrl(baseURL, tenantURL, chatID)
+            val chatSessionFile = ContactCenterEvent.ChatSessionFile(fileName, fileID, fileType, UUID.randomUUID().toString())
+            val payload = createSendEventPayload(chatSessionFile)
+            networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
+                chatSessionFile.url = URLProvider.Endpoint.File.generateFileUrl(baseURL, fileID)
+                completion.invoke(Success(listOf(chatSessionFile)))
+            }, {
+                completion.invoke(Failure(parseVolleyError(it)))
+            })
+        } catch (e: ContactCenterError) {
+            completion.invoke(Failure(e))
+        } catch (e: java.lang.Exception) {
+            completion.invoke(Failure(ContactCenterError.CommonCCError(e.toString())))
+        }
+    }
 
-            var html = "";
-            var text = "";
+    override fun uploadFile(fileName: String, image: Bitmap, completion: (Result<ContactCenterUploadedFileInfo, Error>) -> Unit) {
+        try {
 
-            if (ContactCenterCommunicating.ContentFormat.TEXT == format) {
-                text = content
-                html = content.replace("\n", "<br>")
-            }
-            else if (ContactCenterCommunicating.ContentFormat.HTML == format) {
-                html = content;
-            }
+            val boundary = UUID.randomUUID().toString()
 
-            val payload = createSendEventPayload(ContactCenterEvent.ChatSessionMessage(messageID.toString(), UUID.randomUUID().toString(), html, text))
+            val bos = ByteArrayOutputStream()
+            image.compress(Bitmap.CompressFormat.JPEG, 80, bos)
+            val bitmapData = bos.toByteArray()
+
+            val url = URLProvider.Endpoint.UploadFile.generateFullUrl(baseURL, tenantURL)
+
+
+            networkService.executeFileUpload(url, defaultHttpHeaderFields.fileUploadFields(boundary), bitmapData.toBodyEncoded(boundary, fileName),
+                {
+                    val result = format.decodeFromString(ContactCenterUploadedFileInfo.serializer(), it.toString())
+                    completion.invoke((Success(result)))
+                }, {
+                    completion.invoke(Failure(parseVolleyError(it)))
+                })
+
+        } catch (e: ContactCenterError) {
+            completion.invoke(Failure(e))
+        } catch (e: java.lang.Exception) {
+            completion.invoke(Failure(ContactCenterError.FileUploadError(e.toString())))
+        }
+    }
+
+    override fun sendChatMessage(chatID: String, message: String, messageID: UUID?, completion: (Result<String, Error>) -> Unit) {
+        try {
+            val url = URLProvider.Endpoint.SendEvents.generateFullUrl(baseURL, tenantURL, chatID)
+            val payload = createSendEventPayload(ContactCenterEvent.ChatSessionMessage(messageID.toString(), UUID.randomUUID().toString(), message))
 
             networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
                 completion.invoke(Success(it.toString()))
@@ -389,29 +441,49 @@ class ContactCenterCommunicator private constructor(override val baseURL: String
         }
     }
 
+    override fun sendSignalingData(chatID: String, partyID: String, messageID: Int, data: ContactCenterEvent.SignalingData, completion: (Result<Any, Error>) -> Unit) {
+
+        try {
+            val url = URLProvider.Endpoint.SendEvents.generateFullUrl(baseURL, tenantURL, chatID)
+            val signalingEvent = ContactCenterEvent.ChatSessionSignaling(data, destination_party_id = partyID, msg_id = "$messageID", party_id = partyID )
+            val payload = createSendEventPayload(signalingEvent)
+
+            networkService.executeJsonRequest(Request.Method.POST, url, defaultHttpHeaderFields, payload, {
+                completion.invoke(Success(it.toString()))
+            }, {
+                completion.invoke(Failure(parseVolleyError(it)))
+            })
+        } catch (e: ContactCenterError) {
+            completion.invoke(Failure(e))
+        } catch (e: java.lang.Exception) {
+            completion.invoke(Failure(ContactCenterError.CommonCCError(e.toString())))
+        }
+
+    }
+
     private fun createRequestChatPayload(phoneNumber: String, from: String, parameters: JSONObject): JSONObject {
         val payload = JSONObject()
         payload.put(FieldName.PHONE_NUMBER, phoneNumber)
         payload.put(FieldName.FROM, from)
 
-        var parms = parameters
-
-        if (parms == null) {
-            parms = JSONObject()
-        }
+        //        if (parms == null) {
+//            parms = JSONObject()
+//        }
 
         //  Add system info
         val userPlatform = JSONObject()
         userPlatform.put("os", Build.FINGERPRINT)
         userPlatform.put("sdk", Build.VERSION.SDK_INT)
-        userPlatform.put("patch", Build.VERSION.SECURITY_PATCH)
         userPlatform.put("manufacturer", Build.MANUFACTURER)
         userPlatform.put("model", Build.MODEL)
         userPlatform.put("hardware", Build.HARDWARE)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            userPlatform.put("patch", Build.VERSION.SECURITY_PATCH)
+        }
 
-        parms.put("user_platform", userPlatform)
+        parameters.put("user_platform", userPlatform)
 
-        payload.put(FieldName.PARAMETERS, parms)
+        payload.put(FieldName.PARAMETERS, parameters)
 
         return payload
     }

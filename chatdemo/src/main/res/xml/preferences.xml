@@ -3,23 +3,23 @@
     <PreferenceCategory android:title="App preferences">
         <EditTextPreference
             android:key="clientID"
-            android:summary="Please provide your client ID"
-            android:title="Client ID" />
+            android:summary="@string/pref_client_id_summary"
+            android:title="@string/pref_client_id_title" />
         <EditTextPreference
-            android:defaultValue="-* REQUEST FROM THE SERVICE PROVIDER *-"
+            android:defaultValue="@string/pref_base_url_default"
             android:key="baseURL"
-            android:summary="Please provide your base URL"
-            android:title="Base URL" />
+            android:summary="@string/pref_base_url_summary"
+            android:title="@string/pref_base_url_title" />
         <EditTextPreference
-            android:defaultValue="-* REQUEST FROM THE SERVICE PROVIDER *-"
+            android:defaultValue="@string/pref_tenant_url_default"
             android:key="tenantURL"
-            android:summary="Please provide your tenant URL"
-            android:title="Tenant URL" />
+            android:summary="@string/pref_tenant_url_summary"
+            android:title="@string/pref_tenant_url_title" />
         <EditTextPreference
-            android:defaultValue="Android"
+            android:defaultValue="@string/pref_app_id_default"
             android:key="appID"
-            android:summary="Please provide the app ID"
-            android:title="App ID" />
+            android:summary="@string/pref_app_id_summary"
+            android:title="@string/pref_app_id_title" />
 
     </PreferenceCategory>
 </PreferenceScreen>

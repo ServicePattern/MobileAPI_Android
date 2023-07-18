@@ -1,6 +1,7 @@
 package com.brightpattern.bpcontactcenter
 
 import com.android.volley.Request
+import com.brightpattern.bpcontactcenter.entity.ContactCenterEvent
 import com.brightpattern.bpcontactcenter.interfaces.ContactCenterEventsInterface
 import com.brightpattern.bpcontactcenter.interfaces.NetworkServiceable
 import com.brightpattern.bpcontactcenter.model.http.ContactCenterEventsContainerDto
@@ -83,6 +84,13 @@ class PollRequest private constructor(
         if (chatID.isNotEmpty() && !isPaused)
             networkService.executePollRequest(Request.Method.GET, url, defaultHttpHeaderFields, null, pollInterval, {
                 val result = format.decodeFromString(ContactCenterEventsContainerDto.serializer(), it.toString())
+                //  Add URL for file events
+                result.events.forEach { event ->
+                    (event as? ContactCenterEvent.ChatSessionFile)?.let { message ->
+                        message.url = URLProvider.Endpoint.File.generateFileUrl(baseUrl, message.fileUUID)
+                    }
+                }
+
                 callback?.chatSessionEvents(Success(result.events))
                 runObservation()
             }, {

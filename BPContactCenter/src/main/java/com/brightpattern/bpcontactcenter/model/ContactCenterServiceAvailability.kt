@@ -10,7 +10,7 @@ enum class ContactCenterServiceChatAvailability {
     @SerialName("available")
     Available,
 
-    @SerialName("notAvailable")
+    @SerialName("unavailable")
     Unavailable
 }
 

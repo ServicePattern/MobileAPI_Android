@@ -1,19 +1,17 @@
 package com.brightpattern.bpcontactcenter.interfaces
 
+import android.graphics.Bitmap
 import com.brightpattern.bpcontactcenter.entity.ContactCenterEvent
 import com.brightpattern.bpcontactcenter.model.ContactCenterChatSessionProperties
 import com.brightpattern.bpcontactcenter.model.ContactCenterServiceAvailability
 import com.brightpattern.bpcontactcenter.model.ContactCenterVersion
 import com.brightpattern.bpcontactcenter.model.http.ChatSessionCaseHistoryDto
+import com.brightpattern.bpcontactcenter.model.ContactCenterUploadedFileInfo
 import com.brightpattern.bpcontactcenter.utils.Result
 import org.json.JSONObject
 import java.util.*
 
 interface ContactCenterCommunicating {
-    enum class ContentFormat {
-        TEXT, HTML
-    }
-
     // -- Initialization
     /** Base URL to make requests **/
     val baseURL: String
@@ -79,11 +77,10 @@ interface ContactCenterCommunicating {
     /**
      * Send a chat message. Before message is sent the function generates a `messageID` which is returned in a completion
      * @param chatID: The current chat ID
-     * @param content: Content of the message (text or HTML depending on format)
-     * @param format: Message content format (plain text or HTML)
-     * @param completion: Returns unique `messageID` in the chat exchange or [Error] otherwise
+     * @param message: Text of the message
+     * @param completion: Returns  `messageID` in the format chatId:messageNumber where messageNumber is ordinal number of the given message in the chat exchange or [Error] otherwise
      **/
-    fun sendChatMessage(chatID: String, content: String, format: ContentFormat, messageID: UUID? = null, completion: (Result<String, Error>) -> Unit)
+    fun sendChatMessage(chatID: String, message: String, messageID: UUID? = null, completion: (Result<String, Error>) -> Unit)
 
     /**
      * Confirms that a chat message has been delivered to the application
@@ -155,4 +152,24 @@ interface ContactCenterCommunicating {
      * @param completion: Returns `.success` or [ContactCenterError](x-source-tag://ContactCenterError) otherwise
      **/
     fun stopPolling(chatID: String, completion: (Result<Boolean, Error>) -> Unit)
+
+    /** Send a file to the chat session. The file should be uploaded to the server first using `uploadFile` method.
+     * @param chatID: The current chat ID
+     * @param fileID: The file ID. Returned by `uploadFile` method.
+     * @param fileName: The file name.
+     * @param fileType: The file type.
+     * @param completion: Returns  ChatSessionFile object or ContactCenterError
+     **/
+    fun sendChatFile(chatID: String, fileID: String, fileName: String, fileType: String, completion: (Result<List<ContactCenterEvent.ChatSessionFile>, Error>) -> Unit)
+
+    /** Uploads an image to the server.
+    *
+    *   @param fileName: The file name.
+    *   @param image: image to upload
+    *   @param completion: Returns ContactCenterUploadedFileInfo or ContactCenterError
+    *
+    **/
+    fun uploadFile(fileName: String, image: Bitmap, completion: (Result<ContactCenterUploadedFileInfo, Error>) -> Unit)
+
+    fun sendSignalingData(chatID: String, partyID: String, messageID: Int, data: ContactCenterEvent.SignalingData, completion: (Result<Any, Error>) -> Unit)
 }

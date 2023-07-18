@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.brightpattern.bpcontactcenter.ContactCenterCommunicator
 import com.brightpattern.bpcontactcenter.entity.ContactCenterEvent
-import com.brightpattern.bpcontactcenter.interfaces.ContactCenterCommunicating
 import com.brightpattern.bpcontactcenter.interfaces.ContactCenterEventsInterface
 import com.brightpattern.bpcontactcenter.model.ContactCenterChatSessionProperties
 import com.brightpattern.bpcontactcenter.utils.Failure
@@ -89,7 +88,7 @@ class MainActivity : AppCompatActivity() {
                     "getChatHistory" -> api.getChatHistory(ChatDemo.chatID) { r -> resultProcessing(r) }
                     "getCaseHistory" -> api.getCaseHistory(ChatDemo.chatID) { r -> resultProcessing(r) }
                     "closeCase" -> api.closeCase(ChatDemo.chatID) { r -> resultProcessing(r) }
-                    "sendChatMessage" -> api.sendChatMessage(ChatDemo.chatID, "First line<br>SecondLine", ContactCenterCommunicating.ContentFormat.HTML) { r -> resultProcessing(r) }
+                    "sendChatMessage" -> api.sendChatMessage(ChatDemo.chatID, "MY MESSAGE") { r -> resultProcessing(r) }
                     "chatMessageDelivered" -> api.chatMessageDelivered(ChatDemo.chatID, ChatDemo.lastMessageID) { r -> resultProcessing(r) }
                     "chatMessageRead" -> api.chatMessageRead(ChatDemo.chatID, ChatDemo.lastMessageID) { r -> resultProcessing(r) }
                     "chatTyping" -> api.chatTyping(ChatDemo.chatID) { r -> resultProcessing(r) }
@@ -110,11 +109,11 @@ class MainActivity : AppCompatActivity() {
     fun resultProcessing(result: Any) {
         when (result) {
             is Failure<*> -> {
-                Log.e("resultProcessing > Failure", ">>> ${result.reason}")
+                Log.e("resultProcessing", " > Failure >>> ${result.reason}")
                 tvResult.text = "Failure\n${result.reason}"
             }
             is Success<*> -> {
-                Log.e("resultProcessing > Success", ">>> ${result.value}")
+                Log.e("resultProcessing", " > Success >>> ${result.value}")
                 tvResult.text = "Success\n${result.value}"
 
                 (result.value as? List<*>)?.firstOrNull {
